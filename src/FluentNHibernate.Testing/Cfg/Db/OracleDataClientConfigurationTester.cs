@@ -1,5 +1,7 @@
 using FluentNHibernate.Cfg.Db;
 using NHibernate;
+using NHibernate.Dialect;
+using NHibernate.Driver;
 using NUnit.Framework;
 
 namespace FluentNHibernate.Testing.Cfg.Db
@@ -10,11 +12,10 @@ namespace FluentNHibernate.Testing.Cfg.Db
         [Test]
         public void Oracle9_should_default_to_the_Oracle9_dialect()
         {
-            string nhibernateAssembly = typeof(ISession).Assembly.FullName;
             OracleDataClientConfiguration.Oracle9
                 .ToProperties()
-                .ShouldContain("connection.driver_class", "NHibernate.Driver.OracleDataClientDriver, " + nhibernateAssembly)
-                .ShouldContain("dialect", "NHibernate.Dialect.Oracle9Dialect, " + nhibernateAssembly);
+                .ShouldContain("connection.driver_class", typeof(OracleDataClientDriver).AssemblyQualifiedName)
+                .ShouldContain("dialect", typeof(Oracle9iDialect).AssemblyQualifiedName);
         }
 
 
@@ -40,6 +41,36 @@ namespace FluentNHibernate.Testing.Cfg.Db
                 .ToProperties().ShouldContain("connection.connection_string",
                                               "User Id=test;Password=secret;Pooling=False;Statement Cache Size=50;Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=db-srv)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=mydatabase)))");
         }
+
+
+        [Test]
+        public void ConnectionString_leaving_out_the_StatementCacheSize_removes_from_string()
+        {
+            OracleClientConfiguration.Oracle9
+               .ConnectionString(c => c
+                   .Server("db-srv")
+                   .Instance("mydatabase")
+                   .Username("test")
+                   .Password("secret"))
+               .ToProperties().ShouldContain("connection.connection_string",
+                                             "User Id=test;Password=secret;Pooling=False;Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=db-srv)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=mydatabase)))");
+        }
+
+        [Test]
+        public void ConnectionString_pooling_defaults_to_false_when_not_set()
+        {
+            OracleClientConfiguration.Oracle9
+             .ConnectionString(c => c
+                 .Server("db-srv")
+                 .Instance("mydatabase")
+                 .Username("test")
+                 .Password("secret")
+                 .Pooling(true)
+                 .StatementCacheSize(50))
+             .ToProperties().ShouldContain("connection.connection_string",
+                                           "User Id=test;Password=secret;Pooling=True;Statement Cache Size=50;Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=db-srv)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=mydatabase)))");
+        }
+
 
         [Test]
         public void ConnectionString_pooling_is_enabled_when_set()
@@ -95,6 +126,14 @@ namespace FluentNHibernate.Testing.Cfg.Db
                 .ConnectionString(c => c
                     .FromConnectionStringWithKey("main"))
                 .ToProperties().ShouldContain("connection.connection_string", "connection string");
+        }
+
+        [Test]
+        public void ShouldBeAbleToSpecifyConnectionStringDirectly()
+        {
+            OracleDataClientConfiguration.Oracle9
+                .ConnectionString("conn")
+                .ToProperties().ShouldContain("connection.connection_string", "conn");
         }
     }
 }

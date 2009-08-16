@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using NHibernate.Bytecode;
 using NHibernate.Connection;
 using NHibernate.Dialect;
 using NHibernate.Driver;
@@ -29,7 +30,9 @@ namespace FluentNHibernate.Cfg.Db
         protected const string DriverClassKey = "connection.driver_class";
         protected const string ConnectionStringKey = "connection.connection_string";
         protected const string ProxyFactoryFactoryClassKey = "proxyfactory.factory_class";
+        protected const string DefaultProxyFactoryFactoryClassName = "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle";
         protected const string AdoNetBatchSizeKey = "adonet.batch_size";
+		protected const string CurrentSessionContextClassKey = "current_session_context_class";
 
         private readonly Dictionary<string, string> rawValues;
 
@@ -44,6 +47,7 @@ namespace FluentNHibernate.Cfg.Db
             rawValues = new Dictionary<string, string>();
             values = new Cache<string, string>(rawValues, s=>"");
             values.Store(ConnectionProviderKey, DefaultConnectionProviderClassName);
+            values.Store(ProxyFactoryFactoryClassKey, DefaultProxyFactoryFactoryClassName);
             connectionString = new TConnectionString();
         }
 
@@ -174,6 +178,12 @@ namespace FluentNHibernate.Cfg.Db
             return (TThisConfiguration)this;
         }
 
+        public TThisConfiguration ConnectionString(string value)
+        {
+            connectionString.Is(value);
+            return (TThisConfiguration)this;
+        }
+
         public TThisConfiguration Cache(Action<CacheSettingsBuilder> cacheExpression)
         {
             cacheExpression(cache);
@@ -198,6 +208,17 @@ namespace FluentNHibernate.Cfg.Db
             return (TThisConfiguration)this;
         }
 
+        public TThisConfiguration ProxyFactoryFactory(Type proxyFactoryFactory)
+        {
+            values.Store(ProxyFactoryFactoryClassKey, proxyFactoryFactory.AssemblyQualifiedName);
+            return (TThisConfiguration)this;
+        }
+
+        public TThisConfiguration ProxyFactoryFactory<TProxyFactoryFactory>() where TProxyFactoryFactory : IProxyFactoryFactory
+        {
+            return ProxyFactoryFactory(typeof(TProxyFactoryFactory));
+        }
+
         /// <summary>
         /// Sets the adonet.batch_size property.
         /// </summary>
@@ -208,5 +229,26 @@ namespace FluentNHibernate.Cfg.Db
             values.Store(AdoNetBatchSizeKey, size.ToString());
             return (TThisConfiguration)this;
         }
+
+		/// <summary>
+		/// Sets the current_session_context_class property.
+		/// </summary>
+		/// <param name="currentSessionContextClass">current session context class</param>
+		/// <returns>Configuration</returns>
+		public TThisConfiguration CurrentSessionContext(string currentSessionContextClass)
+		{
+			values.Store(CurrentSessionContextClassKey, currentSessionContextClass);
+			return (TThisConfiguration)this;
+		}
+
+		/// <summary>
+		/// Sets the current_session_context_class property.
+		/// </summary>
+		/// <typeparam name="TSessionContext">Implementation of ICurrentSessionContext to use</typeparam>
+		/// <returns>Configuration</returns>
+		public TThisConfiguration CurrentSessionContext<TSessionContext>() where TSessionContext : NHibernate.Context.ICurrentSessionContext
+		{
+			return CurrentSessionContext(typeof(TSessionContext).AssemblyQualifiedName);
+		}
     }
 }

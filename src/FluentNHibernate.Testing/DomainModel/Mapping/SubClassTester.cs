@@ -1,5 +1,6 @@
 using System;
 using FluentNHibernate.Conventions;
+using FluentNHibernate.Conventions.Instances;
 using FluentNHibernate.Mapping;
 using NUnit.Framework;
 
@@ -31,16 +32,13 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         }
 
         [Test]
-        public void CreateTheSubClassMappings()
+        public void ShouldSetTheName()
         {
             new MappingTester<MappedObject>()
                 .ForMapping(map =>
                     map.DiscriminateSubClassesOnColumn<string>("Type")
                         .SubClass<SecondMappedObject>("red", sc => { }))
-                .Element("//subclass")
-                    .Exists()
-                    .HasAttribute("name", typeof(SecondMappedObject).AssemblyQualifiedName)
-                    .HasAttribute("discriminator-value", "red");
+                .Element("//subclass").HasAttribute("name", typeof(SecondMappedObject).AssemblyQualifiedName);
         }
 
         [Test]
@@ -252,16 +250,6 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         }
 
         [Test]
-        public void MapsVersion()
-        {
-            new MappingTester<MappedObject>()
-                .ForMapping(map =>
-                    map.DiscriminateSubClassesOnColumn<string>("Type")
-                        .SubClass<MappedObject>(sc => sc.Version(x => x.Version)))
-                .Element("//subclass/version").Exists();
-        }
-
-        [Test]
         public void SubclassShouldNotHaveDiscriminator()
         {
             new MappingTester<MappedObject>()
@@ -379,20 +367,9 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
             new MappingTester<MappedObject>()
                 .ForMapping(map =>
                     map.DiscriminateSubClassesOnColumn("Type")
-                        .WithLengthOf(1234))
+                        .Length(1234))
                 .Element("class/discriminator")
                     .HasAttribute("length", "1234");
-        }
-
-        [Test]
-        public void CanSpecifyCustomAttributeOnDiscriminator()
-        {
-            new MappingTester<MappedObject>()
-                .ForMapping(map =>
-                    map.DiscriminateSubClassesOnColumn("Type")
-                        .SetAttribute("attr", "value"))
-                .Element("class/discriminator")
-                    .HasAttribute("attr", "value");
         }
 
         [Test]
@@ -444,8 +421,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
                     map.DiscriminateSubClassesOnColumn("Type")
                         .SubClass<MappedObjectSubclass>(("foo"), sc => sc.References(x => x.Child)))
 
-                .Element("//subclass/many-to-one")
-                    .HasAttribute("column", "test_column");
+                .Element("//subclass/many-to-one/column")
+                    .HasAttribute("name", "test_column");
 
         }
 
@@ -462,8 +439,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
                             sc.SubClass<MappedObjectSubSubClass>("bar", 
                                 ssc => ssc.References(x => x.Child));
                         }))
-                .Element("//subclass/subclass/many-to-one")
-                    .HasAttribute("column", "test_column");
+                .Element("//subclass/subclass/many-to-one/column")
+                    .HasAttribute("name", "test_column");
 
         }
 
@@ -502,50 +479,30 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
 
         public class TestPropertyConvention : IPropertyConvention
         {
-            public bool Accept(IProperty target)
+            public void Apply(IPropertyInstance instance)
             {
-                return true;
-            }
-
-            public void Apply(IProperty target)
-            {
-                target.SetAttribute("generated", "never");
+                instance.Generated.Never();
             }
         }
 
         public class TestManyToOneConvention: IReferenceConvention
         {
             /// <summary>
-            /// Whether this convention will be applied to the target.
-            /// </summary>
-            /// <param name="target">Instace that could be supplied</param>
-            /// <returns>Apply on this target?</returns>
-            public bool Accept(IManyToOnePart target)
-            {
-                return true;
-            }
-
-            /// <summary>
             /// Apply changes to the target
             /// </summary>
-            /// <param name="target">Instance to apply changes to</param>
-            public void Apply(IManyToOnePart target)
+            /// <param name="instance">Instance to apply changes to</param>
+            public void Apply(IManyToOneInstance instance)
             {
-                target.ColumnName("test_column");
+                instance.Column("test_column");
             }
         }
 
         public class TestOneToManyConvention: IHasManyConvention
         {
-            public bool Accept(IOneToManyPart target)
+            public void Apply(IOneToManyCollectionInstance instance)
             {
-                return true;
-            }
-
-            public void Apply(IOneToManyPart target)
-            {
-                target.KeyColumnNames.Add("test_column");
-                target.WithForeignKeyConstraintName("test_fk");
+                instance.Key.Column("test_column");
+                instance.Key.ForeignKey("test_fk");
             }
         }
 
