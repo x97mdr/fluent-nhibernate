@@ -15,17 +15,7 @@ namespace FluentNHibernate.Testing.Cfg.Db
             OracleDataClientConfiguration.Oracle9
                 .ToProperties()
                 .ShouldContain("connection.driver_class", typeof(OracleDataClientDriver).AssemblyQualifiedName)
-                .ShouldContain("dialect", typeof(Oracle9iDialect).AssemblyQualifiedName);
-        }
-
-
-        [Test]
-        public void Oracle10_should_default_to_the_Oracle10_dialect()
-        {
-            OracleDataClientConfiguration.Oracle10
-                .ToProperties()
-                .ShouldContain("connection.driver_class", typeof(OracleDataClientDriver).AssemblyQualifiedName)
-                .ShouldContain("dialect", typeof(Oracle10gDialect).AssemblyQualifiedName);
+                .ShouldContain("dialect", typeof(Oracle9Dialect).AssemblyQualifiedName);
         }
 
         [Test]

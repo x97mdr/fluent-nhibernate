@@ -362,12 +362,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\tools\NHibernate\nhib2.1\NHibernate.ByteCode.Castle.dll">
-      <Link>NHibernate.ByteCode.Castle.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Fixtures\Conventions\" />
     <Folder Include="MappingModel\Identity\" />
   </ItemGroup>

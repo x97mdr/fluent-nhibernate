@@ -32,14 +32,6 @@ namespace FluentNHibernate.Testing.Cfg.Db
         }
 
         [Test]
-        public void MsSql2008_should_default_to_the_Sql2008_dialect()
-        {
-            MsSqlConfiguration.MsSql2008
-                .ToProperties()
-                .ShouldContain("dialect", "NHibernate.Dialect.MsSql2008Dialect, " + typeof(ISession).Assembly.FullName);
-        }
-
-        [Test]
         public void MsSql_driver_should_default_to_the_SqlClientDriver()
         {
             MsSqlConfiguration.MsSql2000

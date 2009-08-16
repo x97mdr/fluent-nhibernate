@@ -29,8 +29,6 @@ namespace FluentNHibernate.Cfg.Db
         protected const string DefaultConnectionProviderClassName = "NHibernate.Connection.DriverConnectionProvider";
         protected const string DriverClassKey = "connection.driver_class";
         protected const string ConnectionStringKey = "connection.connection_string";
-        protected const string ProxyFactoryFactoryClassKey = "proxyfactory.factory_class";
-        protected const string DefaultProxyFactoryFactoryClassName = "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle";
         protected const string AdoNetBatchSizeKey = "adonet.batch_size";
 		protected const string CurrentSessionContextClassKey = "current_session_context_class";
 
@@ -47,7 +45,6 @@ namespace FluentNHibernate.Cfg.Db
             rawValues = new Dictionary<string, string>();
             values = new Cache<string, string>(rawValues, s=>"");
             values.Store(ConnectionProviderKey, DefaultConnectionProviderClassName);
-            values.Store(ProxyFactoryFactoryClassKey, DefaultProxyFactoryFactoryClassName);
             connectionString = new TConnectionString();
         }
 
@@ -194,29 +191,6 @@ namespace FluentNHibernate.Cfg.Db
         {
             values.Store(key, value);
             return (TThisConfiguration) this;
-        }
-
-        /// <summary>
-        /// Sets the proxyfactory.factory_class property.
-        /// NOTE: NHibernate 2.1 only
-        /// </summary>
-        /// <param name="proxyFactoryFactoryClass">factory class</param>
-        /// <returns>Configuration</returns>
-        public TThisConfiguration ProxyFactoryFactory(string proxyFactoryFactoryClass)
-        {
-            values.Store(ProxyFactoryFactoryClassKey, proxyFactoryFactoryClass);
-            return (TThisConfiguration)this;
-        }
-
-        public TThisConfiguration ProxyFactoryFactory(Type proxyFactoryFactory)
-        {
-            values.Store(ProxyFactoryFactoryClassKey, proxyFactoryFactory.AssemblyQualifiedName);
-            return (TThisConfiguration)this;
-        }
-
-        public TThisConfiguration ProxyFactoryFactory<TProxyFactoryFactory>() where TProxyFactoryFactory : IProxyFactoryFactory
-        {
-            return ProxyFactoryFactory(typeof(TProxyFactoryFactory));
         }
 
         /// <summary>
