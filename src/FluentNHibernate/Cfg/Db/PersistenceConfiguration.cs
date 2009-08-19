@@ -24,6 +24,7 @@ namespace FluentNHibernate.Cfg.Db
         protected const string UseReflectionOptimizerKey = "use_reflection_optimizer";
         protected const string QuerySubstitutionsKey = "query.substitutions";
         protected const string ShowSqlKey = "show_sql";
+        protected const string FormatSqlKey = "format_sql";
 
         protected const string ConnectionProviderKey = "connection.provider";
         protected const string DefaultConnectionProviderClassName = "NHibernate.Connection.DriverConnectionProvider";
@@ -144,6 +145,12 @@ namespace FluentNHibernate.Cfg.Db
             ToggleBooleanSetting(ShowSqlKey);
             return (TThisConfiguration)this;
         }
+
+		public TThisConfiguration FormatSql()
+		{
+			ToggleBooleanSetting(FormatSqlKey);
+			return (TThisConfiguration)this;
+		}
 
         public TThisConfiguration Provider(string provider)
         {
