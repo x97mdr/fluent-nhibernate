@@ -6,6 +6,8 @@ using NUnit.Framework;
 
 namespace FluentNHibernate.Testing.DomainModel.Mapping
 {
+// ignoring warning for obsolete SubClass
+#pragma warning disable 612,618
     [TestFixture]
     public class SubClassTester
     {
@@ -509,4 +511,6 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         private class ProxyClass
         {}
     }
+
+#pragma warning restore 612,618
 }
