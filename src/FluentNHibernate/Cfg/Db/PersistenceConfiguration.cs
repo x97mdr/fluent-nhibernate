@@ -33,9 +33,7 @@ namespace FluentNHibernate.Cfg.Db
         protected const string AdoNetBatchSizeKey = "adonet.batch_size";
 		protected const string CurrentSessionContextClassKey = "current_session_context_class";
 
-        private readonly Dictionary<string, string> rawValues;
-
-        private readonly Cache<string, string> values;
+        private readonly Dictionary<string, string> values = new Dictionary<string, string>();
 
         private bool nextBoolSettingValue = true;
         private readonly TConnectionString connectionString;
@@ -43,9 +41,7 @@ namespace FluentNHibernate.Cfg.Db
 
         protected PersistenceConfiguration()
         {
-            rawValues = new Dictionary<string, string>();
-            values = new Cache<string, string>(rawValues, s=>"");
-            values.Store(ConnectionProviderKey, DefaultConnectionProviderClassName);
+            values[ConnectionProviderKey] = DefaultConnectionProviderClassName;
             connectionString = new TConnectionString();
         }
 
@@ -62,7 +58,7 @@ namespace FluentNHibernate.Cfg.Db
                 }
             }
 
-            return rawValues;
+            return values;
         }
 
         public NHibConfiguration ConfigureProperties(NHibConfiguration nhibernateConfig)
@@ -83,7 +79,7 @@ namespace FluentNHibernate.Cfg.Db
         {
             var value = nextBoolSettingValue.ToString().ToLowerInvariant();
 
-            values.Store(settingKey, value);
+            values[settingKey] = value;
 
             nextBoolSettingValue = true;
         }
@@ -99,8 +95,8 @@ namespace FluentNHibernate.Cfg.Db
 
         public TThisConfiguration Dialect(string dialect)
         {
-            values.Store(DialectKey, dialect);
-            values.Store(AltDialectKey, dialect);
+            values[DialectKey] = dialect;
+            values[AltDialectKey] = dialect;
             return (TThisConfiguration) this;
         }
 
@@ -112,7 +108,7 @@ namespace FluentNHibernate.Cfg.Db
 
         public TThisConfiguration DefaultSchema(string schema)
         {
-            values.Store(DefaultSchemaKey, schema);
+            values[DefaultSchemaKey] = schema;
             return (TThisConfiguration) this;
         }
 
@@ -124,7 +120,7 @@ namespace FluentNHibernate.Cfg.Db
 
         public TThisConfiguration MaxFetchDepth(int maxFetchDepth)
         {
-            values.Store(MaxFetchDepthKey, maxFetchDepth.ToString());
+            values[MaxFetchDepthKey] = maxFetchDepth.ToString();
             return (TThisConfiguration)this;
         }
 
@@ -136,7 +132,7 @@ namespace FluentNHibernate.Cfg.Db
 
         public TThisConfiguration QuerySubstitutions(string query)
         {
-            values.Store(QuerySubstitutionsKey, query);
+            values[QuerySubstitutionsKey] = query;
             return (TThisConfiguration)this;
         }
 
@@ -154,7 +150,7 @@ namespace FluentNHibernate.Cfg.Db
 
         public TThisConfiguration Provider(string provider)
         {
-            values.Store(ConnectionProviderKey, provider);
+            values[ConnectionProviderKey] = provider;
             return (TThisConfiguration)this;
         }
 
@@ -166,7 +162,7 @@ namespace FluentNHibernate.Cfg.Db
 
         public TThisConfiguration Driver(string driverClass)
         {
-            values.Store(DriverClassKey, driverClass);
+            values[DriverClassKey] = driverClass;
             return (TThisConfiguration)this;
         }
 
@@ -196,7 +192,7 @@ namespace FluentNHibernate.Cfg.Db
 
         public TThisConfiguration Raw(string key, string value)
         {
-            values.Store(key, value);
+            values[key] = value;
             return (TThisConfiguration) this;
         }
 
@@ -207,7 +203,7 @@ namespace FluentNHibernate.Cfg.Db
         /// <returns>Configuration</returns>
         public TThisConfiguration AdoNetBatchSize(int size)
         {
-            values.Store(AdoNetBatchSizeKey, size.ToString());
+            values[AdoNetBatchSizeKey] = size.ToString();
             return (TThisConfiguration)this;
         }
 
@@ -218,7 +214,7 @@ namespace FluentNHibernate.Cfg.Db
 		/// <returns>Configuration</returns>
 		public TThisConfiguration CurrentSessionContext(string currentSessionContextClass)
 		{
-			values.Store(CurrentSessionContextClassKey, currentSessionContextClass);
+			values[CurrentSessionContextClassKey] = currentSessionContextClass;
 			return (TThisConfiguration)this;
 		}
 
