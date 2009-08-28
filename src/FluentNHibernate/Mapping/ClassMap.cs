@@ -130,7 +130,7 @@ namespace FluentNHibernate.Mapping
             get { return hibernateMappingPart; }
         }
 
-        public CompositeIdentityPart<T> CompositeId()
+        public virtual CompositeIdentityPart<T> CompositeId()
         {
             var part = new CompositeIdentityPart<T>();
 
