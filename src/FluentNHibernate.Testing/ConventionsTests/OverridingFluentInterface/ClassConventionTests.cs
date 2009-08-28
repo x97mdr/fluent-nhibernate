@@ -133,6 +133,19 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
             VerifyModel(x => x.Subselect.ShouldEqual("test"));
         }
 
+        [Test]
+        public void ShouldSetProxyProperty()
+        {
+            Mapping<ExampleClass>(x => x.Proxy("type"));
+
+            Convention(x => x.Proxy<CustomProxy>());
+
+            VerifyModel(x => x.Proxy.ShouldEqual("type"));
+        }
+
+        private class CustomProxy
+        {}
+
         #region Helpers
 
         private void Convention(Action<IClassInstance> convention)
