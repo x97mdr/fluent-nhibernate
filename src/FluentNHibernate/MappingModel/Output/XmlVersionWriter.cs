@@ -1,4 +1,6 @@
+using System.Linq;
 using System.Xml;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.Utils;
 
 namespace FluentNHibernate.MappingModel.Output
@@ -40,14 +42,17 @@ namespace FluentNHibernate.MappingModel.Output
 
             if (mapping.HasValue("UnsavedValue"))
                 element.WithAtt("unsaved-value", mapping.UnsavedValue);
+
+            if (mapping.Columns.Count() > 0)
+                element.WithAtt("column", mapping.Columns.First().Name);
         }
 
-        public override void Visit(ColumnMapping columnMapping)
-        {
-            var writer = serviceLocator.GetWriter<ColumnMapping>();
-            var columnXml = writer.Write(columnMapping);
+        //public override void Visit(ColumnMapping columnMapping)
+        //{
+        //    var writer = serviceLocator.GetWriter<ColumnMapping>();
+        //    var columnXml = writer.Write(columnMapping);
 
-            document.ImportAndAppendChild(columnXml);
-        }
+        //    document.ImportAndAppendChild(columnXml);
+        //}
     }
 }

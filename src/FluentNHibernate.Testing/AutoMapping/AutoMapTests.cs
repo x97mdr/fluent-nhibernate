@@ -29,8 +29,9 @@ namespace FluentNHibernate.Testing.Automapping
 
             Test<ExampleClass>(mapping =>
                 mapping
-                    .Element("//version").HasAttribute("name", "Timestamp")
-                    .Element("//version/column").HasAttribute("name", "Timestamp"));
+                    .Element("//version")
+                        .HasAttribute("name", "Timestamp")
+                        .HasAttribute("column", "Timestamp"));
         }
 
         [Test]

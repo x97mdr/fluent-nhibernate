@@ -20,8 +20,9 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         {
             new MappingTester<VersionTarget>()
                 .ForMapping(map => map.Version(x => x.VersionNumber))
-                .Element("//version").Exists()
-                .Element("//version/column").HasAttribute("name", "VersionNumber");
+                .Element("//version")
+                    .Exists()
+                    .HasAttribute("column", "VersionNumber");
         }
 
         [Test]
@@ -29,7 +30,7 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         {
             new MappingTester<VersionTarget>()
                 .ForMapping(map => map.Version(x => x.VersionNumber).Column("Version"))
-                .Element("//version/column").HasAttribute("name", "Version");
+                .Element("//version").HasAttribute("column", "Version");
         }
 
         [Test]

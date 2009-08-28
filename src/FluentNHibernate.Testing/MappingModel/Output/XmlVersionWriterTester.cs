@@ -70,7 +70,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
             mapping.AddColumn(new ColumnMapping { Name = "Column1" });
 
             writer.VerifyXml(mapping)
-                .Element("column").Exists();
+                .RootElement.HasAttribute("column", "Column1");
         }
     }
 }
