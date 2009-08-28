@@ -29,13 +29,13 @@ namespace FluentNHibernate.Conventions.Instances
 
         public void Table(string tableName)
         {
-            if (!mapping.IsSpecified(x => x.TableName))
+            if (!mapping.IsSpecified("TableName"))
                 mapping.TableName = tableName;
         }
 
         public new void DynamicInsert()
         {
-            if (!mapping.IsSpecified(x => x.DynamicInsert))
+            if (!mapping.IsSpecified("DynamicInsert"))
             {
                 mapping.DynamicInsert = nextBool;
                 nextBool = true;
@@ -44,7 +44,7 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void DynamicUpdate()
         {
-            if (!mapping.IsSpecified(x => x.DynamicUpdate))
+            if (!mapping.IsSpecified("DynamicUpdate"))
             {
                 mapping.DynamicUpdate = nextBool;
                 nextBool = true;
@@ -57,7 +57,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new OptimisticLockInstance(value =>
                 {
-                    if (!mapping.IsSpecified(x => x.OptimisticLock))
+                    if (!mapping.IsSpecified("OptimisticLock"))
                         mapping.OptimisticLock = value;
                 });
             }
@@ -65,13 +65,13 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void BatchSize(int size)
         {
-            if (!mapping.IsSpecified(x => x.BatchSize))
+            if (!mapping.IsSpecified("BatchSize"))
                 mapping.BatchSize = size;
         }
 
         public new void LazyLoad()
         {
-            if (!mapping.IsSpecified(x => x.Lazy))
+            if (!mapping.IsSpecified("Lazy"))
             {
                 mapping.Lazy = nextBool;
                 nextBool = true;
@@ -80,7 +80,7 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void ReadOnly()
         {
-            if (!mapping.IsSpecified(x => x.Mutable))
+            if (!mapping.IsSpecified("Mutable"))
             {
                 mapping.Mutable = !nextBool;
                 nextBool = true;
@@ -89,19 +89,19 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void Schema(string schema)
         {
-            if (!mapping.IsSpecified(x => x.Schema))
+            if (!mapping.IsSpecified("Schema"))
                 mapping.Schema = schema;
         }
 
         public new void Where(string where)
         {
-            if (!mapping.IsSpecified(x => x.Where))
+            if (!mapping.IsSpecified("Where"))
                 mapping.Where = where;
         }
 
         public new void Subselect(string subselectSql)
         {
-            if (!mapping.IsSpecified(x => x.Subselect))
+            if (!mapping.IsSpecified("Subselect"))
                 mapping.Subselect = subselectSql;
         }
     }
