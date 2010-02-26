@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
+using FluentNHibernate.Automapping.Results;
 using FluentNHibernate.Automapping.Rules;
 using FluentNHibernate.MappingModel;
+using FluentNHibernate.MappingModel.Buckets;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Collections;
 
@@ -48,18 +50,18 @@ namespace FluentNHibernate.Automapping.Steps
             return new BagMapping();
         }
 
-        private void ConfigureModel(Member property, ICollectionMapping mapping, ClassMappingBase classMap, Type parentSide)
+        private void ConfigureModel(MappingMetaData metaData, ICollectionMapping mapping, MemberBucket classMap, Type parentSide)
         {
             // TODO: Make the child type safer
-            mapping.SetDefaultValue(x => x.Name, property.Name);
-            mapping.Relationship = CreateManyToMany(property, property.PropertyType.GetGenericArguments()[0], classMap.Type);
-            mapping.ContainingEntityType = classMap.Type;
-            mapping.ChildType = property.PropertyType.GetGenericArguments()[0];
-            mapping.Member = property;
+            mapping.SetDefaultValue(x => x.Name, metaData.Member.Name);
+            mapping.Relationship = CreateManyToMany(metaData.Member, metaData.Member.PropertyType.GetGenericArguments()[0], metaData.EntityType);
+            mapping.ContainingEntityType = metaData.EntityType;
+            mapping.ChildType = metaData.Member.PropertyType.GetGenericArguments()[0];
+            mapping.Member = metaData.Member;
 
-            SetKey(property, classMap, mapping);
+            SetKey(metaData, classMap, mapping);
 
-            if (parentSide != property.DeclaringType)
+            if (parentSide != metaData.Member.DeclaringType)
                 mapping.Inverse = true;
         }
 
@@ -76,30 +78,34 @@ namespace FluentNHibernate.Automapping.Steps
             return mapping;
         }
 
-        private void SetKey(Member property, ClassMappingBase classMap, ICollectionMapping mapping)
+        private void SetKey(MappingMetaData metaData, MemberBucket container, ICollectionMapping mapping)
         {
-            var columnName = property.DeclaringType.Name + "_id";
+            var columnName = metaData.Member.DeclaringType.Name + "_id";
 
-            if (classMap is ComponentMapping)
-                columnName = rules.ComponentColumnPrefixRule(((ComponentMapping)classMap).Member) + columnName;
+            //if (container is ComponentMapping)
+            //    columnName = rules.ComponentColumnPrefixRule(((ComponentMapping)container).Member) + columnName;
 
             var key = new KeyMapping();
 
-            key.ContainingEntityType = classMap.Type;
+            key.ContainingEntityType = metaData.EntityType;
             key.AddDefaultColumn(new ColumnMapping { Name = columnName });
 
             mapping.SetDefaultValue(x => x.Key, key);
         }
 
-        public void Map(ClassMappingBase classMap, Member member)
+        public IAutomappingResult Map(MappingMetaData metaData)
         {
-            var inverseProperty = GetInverseProperty(member);
-            var parentSide = rules.FindParentSideForManyToManyRule(member.DeclaringType, inverseProperty.DeclaringType);
-            var mapping = GetCollection(member);
+            var inverseProperty = GetInverseProperty(metaData.Member);
+            var parentSide = rules.FindParentSideForManyToManyRule(metaData.Member.DeclaringType, inverseProperty.DeclaringType);
+            var mapping = GetCollection(metaData.Member);
 
-            ConfigureModel(member, mapping, classMap, parentSide);
+            var members = new MemberBucket();
 
-            classMap.AddCollection(mapping);
+            ConfigureModel(metaData, mapping, members, parentSide);
+
+            members.AddCollection(mapping);
+
+            return new AutomappingResult(members);
         }
     }
 }

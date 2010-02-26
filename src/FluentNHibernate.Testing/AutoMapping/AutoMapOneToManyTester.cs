@@ -49,47 +49,47 @@ namespace FluentNHibernate.Testing.Automapping
             ShouldntMap(x => x.Entity);
         }
 
-        [Test]
-        public void ShouldMapListAsBag()
-        {
-            var classMapping = new ClassMapping()
-            {
-                Type = typeof(PropertyTarget)
-            };
+        //[Test]
+        //public void ShouldMapListAsBag()
+        //{
+        //    var classMapping = new ClassMapping()
+        //    {
+        //        Type = typeof(PropertyTarget)
+        //    };
 
-            mapper.Map(classMapping, typeof(PropertyTarget).GetProperty("List").ToMember());
+        //    mapper.Map(classMapping, typeof(PropertyTarget).GetProperty("List").ToMember());
 
-            classMapping.Collections
-                .First().ShouldBeOfType(typeof(BagMapping));
-        }
+        //    classMapping.Collections
+        //        .First().ShouldBeOfType(typeof(BagMapping));
+        //}
 
-        [Test]
-        public void ShouldMapSetAsSet()
-        {
-            var classMapping = new ClassMapping()
-            {
-                Type = typeof(PropertyTarget)
-            };
+        //[Test]
+        //public void ShouldMapSetAsSet()
+        //{
+        //    var classMapping = new ClassMapping()
+        //    {
+        //        Type = typeof(PropertyTarget)
+        //    };
 
-            mapper.Map(classMapping, typeof(PropertyTarget).GetProperty("Set").ToMember());
+        //    mapper.Map(classMapping, typeof(PropertyTarget).GetProperty("Set").ToMember());
 
-            classMapping.Collections
-                .First().ShouldBeOfType(typeof(SetMapping));
-        }
+        //    classMapping.Collections
+        //        .First().ShouldBeOfType(typeof(SetMapping));
+        //}
 
-        [Test]
-        public void ShouldMapHashSetAsSet()
-        {
-            var classMapping = new ClassMapping()
-            {
-                Type = typeof(PropertyTarget)
-            };
+        //[Test]
+        //public void ShouldMapHashSetAsSet()
+        //{
+        //    var classMapping = new ClassMapping()
+        //    {
+        //        Type = typeof(PropertyTarget)
+        //    };
 
-            mapper.Map(classMapping, typeof(PropertyTarget).GetProperty("HashSet").ToMember());
+        //    mapper.Map(classMapping, typeof(PropertyTarget).GetProperty("HashSet").ToMember());
 
-            classMapping.Collections
-                .First().ShouldBeOfType(typeof(SetMapping));
-        }
+        //    classMapping.Collections
+        //        .First().ShouldBeOfType(typeof(SetMapping));
+        //}
 
         protected void ShouldMap(Expression<System.Func<PropertyTarget, object>> property)
         {

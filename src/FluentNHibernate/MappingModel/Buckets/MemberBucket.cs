@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Collections;
+using FluentNHibernate.MappingModel.Identity;
+using FluentNHibernate.Utils;
 using FluentNHibernate.Visitors;
 
-namespace FluentNHibernate.MappingModel
+namespace FluentNHibernate.MappingModel.Buckets
 {
-    internal class MappedMembers : IMappingBase, IHasMappedMembers
+    public class MemberBucket : IMappingBase, IMemberBucket
     {
         private readonly List<PropertyMapping> properties;
         private readonly List<ICollectionMapping> collections;
@@ -18,7 +20,7 @@ namespace FluentNHibernate.MappingModel
         private readonly List<FilterMapping> filters;
         private readonly List<StoredProcedureMapping> storedProcedures;
 
-        public MappedMembers()
+        public MemberBucket()
         {
             properties = new List<PropertyMapping>();
             collections = new List<ICollectionMapping>();
@@ -70,6 +72,9 @@ namespace FluentNHibernate.MappingModel
         {
             get { return filters; }
         }
+
+        public IIdentityMapping Id { get; private set; }
+        public VersionMapping Version { get; private set; }
 
         public IEnumerable<StoredProcedureMapping> StoredProcedures
         {
@@ -176,6 +181,16 @@ namespace FluentNHibernate.MappingModel
             filters.Add(mapping);
         }
 
+        public void SetId(IIdentityMapping mapping)
+        {
+            Id = mapping;
+        }
+
+        public void SetVersion(VersionMapping mapping)
+        {
+            Version = mapping;
+        }
+
         public virtual void AcceptVisitor(IMappingModelVisitor visitor)
         {
             foreach (var collection in Collections)
@@ -216,27 +231,27 @@ namespace FluentNHibernate.MappingModel
             storedProcedures.Add(mapping);
         }
 
-        public bool Equals(MappedMembers other)
+        public bool Equals(MemberBucket other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return other.properties.ContentEquals(properties) &&
                 other.collections.ContentEquals(collections) &&
-                other.references.ContentEquals(references) &&
-                other.components.ContentEquals(components) &&
-                other.oneToOnes.ContentEquals(oneToOnes) &&
-                other.anys.ContentEquals(anys) &&
-                other.joins.ContentEquals(joins) &&
-                other.filters.ContentEquals(filters) &&
-                other.storedProcedures.ContentEquals(storedProcedures);
+                    other.references.ContentEquals(references) &&
+                        other.components.ContentEquals(components) &&
+                            other.oneToOnes.ContentEquals(oneToOnes) &&
+                                other.anys.ContentEquals(anys) &&
+                                    other.joins.ContentEquals(joins) &&
+                                        other.filters.ContentEquals(filters) &&
+                                            other.storedProcedures.ContentEquals(storedProcedures);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof(MappedMembers)) return false;
-            return Equals((MappedMembers)obj);
+            if (obj.GetType() != typeof(MemberBucket)) return false;
+            return Equals((MemberBucket)obj);
         }
 
         public override int GetHashCode()
@@ -254,6 +269,22 @@ namespace FluentNHibernate.MappingModel
                 result = (result * 397) ^ (storedProcedures != null ? storedProcedures.GetHashCode() : 0);
                 return result;
             }
+        }
+
+        public void MergeWithBucket(IMemberBucketInspector bucket)
+        {
+            bucket.Anys.Each(AddAny);
+            bucket.Collections.Each(AddCollection);
+            bucket.Components.Each(AddComponent);
+            bucket.Filters.Each(AddFilter);
+            bucket.OneToOnes.Each(AddOneToOne);
+            bucket.Properties.Each(AddProperty);
+            bucket.References.Each(AddReference);
+            bucket.Joins.Each(AddJoin);
+            bucket.StoredProcedures.Each(AddStoredProcedure);
+
+            Id = bucket.Id ?? Id;
+            Version = bucket.Version ?? Version;
         }
     }
 }

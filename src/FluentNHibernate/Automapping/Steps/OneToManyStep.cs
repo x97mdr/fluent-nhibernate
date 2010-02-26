@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
+using FluentNHibernate.Automapping.Results;
 using FluentNHibernate.Automapping.Rules;
-using FluentNHibernate.MappingModel;
-using FluentNHibernate.MappingModel.ClassBased;
 
 namespace FluentNHibernate.Automapping.Steps
 {
@@ -23,15 +20,17 @@ namespace FluentNHibernate.Automapping.Steps
                    entityCollectionStep.IsMappable(property);
         }
 
-        public void Map(ClassMappingBase classMap, Member member)
+        public IAutomappingResult Map(MappingMetaData metaData)
         {
-            if (member.DeclaringType != classMap.Type)
-                return;
+            if (metaData.Member.DeclaringType != metaData.EntityType)
+                return new EmptyResult();
 
-            if (simpleTypeCollectionStep.IsMappable(member))
-                simpleTypeCollectionStep.Map(classMap, member);
-            else if (entityCollectionStep.IsMappable(member))
-                entityCollectionStep.Map(classMap, member);
+            if (simpleTypeCollectionStep.IsMappable(metaData.Member))
+                return simpleTypeCollectionStep.Map(metaData);
+            else if (entityCollectionStep.IsMappable(metaData.Member))
+                return entityCollectionStep.Map(metaData);
+
+            return new EmptyResult();
         }
     }
 }

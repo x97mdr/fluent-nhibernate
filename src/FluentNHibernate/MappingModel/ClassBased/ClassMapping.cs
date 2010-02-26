@@ -1,12 +1,14 @@
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using FluentNHibernate.MappingModel.Buckets;
 using FluentNHibernate.MappingModel.Identity;
+using FluentNHibernate.Utils;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel.ClassBased
 {
-    public class ClassMapping : ClassMappingBase
+    public class ClassMapping : ClassMappingBase, IMergableWithBucket
     {
         private readonly AttributeStore<ClassMapping> attributes;
 
@@ -237,6 +239,20 @@ namespace FluentNHibernate.MappingModel.ClassBased
         public override int GetHashCode()
         {
             return (attributes != null ? attributes.GetHashCode() : 0);
+        }
+
+        public void MergeWithBucket(IMemberBucketInspector bucket)
+        {
+            bucket.Anys.Each(AddAny);
+            bucket.Collections.Each(AddCollection);
+            bucket.Components.Each(AddComponent);
+            bucket.Filters.Each(AddFilter);
+            bucket.OneToOnes.Each(AddOneToOne);
+            bucket.Properties.Each(AddProperty);
+            bucket.References.Each(AddReference);
+
+            Id = bucket.Id ?? Id;
+            Version = bucket.Version ?? bucket.Version;
         }
     }
 }

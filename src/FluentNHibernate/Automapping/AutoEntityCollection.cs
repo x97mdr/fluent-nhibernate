@@ -1,6 +1,8 @@
+using FluentNHibernate.Automapping.Results;
 using FluentNHibernate.Automapping.Rules;
 using FluentNHibernate.Automapping.Steps;
 using FluentNHibernate.MappingModel;
+using FluentNHibernate.MappingModel.Buckets;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Collections;
 using FluentNHibernate.Utils;
@@ -26,29 +28,32 @@ namespace FluentNHibernate.Automapping
                 property.PropertyType.Namespace.In("System.Collections.Generic", "Iesi.Collections.Generic");
         }
 
-        public void Map(ClassMappingBase classMap, Member property)
+        public IAutomappingResult Map(MappingMetaData metaData)
         {
-            if (property.DeclaringType != classMap.Type)
-                return;
+            if (metaData.Member.DeclaringType != metaData.EntityType)
+                return new EmptyResult();
 
-            var mapping = collections.CreateCollectionMapping(property.PropertyType);
+            var mapping = collections.CreateCollectionMapping(metaData.Member.PropertyType);
 
-            mapping.ContainingEntityType = classMap.Type;
-            mapping.Member = property;
-            mapping.SetDefaultValue(x => x.Name, property.Name);
+            mapping.ContainingEntityType = metaData.EntityType;
+            mapping.Member = metaData.Member;
+            mapping.SetDefaultValue(x => x.Name, metaData.EntityType.Name);
 
-            SetRelationship(property, classMap, mapping);
-            keys.SetKey(property, classMap, mapping);
+            SetRelationship(metaData, mapping);
+            keys.SetKey(metaData, mapping);
 
-            classMap.AddCollection(mapping);  
+            var members = new MemberBucket();
+            members.AddCollection(mapping);  
+            
+            return new AutomappingResult(members);
         }
 
-        private void SetRelationship(Member property, ClassMappingBase classMap, ICollectionMapping mapping)
+        private void SetRelationship(MappingMetaData metaData, ICollectionMapping mapping)
         {
             var relationship = new OneToManyMapping
             {
-                Class = new TypeReference(property.PropertyType.GetGenericArguments()[0]),
-                ContainingEntityType = classMap.Type
+                Class = new TypeReference(metaData.Member.PropertyType.GetGenericArguments()[0]),
+                ContainingEntityType = metaData.EntityType
             };
 
             mapping.SetDefaultValue(x => x.Relationship, relationship);

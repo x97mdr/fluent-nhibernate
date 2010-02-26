@@ -1,18 +1,20 @@
 using System;
 using System.Collections.Generic;
+using FluentNHibernate.MappingModel.Buckets;
 using FluentNHibernate.MappingModel.Collections;
+using FluentNHibernate.MappingModel.Identity;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel.ClassBased
 {
-    public abstract class ClassMappingBase : MappingBase, IHasMappedMembers
+    public abstract class ClassMappingBase : MappingBase, ICommonMappingMembers
     {
-        private readonly MappedMembers mappedMembers;
+        private readonly MemberBucket mappedMembers;
         private readonly IList<SubclassMapping> subclasses;
 
         protected ClassMappingBase()
         {
-            mappedMembers = new MappedMembers();
+            mappedMembers = new MemberBucket();
             subclasses = new List<SubclassMapping>();
         }
 
@@ -27,7 +29,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
                 visitor.Visit(subclass);
         }
 
-        #region IHasMappedMembers
+        #region ICommonMappingMembers
 
         public IEnumerable<ManyToOneMapping> References
         {

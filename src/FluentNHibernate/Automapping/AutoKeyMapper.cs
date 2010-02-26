@@ -1,4 +1,5 @@
 using FluentNHibernate.Automapping.Rules;
+using FluentNHibernate.Automapping.Steps;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Collections;
@@ -14,16 +15,16 @@ namespace FluentNHibernate.Automapping
             this.rules = rules;
         }
 
-        public void SetKey(Member property, ClassMappingBase classMap, ICollectionMapping mapping)
+        public void SetKey(MappingMetaData metaData, ICollectionMapping mapping)
         {
-            var columnName = property.DeclaringType.Name + "_id";
+            var columnName = metaData.Member.DeclaringType.Name + "_id";
 
-            if (classMap is ComponentMapping)
-                columnName = rules.ComponentColumnPrefixRule(((ComponentMapping)classMap).Member) + columnName;
+            //if (container is ComponentMapping)
+            //    columnName = rules.ComponentColumnPrefixRule(((ComponentMapping)container).Member) + columnName;
 
             var key = new KeyMapping();
 
-            key.ContainingEntityType = classMap.Type;
+            key.ContainingEntityType = metaData.EntityType;
             key.AddDefaultColumn(new ColumnMapping { Name = columnName });
 
             mapping.SetDefaultValue(x => x.Key, key);

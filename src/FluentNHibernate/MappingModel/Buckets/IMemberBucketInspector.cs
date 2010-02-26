@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Collections;
+using FluentNHibernate.MappingModel.Identity;
 
-namespace FluentNHibernate.MappingModel
+namespace FluentNHibernate.MappingModel.Buckets
 {
-    public interface IHasMappedMembers
+    public interface IMemberBucketInspector
     {
         IEnumerable<PropertyMapping> Properties { get; }
         IEnumerable<ICollectionMapping> Collections { get; }
@@ -13,12 +14,9 @@ namespace FluentNHibernate.MappingModel
         IEnumerable<OneToOneMapping> OneToOnes { get; }
         IEnumerable<AnyMapping> Anys { get; }
         IEnumerable<FilterMapping> Filters { get; }
-        void AddProperty(PropertyMapping property);
-        void AddCollection(ICollectionMapping collection);
-        void AddReference(ManyToOneMapping manyToOne);
-        void AddComponent(IComponentMapping component);
-        void AddOneToOne(OneToOneMapping mapping);
-        void AddAny(AnyMapping mapping);
-        void AddFilter(FilterMapping mapping);
+        IEnumerable<JoinMapping> Joins { get; }
+        IEnumerable<StoredProcedureMapping> StoredProcedures { get; }
+        IIdentityMapping Id { get; }
+        VersionMapping Version { get; }
     }
 }

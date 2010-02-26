@@ -1,5 +1,7 @@
 using System;
+using FluentNHibernate.Automapping.Results;
 using FluentNHibernate.MappingModel;
+using FluentNHibernate.MappingModel.Buckets;
 using FluentNHibernate.MappingModel.ClassBased;
 
 namespace FluentNHibernate.Automapping.Steps
@@ -20,10 +22,14 @@ namespace FluentNHibernate.Automapping.Steps
             return false;
         }
 
-        public void Map(ClassMappingBase classMap, Member member)
+        public IAutomappingResult Map(MappingMetaData metaData)
         {
-            var manyToOne = CreateMapping(member);
-            classMap.AddReference(manyToOne);
+            var manyToOne = CreateMapping(metaData.Member);
+            var members = new MemberBucket();
+
+            members.AddReference(manyToOne);
+
+            return new AutomappingResult(members);
         }
 
         private ManyToOneMapping CreateMapping(Member property)

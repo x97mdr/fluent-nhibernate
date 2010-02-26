@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using FluentNHibernate.Automapping.Results;
 using FluentNHibernate.MappingModel;
+using FluentNHibernate.MappingModel.Buckets;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.Utils;
 
@@ -16,19 +18,17 @@ namespace FluentNHibernate.Automapping.Steps
             return ValidNames.Contains(property.Name.ToLowerInvariant()) && ValidTypes.Contains(property.PropertyType);
         }
 
-        public void Map(ClassMappingBase classMap, Member member)
+        public IAutomappingResult Map(MappingMetaData metaData)
         {
-            if (!(classMap is ClassMapping)) return;
-
             var version = new VersionMapping
             {
-                Name = member.Name,
+                Name = metaData.Member.Name,
             };
 
-            version.SetDefaultValue("Type", GetDefaultType(member));
-            version.AddDefaultColumn(new ColumnMapping { Name = member.Name });
+            version.SetDefaultValue("Type", GetDefaultType(metaData.Member));
+            version.AddDefaultColumn(new ColumnMapping { Name = metaData.Member.Name });
 
-            if (IsSqlTimestamp(member))
+            if (IsSqlTimestamp(metaData.Member))
             {
                 version.Columns.Each(x =>
                 {
@@ -38,7 +38,10 @@ namespace FluentNHibernate.Automapping.Steps
                 version.UnsavedValue = null;
             }
 
-            ((ClassMapping)classMap).Version = version;
+            var members = new MemberBucket();
+            members.SetVersion(version);
+            
+            return new AutomappingResult(members);
         }
 
         private bool IsSqlTimestamp(Member property)

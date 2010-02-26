@@ -79,7 +79,12 @@
     <Compile Include="Automapping\AutoKeyMapper.cs" />
     <Compile Include="Automapping\AutoMap.cs" />
     <Compile Include="Automapping\AutoMapping.cs" />
+    <Compile Include="MappingModel\Buckets\IMemberBucketInspector.cs" />
+    <Compile Include="MappingModel\Buckets\IMergableWithBucket.cs" />
+    <Compile Include="Automapping\Results\EmptyResult.cs" />
+    <Compile Include="Automapping\Results\AutomappingResult.cs" />
     <Compile Include="Automapping\EntityAutomapper.cs" />
+    <Compile Include="Automapping\Results\IAutomappingResult.cs" />
     <Compile Include="Automapping\Rules\DefaultDiscoveryRules.cs" />
     <Compile Include="Automapping\Steps\ComponentStep.cs" />
     <Compile Include="Automapping\Rules\DiscoveryRules.cs" />
@@ -400,6 +405,8 @@
     <Compile Include="MappingModel\ClassBased\ExternalComponentMapping.cs" />
     <Compile Include="MappingModel\ClassBased\SubclassType.cs" />
     <Compile Include="MappingModel\EqualityExtensions.cs" />
+    <Compile Include="MappingModel\Buckets\IMemberBucket.cs" />
+    <Compile Include="MappingModel\Buckets\IMemberBucketModifier.cs" />
     <Compile Include="Mapping\Providers\IExternalComponentMappingProvider.cs" />
     <Compile Include="Mapping\Providers\IReferenceComponentMappingProvider.cs" />
     <Compile Include="Utils\Extensions.cs" />
@@ -697,8 +704,8 @@
     <Compile Include="MappingModel\Conventions\ConventionException.cs" />
     <Compile Include="MappingModel\Conventions\ManyToManyTableConvention.cs" />
     <Compile Include="MappingModel\DiscriminatorMapping.cs" />
-    <Compile Include="MappingModel\IHasMappedMembers.cs" />
-    <Compile Include="MappingModel\MappedMembers.cs" />
+    <Compile Include="MappingModel\ICommonMappingMembers.cs" />
+    <Compile Include="MappingModel\Buckets\MemberBucket.cs" />
     <Compile Include="Visitors\NullMappingModelVisitor.cs" />
     <Compile Include="MappingModel\KeyMapping.cs" />
     <Compile Include="Visitors\IMappingModelVisitor.cs" />

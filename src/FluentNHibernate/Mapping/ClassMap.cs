@@ -105,16 +105,27 @@ namespace FluentNHibernate.Mapping
             mapping.Tuplizer = tuplizerMapping;
 
             if (entityAutomapper != null)
-                entityAutomapper.Map(mapping, typeof(T), GetMappedProperties(mapping));
+            {
+                var automappingResult = entityAutomapper.Map(typeof(T), GetMappedProperties(mapping));
+
+                automappingResult.ApplyTo(mapping);
+            }
 
             return mapping;
         }
 
         IList<string> GetMappedProperties(ClassMapping mapping)
         {
-            return mapping.Properties
-                .Select(x => x.Name)
-                .ToList();
+            var mappedProperties = new List<string>();
+
+            mapping.Properties.Select(x => x.Member.Name).Each(mappedProperties.Add);
+            mapping.References.Select(x => x.Member.Name).Each(mappedProperties.Add);
+            mapping.Collections.Select(x => x.Member.Name).Each(mappedProperties.Add);
+
+            if (mapping.Id != null)
+                mappedProperties.Add(mapping.Id.Name);
+
+            return mappedProperties;
         }
 
         private string GetDefaultTableName()

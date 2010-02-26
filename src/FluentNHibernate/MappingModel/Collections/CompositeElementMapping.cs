@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using FluentNHibernate.Mapping;
+using FluentNHibernate.MappingModel.Buckets;
 using FluentNHibernate.Utils;
 using FluentNHibernate.Visitors;
 
@@ -10,7 +11,7 @@ namespace FluentNHibernate.MappingModel.Collections
 {
     public class CompositeElementMapping : MappingBase
     {
-        private readonly MappedMembers mappedMembers;
+        private readonly MemberBucket mappedMembers;
         protected readonly AttributeStore<CompositeElementMapping> attributes;
 
         public CompositeElementMapping()
@@ -20,7 +21,7 @@ namespace FluentNHibernate.MappingModel.Collections
         public CompositeElementMapping(AttributeStore store)
         {
             attributes = new AttributeStore<CompositeElementMapping>(store);
-            mappedMembers = new MappedMembers();
+            mappedMembers = new MemberBucket();
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)

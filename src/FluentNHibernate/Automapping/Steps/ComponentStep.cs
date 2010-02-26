@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using FluentNHibernate.Automapping.Results;
 using FluentNHibernate.Automapping.Rules;
+using FluentNHibernate.MappingModel.Buckets;
 using FluentNHibernate.MappingModel.ClassBased;
 
 namespace FluentNHibernate.Automapping.Steps
@@ -20,20 +22,23 @@ namespace FluentNHibernate.Automapping.Steps
             return rules.FindComponentRule(property.PropertyType);
         }
 
-        public void Map(ClassMappingBase classMap, Member member)
+        public IAutomappingResult Map(MappingMetaData metaData)
         {
             var mapping = new ComponentMapping
             {
-                Name = member.Name,
-                Member = member,
-                ContainingEntityType = classMap.Type,
-                Type = member.PropertyType
+                Name = metaData.Member.Name,
+                Member = metaData.Member,
+                ContainingEntityType = metaData.EntityType,
+                Type = metaData.Member.PropertyType
             };
 
-            mapper.FlagAsMapped(member.PropertyType);
-            mapper.MergeMap(member.PropertyType, mapping, new List<string>());
+            mapper.FlagAsMapped(metaData.Member.PropertyType);
+            mapper.MergeMap(metaData.Member.PropertyType, mapping, new List<string>());
 
-            classMap.AddComponent(mapping);
+            var members = new MemberBucket();
+            members.AddComponent(mapping);
+
+            return new AutomappingResult(members);
         }
     }
 }

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using FluentNHibernate.Automapping.Results;
 using FluentNHibernate.Automapping.Rules;
 using FluentNHibernate.Automapping.Steps;
 using FluentNHibernate.Conventions;
+using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
 
 namespace FluentNHibernate.Automapping
@@ -30,19 +32,20 @@ namespace FluentNHibernate.Automapping
             this.rules = rules;
         }
 
-        public override void Map(ClassMappingBase mapping, Type entityType, IList<string> mappedProperties)
+        public override IAutomappingResult Map(Type entityType, IList<string> mappedProperties)
         {
             // This will ONLY map private properties. Do not call base.
 
-            var rule = rules.FindMappablePrivatePropertiesRule;
-            if (rule == null)
-                throw new InvalidOperationException("The FindMappablePrivateProperties convention must be supplied to use the PrivateAutoMapper. ");
+            //var rule = rules.FindMappablePrivatePropertiesRule;
+            //if (rule == null)
+            //    throw new InvalidOperationException("The FindMappablePrivateProperties convention must be supplied to use the PrivateAutoMapper. ");
 
-            foreach (var property in entityType.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic).Select(x => x.ToMember()))
-            {
-                if (rule(property))
-                    TryToMapProperty(mapping, property, mappedProperties);
-            }
+            //foreach (var property in entityType.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic).Select(x => x.ToMember()))
+            //{
+            //    if (rule(property))
+            //        TryToMapProperty(mapping, property, mappedProperties);
+            //}
+            throw new NotImplementedException("Private automapper broke");
         } 
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using FluentNHibernate.Mapping;
+using FluentNHibernate.MappingModel.Buckets;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.Visitors;
 
@@ -12,7 +13,7 @@ namespace FluentNHibernate.MappingModel
     {
         private readonly AttributeStore<JoinMapping> attributes;
 
-        private readonly MappedMembers mappedMembers;
+        private readonly MemberBucket mappedMembers;
 
         public JoinMapping()
             : this(new AttributeStore())
@@ -21,7 +22,7 @@ namespace FluentNHibernate.MappingModel
         public JoinMapping(AttributeStore underlyingStore)
         {
             attributes = new AttributeStore<JoinMapping>(underlyingStore);
-            mappedMembers = new MappedMembers();
+            mappedMembers = new MemberBucket();
         }
 
         public KeyMapping Key

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NHibernate.Util;
 
@@ -7,6 +8,11 @@ namespace FluentNHibernate.Utils
     public static class Extensions
     {
         public static bool In<T>(this T instance, params T[] expected)
+        {
+            return expected.Any(x => instance.Equals(x));
+        }
+
+        public static bool In<T>(this T instance, IEnumerable<T> expected)
         {
             return expected.Any(x => instance.Equals(x));
         }

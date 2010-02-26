@@ -1,11 +1,13 @@
 using System;
 using System.Linq;
+using FluentNHibernate.Automapping.Results;
 using FluentNHibernate.Automapping.Rules;
 using FluentNHibernate.Conventions;
 using FluentNHibernate.Conventions.AcceptanceCriteria;
 using FluentNHibernate.Conventions.Inspections;
 using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel;
+using FluentNHibernate.MappingModel.Buckets;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.Utils;
 
@@ -71,23 +73,26 @@ namespace FluentNHibernate.Automapping.Steps
                     || property.PropertyType.IsEnum;
         }
 
-        public void Map(ClassMappingBase classMap, Member member)
+        public IAutomappingResult Map(MappingMetaData metaData)
         {
-            classMap.AddProperty(GetPropertyMapping(classMap.Type, member, classMap as ComponentMapping));
+            var members = new MemberBucket();
+            members.AddProperty(GetPropertyMapping(metaData.EntityType, metaData));
+
+            return new AutomappingResult(members);
         }
 
-        private PropertyMapping GetPropertyMapping(Type type, Member property, ComponentMapping component)
+        private PropertyMapping GetPropertyMapping(Type type, MappingMetaData metaData)
         {
             var mapping = new PropertyMapping
             {
                 ContainingEntityType = type,
-                Member = property
+                Member = metaData.Member
             };
 
-            var columnName = property.Name;
+            var columnName = metaData.Member.Name;
             
-            if (component != null)
-                columnName = rules.ComponentColumnPrefixRule(component.Member) + columnName;
+            //if (component != null)
+            //    columnName = rules.ComponentColumnPrefixRule(component.Member) + columnName;
 
             mapping.AddDefaultColumn(new ColumnMapping { Name = columnName });
 
@@ -95,7 +100,7 @@ namespace FluentNHibernate.Automapping.Steps
                 mapping.Name = mapping.Member.Name;
 
             if (!mapping.IsSpecified("Type"))
-                mapping.SetDefaultValue("Type", GetDefaultType(property));
+                mapping.SetDefaultValue("Type", GetDefaultType(metaData.Member));
 
             return mapping;
         }
