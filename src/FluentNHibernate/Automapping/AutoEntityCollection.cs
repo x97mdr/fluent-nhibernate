@@ -37,7 +37,7 @@ namespace FluentNHibernate.Automapping
 
             mapping.ContainingEntityType = metaData.EntityType;
             mapping.Member = metaData.Member;
-            mapping.SetDefaultValue(x => x.Name, metaData.EntityType.Name);
+            mapping.SetDefaultValue(x => x.Name, metaData.Member.Name);
 
             SetRelationship(metaData, mapping);
             keys.SetKey(metaData, mapping);

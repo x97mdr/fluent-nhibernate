@@ -8,6 +8,7 @@ using FluentNHibernate.Automapping.Steps;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel;
+using FluentNHibernate.Utils;
 
 namespace FluentNHibernate.Automapping
 {
@@ -15,7 +16,7 @@ namespace FluentNHibernate.Automapping
     {
         protected AutoMapper autoMapper;
         private readonly List<ITypeSource> sources = new List<ITypeSource>();
-        private Func<Type, bool> shouldIncludeType;
+        private Func<Type, bool> shouldIncludeType = t => true;
         private readonly List<AutoMapType> mappingTypes = new List<AutoMapType>();
         private bool autoMappingsCreated;
         private readonly AutoMappingAlterationCollection alterations = new AutoMappingAlterationCollection();
@@ -96,19 +97,11 @@ namespace FluentNHibernate.Automapping
 
             alterations.Apply(this);
 
-            foreach (var type in sources.SelectMany(x => x.GetTypes()))
-            {
-                if (shouldIncludeType != null)
-                {
-                    if (!shouldIncludeType(type))
-                        continue;
-                }
-
-                if (!ShouldMap(type))
-                    continue;
-
-                mappingTypes.Add(new AutoMapType(type));
-            }
+            sources.SelectMany(x => x.GetTypes())
+                .Where(shouldIncludeType)
+                .Where(ShouldMap)
+                .Select(type => new AutoMapType(type))
+                .Each(mappingTypes.Add);
 
             foreach (var type in mappingTypes)
             {

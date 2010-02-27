@@ -76,6 +76,16 @@ namespace FluentNHibernate.MappingModel.ClassBased
 
         public abstract bool HasValue(string property);
 
+        public bool HasColumnPrefix
+        {
+            get { return !string.IsNullOrEmpty(ColumnPrefix); }
+        }
+
+        public string ColumnPrefix
+        {
+            get { return Member.Name + "_"; }
+        }
+
         public bool HasValue<TResult>(Expression<Func<ComponentMappingBase, TResult>> property)
         {
             return attributes.HasValue(property);

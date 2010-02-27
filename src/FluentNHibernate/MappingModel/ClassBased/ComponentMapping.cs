@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using FluentNHibernate.MappingModel.Buckets;
+using FluentNHibernate.Utils;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel.ClassBased
@@ -101,5 +103,17 @@ namespace FluentNHibernate.MappingModel.ClassBased
                 }
             }
         }
+
+        public override void MergeWithBucket(IMemberBucketInspector bucket)
+        {
+            bucket.Anys.Each(AddAny);
+            bucket.Collections.Each(AddCollection);
+            bucket.Components.Each(AddComponent);
+            bucket.Filters.Each(AddFilter);
+            bucket.OneToOnes.Each(AddOneToOne);
+            bucket.Properties.Each(AddProperty);
+            bucket.References.Each(AddReference);
+        }
+
     }
 }

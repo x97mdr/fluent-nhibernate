@@ -241,7 +241,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
             return (attributes != null ? attributes.GetHashCode() : 0);
         }
 
-        public void MergeWithBucket(IMemberBucketInspector bucket)
+        public override void MergeWithBucket(IMemberBucketInspector bucket)
         {
             bucket.Anys.Each(AddAny);
             bucket.Collections.Each(AddCollection);

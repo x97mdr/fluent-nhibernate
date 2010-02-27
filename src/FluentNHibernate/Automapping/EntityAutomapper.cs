@@ -31,12 +31,7 @@ namespace FluentNHibernate.Automapping
 
             foreach (var property in properties)
             {
-                var metaData = new MappingMetaData()
-                {
-                    EntityType = entityType,
-                    Member = property.ToMember()
-                };
-
+                var metaData = new MappingMetaData(entityType, property.ToMember());
                 var result = TryToMapProperty(metaData, mappedProperties);
 
                 results.Add(result);

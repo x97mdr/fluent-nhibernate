@@ -37,5 +37,8 @@ namespace FluentNHibernate.MappingModel.ClassBased
         void AddReference(ManyToOneMapping mapping);
         void AddAny(AnyMapping mapping);
         bool HasValue(string property);
+
+        bool HasColumnPrefix { get; }
+        string ColumnPrefix { get; }
     }
 }

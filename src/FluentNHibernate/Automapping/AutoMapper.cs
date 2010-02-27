@@ -52,7 +52,9 @@ namespace FluentNHibernate.Automapping
             // to see which properties have already been mapped
             ApplyOverrides(classType, mappedProperties, mapping);
 
-            //entityAutomapper.Map(mapping, classType, mappedProperties);
+            var result = entityAutomapper.Map(classType, mappedProperties);
+
+            result.ApplyTo(mapping);
 
             if (mappingTypes != null)
                 MapInheritanceTree(classType, mapping, mappedProperties);

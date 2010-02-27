@@ -104,7 +104,7 @@ namespace FluentNHibernate.Specs.Automapping
             rules.SimpleTypeCollectionValueColumn("custom_column");
 
         Because of = () =>
-            step.Map(new MappingMetaData { Member = FakeMembers.IListOfStrings });
+            result = step.Map(new MappingMetaData(FakeMembers.Type, FakeMembers.IListOfStrings));
 
         It should_create_use_the_element_column_name_defined_in_the_expressions = () =>
             result.Collections.Single().Element.Columns.Single().Name.ShouldEqual("custom_column");
@@ -113,7 +113,7 @@ namespace FluentNHibernate.Specs.Automapping
     public class when_the_automapper_is_told_to_map_a_list_of_simple_types : AutoMapOneToManySpec
     {
         Because of = () =>
-            result = step.Map(new MappingMetaData { Member = FakeMembers.IListOfStrings });
+            result = step.Map(new MappingMetaData(FakeMembers.Type, FakeMembers.IListOfStrings));
 
         It should_create_a_collection = () =>
             result.Collections.Count().ShouldEqual(1);

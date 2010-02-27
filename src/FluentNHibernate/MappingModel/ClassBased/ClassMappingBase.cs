@@ -7,7 +7,7 @@ using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel.ClassBased
 {
-    public abstract class ClassMappingBase : MappingBase, ICommonMappingMembers
+    public abstract class ClassMappingBase : MappingBase, ICommonMappingMembers, IMergableWithBucket
     {
         private readonly MemberBucket mappedMembers;
         private readonly IList<SubclassMapping> subclasses;
@@ -192,5 +192,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
                 return ((mappedMembers != null ? mappedMembers.GetHashCode() : 0) * 397) ^ (subclasses != null ? subclasses.GetHashCode() : 0);
             }
         }
+
+        public abstract void MergeWithBucket(IMemberBucketInspector bucket);
     }
 }

@@ -79,6 +79,7 @@
     <Compile Include="Automapping\AutoKeyMapper.cs" />
     <Compile Include="Automapping\AutoMap.cs" />
     <Compile Include="Automapping\AutoMapping.cs" />
+    <Compile Include="Automapping\Steps\MappingMetaData.cs" />
     <Compile Include="MappingModel\Buckets\IMemberBucketInspector.cs" />
     <Compile Include="MappingModel\Buckets\IMergableWithBucket.cs" />
     <Compile Include="Automapping\Results\EmptyResult.cs" />
