@@ -36,16 +36,22 @@ namespace FluentNHibernate.Automapping
         {
             // This will ONLY map private properties. Do not call base.
 
-            //var rule = rules.FindMappablePrivatePropertiesRule;
-            //if (rule == null)
-            //    throw new InvalidOperationException("The FindMappablePrivateProperties convention must be supplied to use the PrivateAutoMapper. ");
+            var rule = rules.FindMappablePrivatePropertiesRule;
+            if (rule == null)
+                throw new InvalidOperationException("The FindMappablePrivateProperties convention must be supplied to use the PrivateAutoMapper. ");
 
-            //foreach (var property in entityType.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic).Select(x => x.ToMember()))
-            //{
-            //    if (rule(property))
-            //        TryToMapProperty(mapping, property, mappedProperties);
-            //}
-            throw new NotImplementedException("Private automapper broke");
+            var results = new List<IAutomappingResult>();
+
+            foreach (var property in entityType.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic).Select(x => x.ToMember()))
+            {
+                if (!rule(property)) continue;
+
+                var result = TryToMapProperty(new MappingMetaData(entityType, property), mappedProperties);
+
+                results.Add(result);
+            }
+            
+            return new AutomappingResult(results);
         } 
     }
 }
