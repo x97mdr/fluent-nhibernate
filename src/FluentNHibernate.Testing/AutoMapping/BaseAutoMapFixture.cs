@@ -9,7 +9,7 @@ namespace FluentNHibernate.Testing.Automapping
     public abstract class BaseAutoMapFixture
     {
         private Configuration cfg;
-        private AutoPersistenceModel apm;
+        private AutomappingBuilder apm;
 
         [SetUp]
         public void CreateDatabaseCfg()
@@ -21,7 +21,7 @@ namespace FluentNHibernate.Testing.Automapping
                 .ConfigureProperties(cfg);
         }
 
-        protected void Model<T>(Action<AutoPersistenceModel> modelSetup)
+        protected void Model<T>(Action<AutomappingBuilder> modelSetup)
         {
             apm = AutoMap.AssemblyOf<T>();
             modelSetup(apm);

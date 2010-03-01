@@ -18,5 +18,6 @@ namespace FluentNHibernate.MappingModel.Buckets
         IEnumerable<StoredProcedureMapping> StoredProcedures { get; }
         IIdentityMapping Id { get; }
         VersionMapping Version { get; }
+        AttributeStore Attributes { get; }
     }
 }

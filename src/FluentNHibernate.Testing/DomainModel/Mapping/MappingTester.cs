@@ -52,7 +52,7 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public virtual MappingTester<T> ForMapping(ClassMap<T> classMap)
         {
             if (classMap  != null)
-                model.Add(classMap);
+                model.AddMappingsSource(new StubMappingSource(classMap));
 
             var mappings = model.BuildMappings();
             var foundMapping = mappings

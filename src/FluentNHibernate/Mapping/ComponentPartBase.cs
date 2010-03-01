@@ -24,8 +24,8 @@ namespace FluentNHibernate.Mapping
             this.propertyName = propertyName;
         }
 
-        protected abstract ComponentMapping CreateComponentMappingRoot(AttributeStore store);
-        protected ComponentMapping CreateComponentMapping()
+        protected abstract IComponentMapping CreateComponentMappingRoot(AttributeStore store);
+        protected IMappingResult CreateComponentMapping()
         {
             var mapping = CreateComponentMappingRoot(attributes.CloneInner());
 
@@ -35,7 +35,11 @@ namespace FluentNHibernate.Mapping
                 mapping.AddProperty(property.GetPropertyMapping());
 
             foreach (var component in components)
-                mapping.AddComponent(component.GetComponentMapping());
+            {
+                var componentMapping = CreateComponentMapping(component);
+
+                mapping.AddComponent(componentMapping);
+            }
 
             foreach (var oneToOne in oneToOnes)
                 mapping.AddOneToOne(oneToOne.GetOneToOneMapping());
@@ -49,7 +53,7 @@ namespace FluentNHibernate.Mapping
             foreach (var any in anys)
                 mapping.AddAny(any.GetAnyMapping());
 
-            return mapping;
+            throw new NullReferenceException();
         }
 
         /// <summary>

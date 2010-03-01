@@ -12,9 +12,9 @@ namespace FluentNHibernate.Testing.Automapping.Apm
         public void ShouldBeConsideredLayerSuperTypesByDefault()
         {
             var automapper =
-                AutoMap.Source(new StubTypeSource(new[] { typeof(AbstractBase), typeof(Child) }));
-            automapper.ValidationEnabled = false;
-            var mappings = automapper.BuildMappings();
+                AutoMap.Source(new StubTypeSource(new[] { typeof(AbstractBase), typeof(Child) }))
+                    .Not.ValidationEnabled();
+            var mappings = automapper.CreateModel().BuildMappings();
 
             mappings
                 .SelectMany(x => x.Classes)
@@ -26,10 +26,10 @@ namespace FluentNHibernate.Testing.Automapping.Apm
         {
             var automapper =
                 AutoMap.Source(new StubTypeSource(new[] { typeof(AbstractBase), typeof(Child) }))
+                    .Not.ValidationEnabled()
                     .Setup(x => x.AbstractClassIsLayerSupertype(t => false));
 
-            automapper.ValidationEnabled = false;
-            var mappings = automapper.BuildMappings();
+            var mappings = automapper.CreateModel().BuildMappings();
 
             mappings
                 .SelectMany(x => x.Classes)
@@ -41,10 +41,10 @@ namespace FluentNHibernate.Testing.Automapping.Apm
         {
             var automapper =
                 AutoMap.Source(new StubTypeSource(new[] { typeof(AbstractBase), typeof(Child) }))
+                    .Not.ValidationEnabled()
                     .IncludeBase<AbstractBase>();
 
-            automapper.ValidationEnabled = false;
-            var mappings = automapper.BuildMappings();
+            var mappings = automapper.CreateModel().BuildMappings();
 
             mappings
                 .SelectMany(x => x.Classes)

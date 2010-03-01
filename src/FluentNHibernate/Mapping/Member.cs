@@ -17,7 +17,9 @@ namespace FluentNHibernate
         public abstract bool IsMethod { get; }
         public abstract bool IsField { get; }
         public abstract bool IsProperty { get; }
-        //   GetIndexParameters().Length == 0
+        public abstract bool IsPublic { get; }
+        public abstract bool IsProtected { get; }
+        public abstract bool IsPrivate { get; }
 
         public bool Equals(Member other)
         {
@@ -124,6 +126,18 @@ namespace FluentNHibernate
         {
             get { return false; }
         }
+        public override bool IsPublic
+        {
+            get { return _fieldInfo.IsPublic; }
+        }
+        public override bool IsProtected
+        {
+            get { return _fieldInfo.IsFamily; }
+        }
+        public override bool IsPrivate
+        {
+            get { return _fieldInfo.IsPrivate; }
+        }
     }
 
     internal class MethodMember : Member
@@ -199,6 +213,23 @@ namespace FluentNHibernate
         {
             get { return false; }
         }
+        public override bool IsPublic
+        {
+            get { return _methodInfo.IsPublic; }
+        }
+        public override bool IsProtected
+        {
+            get { return _methodInfo.IsFamily; }
+        }
+        public override bool IsPrivate
+        {
+            get { return _methodInfo.IsPrivate; }
+        }
+
+        public bool HasParameters
+        {
+            get { return _methodInfo.GetParameters().Any(); }
+        }
     }
 
     internal class PropertyMember : Member
@@ -273,6 +304,19 @@ namespace FluentNHibernate
         public override bool IsProperty
         {
             get { return true; }
+        }
+
+        public override bool IsPublic
+        {
+            get { return _propertyInfo.GetGetMethod().ToMember().IsPublic; }
+        }
+        public override bool IsProtected
+        {
+            get { return _propertyInfo.GetGetMethod().ToMember().IsProtected; }
+        }
+        public override bool IsPrivate
+        {
+            get { return _propertyInfo.GetGetMethod().ToMember().IsPrivate; }
         }
     }
 

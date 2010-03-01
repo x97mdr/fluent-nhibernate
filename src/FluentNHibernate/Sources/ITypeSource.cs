@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace FluentNHibernate
+namespace FluentNHibernate.Sources
 {
     /// <summary>
     /// A source for Type instances, acts as a facade for an Assembly or as an alternative Type provider.

@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using FluentNHibernate.Automapping.Results;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Buckets;
-using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.Utils;
 
 namespace FluentNHibernate.Automapping.Steps
@@ -12,13 +11,19 @@ namespace FluentNHibernate.Automapping.Steps
     {
         private static readonly IList<string> ValidNames = new List<string> { "version", "timestamp" };
         private static readonly IList<Type> ValidTypes = new List<Type> { typeof(int), typeof(long), typeof(TimeSpan), typeof(byte[]) };
+        readonly IAutomappingStrategy strategy;
+
+        public VersionStep(IAutomappingStrategy strategy)
+        {
+            this.strategy = strategy;
+        }
 
         public bool IsMappable(Member property)
         {
             return ValidNames.Contains(property.Name.ToLowerInvariant()) && ValidTypes.Contains(property.PropertyType);
         }
 
-        public IAutomappingResult Map(MappingMetaData metaData)
+        public IMappingResult Map(MappingMetaData metaData)
         {
             var version = new VersionMapping
             {
@@ -41,7 +46,7 @@ namespace FluentNHibernate.Automapping.Steps
             var members = new MemberBucket();
             members.SetVersion(version);
             
-            return new AutomappingResult(members);
+            return new AutomappingResult(metaData.EntityType, strategy, members);
         }
 
         private bool IsSqlTimestamp(Member property)

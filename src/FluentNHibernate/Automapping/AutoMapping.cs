@@ -24,11 +24,6 @@ namespace FluentNHibernate.Automapping
             DiscriminateSubClassesOnColumn(column);
         }
 
-        IEnumerable<string> IMappingProvider.GetIgnoredProperties()
-        {
-            return mappedProperties;
-        }
-
         void IAutoClasslike.AlterModel(ClassMappingBase mapping)
         {
             mapping.MergeAttributes(attributes.CloneInner());
@@ -62,7 +57,11 @@ namespace FluentNHibernate.Automapping
                 mapping.AddOrReplaceCollection(collection.GetCollectionMapping());
 
             foreach (var component in Components)
-                mapping.AddOrReplaceComponent(component.GetComponentMapping());
+            {
+                // TODO: parse step
+                throw new NotImplementedException();
+             //   mapping.AddOrReplaceComponent(component.GetClassMapping());
+            }
 
             foreach (var oneToOne in oneToOnes)
                 mapping.AddOrReplaceOneToOne(oneToOne.GetOneToOneMapping());

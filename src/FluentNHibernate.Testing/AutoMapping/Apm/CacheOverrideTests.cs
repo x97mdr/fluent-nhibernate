@@ -15,6 +15,7 @@ namespace FluentNHibernate.Testing.AutoMapping.Apm
                     .Override<CacheTarget>(x => x.Cache.ReadOnly());
 
             var classMapping = automapper
+                .CreateModel()
                 .BuildMappings()
                 .SelectMany(x => x.Classes)
                 .First();

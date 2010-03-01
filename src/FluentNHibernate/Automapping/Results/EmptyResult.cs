@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Buckets;
 using FluentNHibernate.MappingModel.ClassBased;
@@ -7,8 +9,25 @@ using FluentNHibernate.MappingModel.Identity;
 
 namespace FluentNHibernate.Automapping.Results
 {
-    public class EmptyResult : IAutomappingResult
+    public class EmptyResult : IMappingResult
     {
+        public Type TypeBeingMapped
+        {
+            get { return null; }
+        }
+        public bool RequiresAutomapping
+        {
+            get { return false; }
+        }
+        public IAutomappingStrategy AutomappingStrategy
+        {
+            get { return new NullStrategy(); }
+        }
+        public IMemberBucket Members
+        {
+            get { return new MemberBucket(); }
+        }
+
         public void ApplyTo(IMergableWithBucket bucket)
         {}
 
@@ -55,6 +74,10 @@ namespace FluentNHibernate.Automapping.Results
             get { return null; }
         }
         public VersionMapping Version
+        {
+            get { return null; }
+        }
+        public AttributeStore Attributes
         {
             get { return null; }
         }

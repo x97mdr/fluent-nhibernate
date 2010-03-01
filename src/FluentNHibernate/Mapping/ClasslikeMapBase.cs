@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using FluentNHibernate.Mapping.Providers;
+using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.Utils;
 
 namespace FluentNHibernate.Mapping
@@ -11,7 +12,7 @@ namespace FluentNHibernate.Mapping
     public abstract class ClasslikeMapBase<T>
     {
         protected readonly IList<IPropertyMappingProvider> properties = new List<IPropertyMappingProvider>();
-        protected readonly IList<IComponentMappingProvider> components = new List<IComponentMappingProvider>();
+        protected readonly IList<IMappingProvider> components = new List<IMappingProvider>();
         protected readonly IList<IOneToOneMappingProvider> oneToOnes = new List<IOneToOneMappingProvider>();
         protected readonly Dictionary<Type, ISubclassMappingProvider> subclasses = new Dictionary<Type, ISubclassMappingProvider>();
         protected readonly IList<ICollectionMappingProvider> collections = new List<ICollectionMappingProvider>();
@@ -315,7 +316,7 @@ namespace FluentNHibernate.Mapping
 			get { return properties; }
 		}
 
-        protected virtual IEnumerable<IComponentMappingProvider> Components
+        protected virtual IEnumerable<IMappingProvider> Components
 		{
 			get { return components; }
 		}
@@ -324,5 +325,14 @@ namespace FluentNHibernate.Mapping
         {
             get { return typeof(T); }
         }
+
+        protected IComponentMapping CreateComponentMapping(IMappingProvider component)
+        {
+            var componentMapping = new ComponentMapping(ComponentType.Component);
+            var result = component.GetClassMapping();
+            result.ApplyTo(componentMapping);
+            return componentMapping;
+        }
+
     }
 }

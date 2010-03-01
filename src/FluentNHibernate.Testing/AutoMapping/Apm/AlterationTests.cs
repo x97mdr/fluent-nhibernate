@@ -9,7 +9,7 @@ namespace FluentNHibernate.Testing.Automapping.Apm
     [TestFixture]
     public class AlterationTests
     {
-        private AutoPersistenceModel model;
+        private AutomappingBuilder model;
 
         [SetUp]
         public void CreateAutoMapper()
@@ -25,9 +25,10 @@ namespace FluentNHibernate.Testing.Automapping.Apm
 
             model
                 .Alterations(alterations => alterations.Add(alteration))
+                .CreateModel()
                 .BuildMappings();
 
-            alteration.AssertWasCalled(x => x.Alter(model));
+            alteration.AssertWasCalled(x => x.Alter(Arg<PersistenceModel>.Is.NotNull));
         }
 
         [Test]

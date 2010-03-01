@@ -18,7 +18,7 @@ namespace FluentNHibernate.Testing.AutoMapping.Overrides
             var model = AutoMap.Source(new StubTypeSource(new[] { typeof(Parent) }))
                .Override<Parent>(o => o.SqlInsert("EXEC InsertParent"));
 
-            HibernateMapping hibernateMapping = model.BuildMappings().First();
+            HibernateMapping hibernateMapping = model.CreateModel().BuildMappings().First();
 
             ClassMapping classMapping = hibernateMapping.Classes.First();
             classMapping.StoredProcedures.ShouldHaveCount(1);
@@ -33,7 +33,7 @@ namespace FluentNHibernate.Testing.AutoMapping.Overrides
             var model = AutoMap.Source(new StubTypeSource(new[] { typeof(Parent) }))
                 .Override<Parent>(o => o.Tuplizer(TuplizerMode.Poco, tuplizerType));
 
-            HibernateMapping hibernateMapping = model.BuildMappings().First();
+            HibernateMapping hibernateMapping = model.CreateModel().BuildMappings().First();
             ClassMapping classMapping = hibernateMapping.Classes.First();
             classMapping.Tuplizer.ShouldNotBeNull();            
         }

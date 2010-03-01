@@ -95,7 +95,11 @@ namespace FluentNHibernate.Mapping
                 mapping.AddProperty(property.GetPropertyMapping());
 
             foreach (var component in components)
-                mapping.AddComponent(component.GetComponentMapping());
+            {
+                // TODO: parse step
+                throw new NotImplementedException();
+                //mapping.AddComponent(component.GetClassMapping());
+            }
 
             foreach (var reference in references)
                 mapping.AddReference(reference.GetManyToOneMapping());

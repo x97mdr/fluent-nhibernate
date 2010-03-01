@@ -41,12 +41,13 @@ namespace FluentNHibernate.Mapping
             columnPrefix = prefix;
         }
 
-        IComponentMapping IComponentMappingProvider.GetComponentMapping()
+        IMappingResult IMappingProvider.GetClassMapping()
         {
-            return new ReferenceComponentMapping(ComponentType.Component, property, typeof(T), containingEntityType, columnPrefix);
+            //return new ReferenceComponentMapping(ComponentType.Component, property, typeof(T), containingEntityType, columnPrefix);
+            throw new NotImplementedException();
         }
 
-        Type IReferenceComponentMappingProvider.Type
+        Type IMappingProvider.Type
         {
             get { return typeof(T); }
         }

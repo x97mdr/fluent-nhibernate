@@ -11,19 +11,19 @@ namespace FluentNHibernate.Automapping.Steps
 {
     public class IdentityStep : IAutomappingStep
     {
-        private readonly IAutomappingDiscoveryRules rules;
+        readonly IAutomappingStrategy strategy;
 
-        public IdentityStep(IAutomappingDiscoveryRules rules)
+        public IdentityStep(IAutomappingStrategy strategy)
         {
-            this.rules = rules;
+            this.strategy = strategy;
         }
 
         public bool IsMappable(Member property)
         {
-            return rules.FindIdentityRule(property);
+            return strategy.GetRules().FindIdentityRule(property);
         }
 
-        public IAutomappingResult Map(MappingMetaData metaData)
+        public IMappingResult Map(MappingMetaData metaData)
         {
             var idMapping = new IdMapping { ContainingEntityType = metaData.EntityType };
             idMapping.AddDefaultColumn(new ColumnMapping() { Name = metaData.Member.Name });
@@ -35,7 +35,7 @@ namespace FluentNHibernate.Automapping.Steps
             var members = new MemberBucket();
             members.SetId(idMapping);
             
-            return new AutomappingResult(members);
+            return new AutomappingResult(metaData.EntityType, strategy, members);
         }
 
         private GeneratorMapping GetDefaultGenerator(Member property)

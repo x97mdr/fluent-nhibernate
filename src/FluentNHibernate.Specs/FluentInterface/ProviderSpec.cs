@@ -13,7 +13,11 @@ namespace FluentNHibernate.Specs.FluentInterface
 
             setup(provider);
 
-            return ((IMappingProvider)provider).GetClassMapping();
+            var mapping = new ClassMapping();
+            var result = ((IMappingProvider)provider).GetClassMapping();
+            result.ApplyTo(mapping);
+
+            return mapping;
         }
 
         public static SubclassMapping map_as_subclass<T>(Action<SubclassMap<T>> setup)
@@ -23,7 +27,8 @@ namespace FluentNHibernate.Specs.FluentInterface
 
             setup(provider);
 
-            ((IIndeterminateSubclassMappingProvider)provider).GetSubclassMapping(mapping);
+            var result = ((IMappingProvider)provider).GetClassMapping();
+            result.ApplyTo(mapping);
 
             return mapping;
         }

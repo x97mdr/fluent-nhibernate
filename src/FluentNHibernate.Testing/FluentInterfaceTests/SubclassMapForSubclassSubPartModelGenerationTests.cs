@@ -31,8 +31,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
 
             var model = new PersistenceModel();
 
-            model.Add(classMap);
-            model.Add(subclassMap);
+            model.AddMappingsSource(new StubMappingSource(classMap, subclassMap));
 
             model.BuildMappings()
                 .First()

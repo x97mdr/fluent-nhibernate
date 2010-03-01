@@ -1,5 +1,6 @@
 using System;
 using FluentNHibernate.Automapping.Results;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Buckets;
 using FluentNHibernate.MappingModel.ClassBased;
@@ -13,6 +14,12 @@ namespace FluentNHibernate.Automapping.Steps
                 p.PropertyType.Namespace != "System.Collections.Generic" &&
                     p.PropertyType.Namespace != "Iesi.Collections.Generic" &&
                         !p.PropertyType.IsEnum);
+        readonly IAutomappingStrategy strategy;
+
+        public ManyToOneStep(IAutomappingStrategy strategy)
+        {
+            this.strategy = strategy;
+        }
 
         public bool IsMappable(Member property)
         {
@@ -22,14 +29,14 @@ namespace FluentNHibernate.Automapping.Steps
             return false;
         }
 
-        public IAutomappingResult Map(MappingMetaData metaData)
+        public IMappingResult Map(MappingMetaData metaData)
         {
             var manyToOne = CreateMapping(metaData.Member);
             var members = new MemberBucket();
 
             members.AddReference(manyToOne);
 
-            return new AutomappingResult(members);
+            return new AutomappingResult(metaData.EntityType, strategy, members);
         }
 
         private ManyToOneMapping CreateMapping(Member property)

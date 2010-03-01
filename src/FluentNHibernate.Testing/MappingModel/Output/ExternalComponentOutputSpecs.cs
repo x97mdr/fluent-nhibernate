@@ -41,12 +41,8 @@ namespace FluentNHibernate.Testing.MappingModel.Output
 
         public override void because()
         {
-            inline_xml = render_xml(x => x.Add(inline_component));
-            referenced_xml = render_xml(x =>
-            {
-                x.Add(reference_component);
-                x.Add(external_component);
-            });
+            inline_xml = render_xml(x => x.AddMappingsSource(new StubMappingSource(inline_component)));
+            referenced_xml = render_xml(x => x.AddMappingsSource(new StubMappingSource(reference_component, external_component)));
         }
 
         [Test]

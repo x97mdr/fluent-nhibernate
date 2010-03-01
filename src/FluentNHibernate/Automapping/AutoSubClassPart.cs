@@ -115,7 +115,12 @@ namespace FluentNHibernate.Automapping
             return (IAutoClasslike)subclass;
         }
 
-        public ClassMapping GetClassMapping()
+        public Type Type
+        {
+            get { return typeof(T); }
+        }
+
+        public IMappingResult GetClassMapping()
         {
             throw new NotImplementedException();
         }

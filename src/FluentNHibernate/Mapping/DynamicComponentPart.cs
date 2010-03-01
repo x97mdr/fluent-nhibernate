@@ -8,7 +8,7 @@ using FluentNHibernate.MappingModel.ClassBased;
 
 namespace FluentNHibernate.Mapping
 {
-    public class DynamicComponentPart<T> : ComponentPartBase<T>, IComponentMappingProvider
+    public class DynamicComponentPart<T> : ComponentPartBase<T>, IMappingProvider
     {
         private readonly Type entity;
         private readonly AccessStrategyBuilder<DynamicComponentPart<T>> access;
@@ -26,7 +26,7 @@ namespace FluentNHibernate.Mapping
             access = new AccessStrategyBuilder<DynamicComponentPart<T>>(this, value => attributes.Set(x => x.Access, value));
         }
 
-        protected override ComponentMapping CreateComponentMappingRoot(AttributeStore store)
+        protected override IComponentMapping CreateComponentMappingRoot(AttributeStore store)
         {
             return new ComponentMapping(ComponentType.DynamicComponent, store)
             {
@@ -103,7 +103,12 @@ namespace FluentNHibernate.Mapping
             return propertyMap;
         }
 
-        IComponentMapping IComponentMappingProvider.GetComponentMapping()
+        public Type Type
+        {
+            get { return typeof(T); }
+        }
+
+        IMappingResult IMappingProvider.GetClassMapping()
         {
             return CreateComponentMapping();
         }

@@ -156,7 +156,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.ApplyingToModel
             classMap.Id(x => x.Id);
             var map = classMap.Version(x => x.Version);
 
-            model.Add(classMap);
+            model.AddMappingsSource(new StubMappingSource(classMap));
 
             var generatedModels = model.BuildMappings();
             var modelInstance = generatedModels

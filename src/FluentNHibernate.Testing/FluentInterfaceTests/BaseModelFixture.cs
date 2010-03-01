@@ -19,7 +19,13 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
     {
         protected ModelTester<ClassMap<T>, ClassMapping> ClassMap<T>()
         {
-            return new ModelTester<ClassMap<T>, ClassMapping>(() => new ClassMap<T>(), x => ((IMappingProvider)x).GetClassMapping());
+            return new ModelTester<ClassMap<T>, ClassMapping>(() => new ClassMap<T>(), x =>
+            {
+                var mapping = new ClassMapping();
+                var result = ((IMappingProvider)x).GetClassMapping();
+                result.ApplyTo(mapping);
+                return mapping;
+            });
         }
 
         protected ModelTester<DiscriminatorPart, DiscriminatorMapping> DiscriminatorMap<T>()
@@ -37,7 +43,13 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
 
         protected ModelTester<SubclassMap<T>, SubclassMapping> SubclassMapForSubclass<T>()
         {
-            return new ModelTester<SubclassMap<T>, SubclassMapping>(() => new SubclassMap<T>(), x => ((IIndeterminateSubclassMappingProvider)x).GetSubclassMapping(new SubclassMapping(SubclassType.Subclass)));
+            return new ModelTester<SubclassMap<T>, SubclassMapping>(() => new SubclassMap<T>(), x =>
+            {
+                var mapping = new SubclassMapping(SubclassType.Subclass);
+                var result = ((IMappingProvider)x).GetClassMapping();
+                result.ApplyTo(mapping);
+                return mapping;
+            });
         }
 
         protected ModelTester<JoinedSubClassPart<T>, SubclassMapping> JoinedSubclass<T>()
@@ -47,17 +59,35 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
 
         protected ModelTester<SubclassMap<T>, SubclassMapping> SubclassMapForJoinedSubclass<T>()
         {
-            return new ModelTester<SubclassMap<T>, SubclassMapping>(() => new SubclassMap<T>(), x => ((IIndeterminateSubclassMappingProvider)x).GetSubclassMapping(new SubclassMapping(SubclassType.JoinedSubclass)));
+            return new ModelTester<SubclassMap<T>, SubclassMapping>(() => new SubclassMap<T>(), x =>
+            {
+                var mapping = new SubclassMapping(SubclassType.JoinedSubclass);
+                var result = ((IMappingProvider)x).GetClassMapping();
+                result.ApplyTo(mapping);
+                return mapping;
+            });
         }
 
         protected ModelTester<ComponentPart<T>, ComponentMapping> Component<T>()
         {
-            return new ModelTester<ComponentPart<T>, ComponentMapping>(() => new ComponentPart<T>(typeof(ExampleClass), ReflectionHelper.GetMember<VersionTarget>(x => x.VersionNumber)), x => (ComponentMapping)((IComponentMappingProvider)x).GetComponentMapping());
+            return new ModelTester<ComponentPart<T>, ComponentMapping>(() => new ComponentPart<T>(typeof(ExampleClass), ReflectionHelper.GetMember<VersionTarget>(x => x.VersionNumber)), x =>
+            {
+                var mapping = new ComponentMapping(ComponentType.Component);
+                var result = ((IMappingProvider)x).GetClassMapping();
+                result.ApplyTo(mapping);
+                return mapping;
+            });
         }
 
         protected ModelTester<DynamicComponentPart<T>, ComponentMapping> DynamicComponent<T>()
         {
-            return new ModelTester<DynamicComponentPart<T>, ComponentMapping>(() => new DynamicComponentPart<T>(typeof(ExampleClass), ReflectionHelper.GetMember<VersionTarget>(x => x.VersionNumber)), x => (ComponentMapping)((IComponentMappingProvider)x).GetComponentMapping());
+            return new ModelTester<DynamicComponentPart<T>, ComponentMapping>(() => new DynamicComponentPart<T>(typeof(ExampleClass), ReflectionHelper.GetMember<VersionTarget>(x => x.VersionNumber)), x =>
+            {
+                var mapping = new ComponentMapping(ComponentType.DynamicComponent);
+                var result = ((IMappingProvider)x).GetClassMapping();
+                result.ApplyTo(mapping);
+                return mapping;
+            });
         }
 
         protected ModelTester<VersionPart, VersionMapping> Version()

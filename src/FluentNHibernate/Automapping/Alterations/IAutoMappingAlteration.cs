@@ -10,6 +10,6 @@
         /// Alter the model
         /// </summary>
         /// <param name="model">AutoPersistenceModel instance to alter</param>
-        void Alter(AutoPersistenceModel model);
+        void Alter(PersistenceModel model);
     }
 }

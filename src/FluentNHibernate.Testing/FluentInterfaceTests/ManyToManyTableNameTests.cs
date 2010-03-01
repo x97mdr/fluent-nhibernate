@@ -25,8 +25,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
             rightMap.Id(x => x.Id);
             rightMap.HasManyToMany(x => x.Lefts);
 
-            model.Add(leftMap);
-            model.Add(rightMap);
+            model.AddMappingsSource(new StubMappingSource(leftMap, rightMap));
 
             var mappings = model.BuildMappings();
 
@@ -52,8 +51,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
             rightMap.Id(x => x.Id);
             rightMap.HasManyToMany(x => x.Lefts);
 
-            model.Add(leftMap);
-            model.Add(rightMap);
+            model.AddMappingsSource(new StubMappingSource(leftMap, rightMap));
 
             var mappings = model.BuildMappings();
 
@@ -79,8 +77,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
             rightMap.HasManyToMany(x => x.Lefts)
                 .Table("MyJoinTable");
 
-            model.Add(leftMap);
-            model.Add(rightMap);
+            model.AddMappingsSource(new StubMappingSource(leftMap, rightMap));
 
             var mappings = model.BuildMappings();
 
@@ -104,8 +101,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
 
             rightMap.Id(x => x.Id);
 
-            model.Add(leftMap);
-            model.Add(rightMap);
+            model.AddMappingsSource(new StubMappingSource(leftMap, rightMap));
 
             var mappings = model.BuildMappings();
 
@@ -130,8 +126,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
             rightMap.HasManyToMany(x => x.Lefts);
             rightMap.HasManyToMany(x => x.SecondLefts);
 
-            model.Add(leftMap);
-            model.Add(rightMap);
+            model.AddMappingsSource(new StubMappingSource(leftMap, rightMap));
 
             var mappings = model.BuildMappings();
 
@@ -159,8 +154,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
             rightMap.Id(x => x.Id);
             rightMap.HasManyToMany(x => x.Lefts);
 
-            model.Add(leftMap);
-            model.Add(rightMap);
+            model.AddMappingsSource(new StubMappingSource(leftMap, rightMap));
             model.Conventions.Add<TestTableNameConvention>();
 
             var mappings = model.BuildMappings();
@@ -185,8 +179,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
 
             rightMap.Id(x => x.Id);
 
-            model.Add(leftMap);
-            model.Add(rightMap);
+            model.AddMappingsSource(new StubMappingSource(leftMap, rightMap));
             model.Conventions.Add<TestTableNameConvention>();
 
             var mappings = model.BuildMappings();

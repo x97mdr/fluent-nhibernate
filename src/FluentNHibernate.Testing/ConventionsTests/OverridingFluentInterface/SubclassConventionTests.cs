@@ -100,7 +100,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
 
             mappingDefinition(subclassMap);
 
-            model.Add(subclassMap);
+            model.AddMappingsSource(new StubMappingSource(subclassMap));
 
             mapping = classMap;
             mappingType = typeof(ExampleClass);
@@ -108,7 +108,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
 
         private void VerifyModel(Action<SubclassMapping> modelVerification)
         {
-            model.Add(mapping);
+            model.AddMappingsSource(new StubMappingSource(mapping));
 
             var generatedModels = model.BuildMappings();
             var modelInstance = generatedModels

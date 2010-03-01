@@ -16,7 +16,7 @@ namespace FluentNHibernate.Testing.Automapping.Apm
                 AutoMap.Source(new StubTypeSource(new[] { typeof(Parent<>), typeof(IntChild), typeof(GuidChild) }))
                     .IgnoreBase(typeof(Parent<>));
 
-            var mappings = automapper.BuildMappings();
+            var mappings = automapper.CreateModel().BuildMappings();
 
             var intChild = mappings.SelectMany(x => x.Classes).First(x => x.Type == typeof(IntChild));
 

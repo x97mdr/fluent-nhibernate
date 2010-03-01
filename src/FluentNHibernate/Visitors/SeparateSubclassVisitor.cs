@@ -9,9 +9,9 @@ namespace FluentNHibernate.Visitors
 {
     public class SeparateSubclassVisitor : DefaultMappingModelVisitor
     {
-        private readonly IList<IIndeterminateSubclassMappingProvider> subclassProviders;
+        private readonly IList<IMappingProvider> subclassProviders;
 
-        public SeparateSubclassVisitor(IList<IIndeterminateSubclassMappingProvider> subclassProviders)
+        public SeparateSubclassVisitor(IList<IMappingProvider> subclassProviders)
         {
             this.subclassProviders = subclassProviders;
         }
@@ -21,7 +21,13 @@ namespace FluentNHibernate.Visitors
             var subclasses = FindClosestSubclasses(mapping.Type);
 
             foreach (var provider in subclasses)
-                mapping.AddSubclass(provider.GetSubclassMapping(CreateSubclass(mapping)));
+            {
+                var subclass = CreateSubclass(mapping);
+                var result = provider.GetClassMapping();
+                result.ApplyTo(subclass);
+
+                mapping.AddSubclass(subclass);
+            }
 
             base.ProcessClass(mapping);
         }
@@ -31,17 +37,23 @@ namespace FluentNHibernate.Visitors
             var subclasses = FindClosestSubclasses(mapping.Type);
 
             foreach (var provider in subclasses)
-                mapping.AddSubclass(provider.GetSubclassMapping(new SubclassMapping(mapping.SubclassType)));
+            {
+                var subclass = new SubclassMapping(mapping.SubclassType);
+                var result = provider.GetClassMapping();
+                result.ApplyTo(subclass);
+
+                mapping.AddSubclass(subclass);
+            }
 
             base.ProcessSubclass(mapping);
         }
 
-        private IEnumerable<IIndeterminateSubclassMappingProvider> FindClosestSubclasses(Type type)
+        private IEnumerable<IMappingProvider> FindClosestSubclasses(Type type)
         {
             var subclasses = SortByDistanceFrom(type, subclassProviders);
 
             if (subclasses.Keys.Count == 0)
-                return new IIndeterminateSubclassMappingProvider[0];
+                return new IMappingProvider[0];
 
             var lowestDistance = subclasses.Keys.Min();
 
@@ -56,9 +68,9 @@ namespace FluentNHibernate.Visitors
             return new SubclassMapping(SubclassType.Subclass);
         }
 
-        private bool IsMapped(Type type, IEnumerable<IIndeterminateSubclassMappingProvider> providers)
+        private bool IsMapped(Type type, IEnumerable<IMappingProvider> providers)
         {
-            return providers.Any(x => x.EntityType == type);
+            return providers.Any(x => x.Type == type);
         }
 
         /// <summary>
@@ -73,13 +85,13 @@ namespace FluentNHibernate.Visitors
         /// <param name="parentType">Starting point, parent type.</param>
         /// <param name="subProviders">List of subclasses</param>
         /// <returns>Dictionary key'd by the distance from the parentType.</returns>
-        private IDictionary<int, IList<IIndeterminateSubclassMappingProvider>> SortByDistanceFrom(Type parentType, IEnumerable<IIndeterminateSubclassMappingProvider> subProviders)
+        private IDictionary<int, IList<IMappingProvider>> SortByDistanceFrom(Type parentType, IEnumerable<IMappingProvider> subProviders)
         {
-            var arranged = new Dictionary<int, IList<IIndeterminateSubclassMappingProvider>>();
+            var arranged = new Dictionary<int, IList<IMappingProvider>>();
 
             foreach (var subclassProvider in subProviders)
             {
-                var subclassType = subclassProvider.EntityType;
+                var subclassType = subclassProvider.Type;
                 var level = 0;
 
                 bool implOfParent = parentType.IsInterface
@@ -89,7 +101,7 @@ namespace FluentNHibernate.Visitors
                 if (!implOfParent) continue;
 
                 if (!arranged.ContainsKey(level))
-                    arranged[level] = new List<IIndeterminateSubclassMappingProvider>();
+                    arranged[level] = new List<IMappingProvider>();
 
                 arranged[level].Add(subclassProvider);
             }

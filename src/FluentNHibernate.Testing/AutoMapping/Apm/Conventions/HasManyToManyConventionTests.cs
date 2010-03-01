@@ -14,7 +14,7 @@ namespace FluentNHibernate.Testing.AutoMapping.Apm.Conventions
             var model =
                 AutoMap.Source(new StubTypeSource(new[] { typeof(One), typeof(Two) }));
 
-            var classMapping = model.BuildMappings()
+            var classMapping = model.CreateModel().BuildMappings()
                 .SelectMany(x => x.Classes)
                 .First(x => x.Type == typeof(One));
              

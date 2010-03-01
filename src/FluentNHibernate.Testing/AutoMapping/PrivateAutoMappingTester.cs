@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using FluentNHibernate.Automapping;
+using FluentNHibernate.Conventions;
 using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.Utils.Reflection;
@@ -16,7 +17,7 @@ namespace FluentNHibernate.Testing.Automapping
     [TestFixture]
     public class PrivateAutoMappingTester
     {
-        private AutoPersistenceModel model;
+        private PersistenceModel model;
 
         [Test]
         public void WillMapPrivatePropertyMatchingTheConvention()
@@ -47,18 +48,18 @@ namespace FluentNHibernate.Testing.Automapping
 
         private void Model<T>(Predicate<Member> convention)
         {
-            model = new PrivateAutoPersistenceModel()
-                .Setup(x => x.FindMappablePrivateProperties(convention));
-            model.ValidationEnabled = false;
-            model.AddTypeSource(new StubTypeSource(typeof(T)));
-            model.BuildMappings();
+            AutoMap.Source(new StubTypeSource(typeof(T)))
+                .Strategy(new PrivateAutomappingStrategy())
+                .Not.ValidationEnabled()
+                .CreateModel()
+                .BuildMappings();
         }
 
         private void Test<T>(Action<ClassMapping> mapping)
         {
-            var map = model.FindMapping<T>();
+            //var map = model.FindMapping<T>();
 
-            mapping(map.GetClassMapping());
+            //mapping(map.GetClassMapping());
         }
     }
 

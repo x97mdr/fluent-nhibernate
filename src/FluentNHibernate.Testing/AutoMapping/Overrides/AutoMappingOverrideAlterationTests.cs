@@ -35,7 +35,7 @@ namespace FluentNHibernate.Testing.AutoMapping.Overrides
             var model = AutoMap.AssemblyOf<Baz>()
                 .Where(t => t.Namespace == typeof(Baz).Namespace);
 
-            alteration.Alter(model);
+            alteration.Alter(model.CreateModel());
 
             new AutoMappingTester<Baz>(model)
                 .Element("class/property[@name='Name']").Exists();

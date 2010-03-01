@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using FluentNHibernate.Automapping.Results;
 using FluentNHibernate.Automapping.Rules;
 using FluentNHibernate.Automapping.Steps;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Buckets;
 using FluentNHibernate.MappingModel.ClassBased;
@@ -13,14 +14,14 @@ namespace FluentNHibernate.Automapping
 {
     public class SimpleTypeCollectionStep : IAutomappingStep
     {
-        readonly IAutomappingDiscoveryRules rules;
+        readonly IAutomappingStrategy strategy;
         readonly AutoKeyMapper keys;
         readonly AutoCollectionCreator collections;
 
-        public SimpleTypeCollectionStep(IAutomappingDiscoveryRules rules)
+        public SimpleTypeCollectionStep(IAutomappingStrategy strategy)
         {
-            this.rules = rules;
-            keys = new AutoKeyMapper(rules);
+            this.strategy = strategy;
+            keys = new AutoKeyMapper(strategy.GetRules());
             collections = new AutoCollectionCreator();
         }
 
@@ -36,7 +37,7 @@ namespace FluentNHibernate.Automapping
                     (childType.IsPrimitive || childType.In(typeof(string), typeof(DateTime)));
         }
 
-        public IAutomappingResult Map(MappingMetaData metaData)
+        public IMappingResult Map(MappingMetaData metaData)
         {
             if (metaData.Member.DeclaringType != metaData.EntityType)
                 return new EmptyResult();
@@ -54,7 +55,7 @@ namespace FluentNHibernate.Automapping
             
             members.AddCollection(mapping);
 
-            return new AutomappingResult(members);
+            return new AutomappingResult(metaData.EntityType, strategy, members);
         }
 
         private void SetElement(MappingMetaData metaData, ICollectionMapping mapping)
@@ -64,6 +65,7 @@ namespace FluentNHibernate.Automapping
                 ContainingEntityType = metaData.EntityType,
                 Type = new TypeReference(metaData.Member.PropertyType.GetGenericArguments()[0])
             };
+            var rules = strategy.GetRules();
 
             element.AddDefaultColumn(new ColumnMapping { Name = rules.SimpleTypeCollectionValueColumnRule(metaData.Member) });
             mapping.SetDefaultValue(x => x.Element, element);

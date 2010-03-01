@@ -3,6 +3,7 @@ using FluentNHibernate.Automapping;
 using FluentNHibernate.Automapping.Results;
 using FluentNHibernate.Automapping.Rules;
 using FluentNHibernate.Automapping.Steps;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Collections;
 using FluentNHibernate.Specs.Automapping.Fixtures;
@@ -160,11 +161,11 @@ namespace FluentNHibernate.Specs.Automapping
         Establish context = () =>
         {
             rules = new DefaultDiscoveryRules();
-            step = new OneToManyStep(rules);
+            step = new OneToManyStep(new TestStrategy(rules));
         };
 
         protected static OneToManyStep step;
-        protected static IAutomappingResult result;
+        protected static IMappingResult result;
         protected static DefaultDiscoveryRules rules;
     }
 
@@ -173,10 +174,25 @@ namespace FluentNHibernate.Specs.Automapping
         Establish context = () =>
         {
             rules = new DefaultDiscoveryRules();
-            step = new SimpleTypeCollectionStep(rules);
+            step = new SimpleTypeCollectionStep(new TestStrategy(rules));
         };
 
         protected static SimpleTypeCollectionStep step;
         protected static DefaultDiscoveryRules rules;
+    }
+
+    public class TestStrategy : DefaultAutomappingStrategy
+    {
+        readonly IAutomappingDiscoveryRules rules;
+
+        public TestStrategy(IAutomappingDiscoveryRules rules)
+        {
+            this.rules = rules;
+        }
+
+        public override IAutomappingDiscoveryRules GetRules()
+        {
+            return rules;
+        }
     }
 }

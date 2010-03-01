@@ -1,5 +1,6 @@
 using FluentNHibernate.Automapping.Results;
 using FluentNHibernate.Automapping.Rules;
+using FluentNHibernate.Mapping;
 
 namespace FluentNHibernate.Automapping.Steps
 {
@@ -8,10 +9,10 @@ namespace FluentNHibernate.Automapping.Steps
         readonly SimpleTypeCollectionStep simpleTypeCollectionStep;
         readonly AutoEntityCollection entityCollectionStep;
 
-        public OneToManyStep(IAutomappingDiscoveryRules rules)
+        public OneToManyStep(IAutomappingStrategy strategy)
         {
-            simpleTypeCollectionStep = new SimpleTypeCollectionStep(rules);
-            entityCollectionStep = new AutoEntityCollection(rules);
+            simpleTypeCollectionStep = new SimpleTypeCollectionStep(strategy);
+            entityCollectionStep = new AutoEntityCollection(strategy);
         }
 
         public bool IsMappable(Member property)
@@ -20,7 +21,7 @@ namespace FluentNHibernate.Automapping.Steps
                    entityCollectionStep.IsMappable(property);
         }
 
-        public IAutomappingResult Map(MappingMetaData metaData)
+        public IMappingResult Map(MappingMetaData metaData)
         {
             if (metaData.Member.DeclaringType != metaData.EntityType)
                 return new EmptyResult();

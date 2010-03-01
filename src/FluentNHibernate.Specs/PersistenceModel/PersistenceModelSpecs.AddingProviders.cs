@@ -2,12 +2,12 @@
 using FluentNHibernate.Specs.Automapping.Fixtures;
 using Machine.Specifications;
 
-namespace FluentNHibernate.Specs.PersistenceModel
+namespace FluentNHibernate.Specs.PersistenceModelSpecs
 {
     public class when_the_persistence_model_has_a_component_added_by_type : PersistenceModelSpec
     {
         Because of = () =>
-            persistence_model.Add(typeof(MyComponentMap));
+            persistence_model.AddMappingsSource(new StubTypeSource(typeof(MyComponentMap)));
 
         It should_contain_the_mapping = () =>
             persistence_model.ContainsMapping(typeof(MyComponentMap)).ShouldBeTrue();
@@ -16,7 +16,7 @@ namespace FluentNHibernate.Specs.PersistenceModel
     public class when_the_persistence_model_has_a_component_instance_added : PersistenceModelSpec
     {
         Because of = () =>
-            persistence_model.Add(new MyComponentMap());
+            persistence_model.AddMappingsSource(new StubMappingSource(new MyComponentMap()));
 
         It should_contain_the_mapping = () =>
             persistence_model.ContainsMapping(typeof(MyComponentMap)).ShouldBeTrue();
@@ -25,7 +25,7 @@ namespace FluentNHibernate.Specs.PersistenceModel
     public class when_the_persistence_model_scans_a_source_for_types : PersistenceModelSpec
     {
         Because of = () =>
-            persistence_model.AddMappingsFromSource(new StubTypeSource(new[]
+            persistence_model.AddMappingsSource(new StubTypeSource(new[]
             {
                 typeof(MyComponentMap),
                 typeof(MyClassMap),

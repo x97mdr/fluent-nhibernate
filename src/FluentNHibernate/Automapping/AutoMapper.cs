@@ -5,6 +5,7 @@ using System.Reflection;
 using FluentNHibernate.Automapping.Rules;
 using FluentNHibernate.Automapping.Steps;
 using FluentNHibernate.Conventions;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.Utils;
@@ -14,21 +15,17 @@ namespace FluentNHibernate.Automapping
     public class AutoMapper
     {
         private List<AutoMapType> mappingTypes;
-        private readonly IAutomappingDiscoveryRules rules;
-        readonly IConventionFinder conventionFinder;
+        readonly IAutomappingStrategy strategy;
         private readonly IEnumerable<InlineOverride> inlineOverrides;
-        private readonly IAutomappingStepSet steps;
         private readonly EntityAutomapper entityAutomapper;
 
-        public AutoMapper(IAutomappingStepSet steps, IAutomappingDiscoveryRules rules, IConventionFinder conventionFinder, IEnumerable<InlineOverride> inlineOverrides)
-            : this(steps, rules, conventionFinder, inlineOverrides, new EntityAutomapper(steps, conventionFinder))
+        public AutoMapper(IConventionFinder conventionFinder, IEnumerable<InlineOverride> inlineOverrides, IAutomappingStrategy strategy)
+            : this(strategy, conventionFinder, inlineOverrides, new EntityAutomapper(conventionFinder, strategy))
         {}
 
-        protected AutoMapper(IAutomappingStepSet steps, IAutomappingDiscoveryRules rules, IConventionFinder conventionFinder, IEnumerable<InlineOverride> inlineOverrides, EntityAutomapper entityAutomapper)
+        protected AutoMapper(IAutomappingStrategy strategy, IConventionFinder conventionFinder, IEnumerable<InlineOverride> inlineOverrides, EntityAutomapper entityAutomapper)
         {
-            this.steps = steps;
-            this.rules = rules;
-            this.conventionFinder = conventionFinder;
+            this.strategy = strategy;
             this.inlineOverrides = inlineOverrides;
             this.entityAutomapper = entityAutomapper;
             this.entityAutomapper.AutoMapper = this; // TODO: Remove this dependency
@@ -64,6 +61,7 @@ namespace FluentNHibernate.Automapping
 
         private void MapInheritanceTree(Type classType, ClassMappingBase mapping, IList<string> mappedProperties)
         {
+            var rules = strategy.GetRules();
             var discriminatorSet = false;
             var isDiscriminated = rules.FindDiscriminatedEntityRule(classType);
 

@@ -10,7 +10,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
 {
     public class ClassMapping : ClassMappingBase, IMergableWithBucket
     {
-        private readonly AttributeStore<ClassMapping> attributes;
+        private AttributeStore<ClassMapping> attributes;
 
         public ClassMapping()
             : this(new AttributeStore())
@@ -243,6 +243,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
 
         public override void MergeWithBucket(IMemberBucketInspector bucket)
         {
+            attributes = new AttributeStore<ClassMapping>(bucket.Attributes != null ? bucket.Attributes.Clone() : attributes.CloneInner());
             bucket.Anys.Each(AddAny);
             bucket.Collections.Each(AddCollection);
             bucket.Components.Each(AddComponent);

@@ -1,9 +1,10 @@
 ﻿using System;
 using FluentNHibernate.Mapping;
+using FluentNHibernate.Specs.Automapping.Fixtures;
 using FluentNHibernate.Visitors;
 using Machine.Specifications;
 
-namespace FluentNHibernate.Specs.PersistenceModel
+namespace FluentNHibernate.Specs.PersistenceModelSpecs
 {
     public class when_the_persistence_model_is_told_to_build_the_mappings_with_a_valid_class_mapping : PersistenceModelValidationSpec
     {
@@ -14,7 +15,7 @@ namespace FluentNHibernate.Specs.PersistenceModel
             var class_map = new ClassMap<Target>();
             class_map.Id(x => x.Id);
             
-            model.Add(class_map);
+            model.AddMappingsSource(new StubMappingSource(class_map));
         };
 
         Because of = () =>
@@ -29,7 +30,7 @@ namespace FluentNHibernate.Specs.PersistenceModel
         Establish context = () =>
         {
             model = new FluentNHibernate.PersistenceModel();
-            model.Add(new ClassMap<Target>());
+            model.AddMappingsSource(new StubMappingSource(new ClassMap<Target>()));
         };
 
         Because of = () =>
@@ -56,7 +57,7 @@ namespace FluentNHibernate.Specs.PersistenceModel
         Establish context = () =>
         {
             model = new FluentNHibernate.PersistenceModel();
-            model.Add(new ClassMap<Target>());
+            model.AddMappingsSource(new StubMappingSource(new ClassMap<Target>()));
             model.ValidationEnabled = false;
         };
 

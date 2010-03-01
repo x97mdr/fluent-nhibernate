@@ -10,7 +10,7 @@ namespace FluentNHibernate.Specs.Automapping
     public class when_the_automapper_is_told_to_map_an_entity_with_static_properties
     {
         Establish context = () =>
-            mapper = AutoMap.Source(new StubTypeSource(typeof(EntityWithStaticProperties)));
+            mapper = AutoMap.Source(new StubTypeSource(typeof(EntityWithStaticProperties))).CreateModel();
 
         Because of = () =>
             mapping = mapper.BuildMappings().SelectMany(x => x.Classes).First();
@@ -18,14 +18,14 @@ namespace FluentNHibernate.Specs.Automapping
         It should_not_create_property_mappings_for_the_static_properties = () =>
             mapping.Properties.Any(x => x.Name == "StaticProperty").ShouldBeFalse();
 
-        static AutoPersistenceModel mapper;
+        static PersistenceModel mapper;
         static ClassMapping mapping;
     }
 
     public class when_the_automapper_is_told_to_map_an_entity_with_a_enum_property : AutomapperEnumPropertySpec
     {
         Establish context = () =>
-            mapper = AutoMap.Source(new StubTypeSource(typeof(Target)));
+            mapper = AutoMap.Source(new StubTypeSource(typeof(Target))).CreateModel();
 
         Because of = () =>
             mapping = mapper.BuildMappings().SelectMany(x => x.Classes).First();
@@ -43,7 +43,7 @@ namespace FluentNHibernate.Specs.Automapping
     public class when_the_automapper_is_told_to_map_an_entity_with_a_nullable_enum_property : AutomapperEnumPropertySpec
     {
         Establish context = () =>
-            mapper = AutoMap.Source(new StubTypeSource(typeof(NullableTarget)));
+            mapper = AutoMap.Source(new StubTypeSource(typeof(NullableTarget))).CreateModel();
 
         Because of = () =>
             mapping = mapper.BuildMappings().SelectMany(x => x.Classes).First();
@@ -74,7 +74,7 @@ namespace FluentNHibernate.Specs.Automapping
 
     public abstract class AutomapperEnumPropertySpec
     {
-        protected static AutoPersistenceModel mapper;
+        protected static PersistenceModel mapper;
         protected static ClassMapping mapping;
     }
 }

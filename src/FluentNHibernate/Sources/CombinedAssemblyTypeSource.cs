@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace FluentNHibernate
+namespace FluentNHibernate.Sources
 {
     /// <summary>
     /// Provides types for mapping from multiple assemblies

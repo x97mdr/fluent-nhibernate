@@ -19,17 +19,17 @@ namespace FluentNHibernate.Mapping
             attributes = new AttributeStore<ComponentMapping>(underlyingStore);
         }
 
-        protected override ComponentMapping CreateComponentMappingRoot(AttributeStore store)
+        protected override IComponentMapping CreateComponentMappingRoot(AttributeStore store)
         {
             return new ExternalComponentMapping(ComponentType.Component, attributes.CloneInner());
         }
 
-        ExternalComponentMapping IExternalComponentMappingProvider.GetComponentMapping()
+        IMappingResult IMappingProvider.GetClassMapping()
         {
-            return (ExternalComponentMapping)CreateComponentMapping();
+            return CreateComponentMapping();
         }
 
-        Type IExternalComponentMappingProvider.Type
+        Type IMappingProvider.Type
         {
             get { return typeof(T); }
         }

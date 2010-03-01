@@ -22,7 +22,7 @@ namespace FluentNHibernate.Testing.ConventionsTests
         {
             var classMap = new ClassMap<Target>();
             classMap.Id(x => x.Id);
-            model.Add(classMap);
+            model.AddMappingsSource(new StubMappingSource(classMap));
             model.Conventions.Add(DefaultCascade.All());
             model.BuildMappings()
                 .First()

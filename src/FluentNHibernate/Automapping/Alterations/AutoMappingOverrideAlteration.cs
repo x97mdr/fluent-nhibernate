@@ -30,7 +30,7 @@ namespace FluentNHibernate.Automapping.Alterations
         /// creates an AutoMapping&lt;T&gt; and applies the override to it.
         /// </remarks>
         /// <param name="model">AutoPersistenceModel instance to alter</param>
-        public void Alter(AutoPersistenceModel model)
+        public void Alter(PersistenceModel model)
         {
             // find all types deriving from IAutoMappingOverride<T>
             var types = from type in assembly.GetExportedTypes()
@@ -57,13 +57,13 @@ namespace FluentNHibernate.Automapping.Alterations
             }
         }
 
-        private void AddOverride<T>(AutoPersistenceModel model, Type entity, IAutoMappingOverride<T> mappingOverride)
+        private void AddOverride<T>(AutomappingBuilder model, Type entity, IAutoMappingOverride<T> mappingOverride)
         {
-            model.AddOverride(entity, x =>
-            {
-                if (x is AutoMapping<T>)
-                    mappingOverride.Override((AutoMapping<T>)x);
-            });
+            //model.AddOverride(entity, x =>
+            //{
+            //    if (x is AutoMapping<T>)
+            //        mappingOverride.Override((AutoMapping<T>)x);
+            //});
         }
     }
 }

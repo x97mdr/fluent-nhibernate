@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using FluentNHibernate.MappingModel.Buckets;
 using FluentNHibernate.MappingModel.Collections;
 using FluentNHibernate.Visitors;
 
@@ -234,6 +235,11 @@ namespace FluentNHibernate.MappingModel.ClassBased
                 result = (result * 397) ^ (containingEntityType != null ? containingEntityType.GetHashCode() : 0);
                 return result;
             }
+        }
+
+        public void MergeWithBucket(IMemberBucketInspector bucket)
+        {
+            throw new NotImplementedException();
         }
     }
 }

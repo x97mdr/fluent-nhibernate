@@ -1,33 +1,30 @@
 using System.Collections.Generic;
 using FluentNHibernate.Automapping.Rules;
 using FluentNHibernate.Conventions;
+using FluentNHibernate.Mapping;
 
 namespace FluentNHibernate.Automapping.Steps
 {
     public class DefaultAutomappingSteps : IAutomappingStepSet
     {
-        readonly IAutomappingDiscoveryRules rules;
+        readonly IAutomappingStrategy strategy;
 
-        public DefaultAutomappingSteps()
-            : this(new DefaultDiscoveryRules())
-        {}
-
-        public DefaultAutomappingSteps(IAutomappingDiscoveryRules rules)
+        public DefaultAutomappingSteps(IAutomappingStrategy strategy)
         {
-            this.rules = rules;
+            this.strategy = strategy;
         }
 
         public IEnumerable<IAutomappingStep> GetSteps(AutoMapper automapper, IConventionFinder conventionFinder)
         {
             return new IAutomappingStep[]
             {
-                new IdentityStep(rules), 
-                new VersionStep(), 
-                new ComponentStep(rules, automapper),
-                new PropertyStep(rules, conventionFinder),
-                new ManyToManyStep(rules),
-                new ManyToOneStep(),
-                new OneToManyStep(rules),
+                new IdentityStep(strategy), 
+                new VersionStep(strategy), 
+                new ComponentStep(strategy, automapper),
+                new PropertyStep(strategy, conventionFinder),
+                new ManyToManyStep(strategy),
+                new ManyToOneStep(strategy),
+                new OneToManyStep(strategy),
             };
         }
     }

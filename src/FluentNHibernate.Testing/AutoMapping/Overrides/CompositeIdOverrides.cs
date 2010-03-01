@@ -16,7 +16,7 @@ namespace FluentNHibernate.Testing.AutoMapping.Overrides
                         .KeyProperty(x => x.ObjectId)
                         .KeyProperty(x => x.SecondId));
 
-            var classMapping = model.BuildMappings()
+            var classMapping = model.CreateModel().BuildMappings()
                 .First()
                 .Classes.First();
 
@@ -32,7 +32,7 @@ namespace FluentNHibernate.Testing.AutoMapping.Overrides
                     o.CompositeId()
                         .KeyReference(x => x.Child));
 
-            var classMapping = model.BuildMappings()
+            var classMapping = model.CreateModel().BuildMappings()
                 .First()
                 .Classes.First();
 

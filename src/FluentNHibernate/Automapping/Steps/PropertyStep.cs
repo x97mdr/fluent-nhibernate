@@ -15,13 +15,13 @@ namespace FluentNHibernate.Automapping.Steps
 {
     public class PropertyStep : IAutomappingStep
     {
+        readonly IAutomappingStrategy strategy;
         private readonly IConventionFinder conventionFinder;
-        private readonly IAutomappingDiscoveryRules rules;
 
-        public PropertyStep(IAutomappingDiscoveryRules rules, IConventionFinder conventionFinder)
+        public PropertyStep(IAutomappingStrategy strategy, IConventionFinder conventionFinder)
         {
+            this.strategy = strategy;
             this.conventionFinder = conventionFinder;
-            this.rules = rules;
         }
 
         public bool IsMappable(Member property)
@@ -73,12 +73,12 @@ namespace FluentNHibernate.Automapping.Steps
                     || property.PropertyType.IsEnum;
         }
 
-        public IAutomappingResult Map(MappingMetaData metaData)
+        public IMappingResult Map(MappingMetaData metaData)
         {
             var members = new MemberBucket();
             members.AddProperty(GetPropertyMapping(metaData.EntityType, metaData));
 
-            return new AutomappingResult(members);
+            return new AutomappingResult(metaData.EntityType, strategy, members);
         }
 
         private PropertyMapping GetPropertyMapping(Type type, MappingMetaData metaData)

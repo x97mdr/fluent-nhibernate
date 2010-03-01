@@ -109,7 +109,8 @@ namespace FluentNHibernate.Cfg
 
             foreach (var type in types)
             {
-                model.Add(type);
+                throw new NotImplementedException();
+                //model.Add(type);
             }
 
             if (!string.IsNullOrEmpty(exportPath))

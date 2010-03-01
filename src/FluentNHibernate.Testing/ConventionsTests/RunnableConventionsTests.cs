@@ -696,7 +696,7 @@ namespace FluentNHibernate.Testing.ConventionsTests
             var model = new PersistenceModel();
 
             model.Conventions.Add(convention);
-            model.Add(getMapping());
+            model.AddMappingsSource(new StubMappingSource(getMapping()));
 
             return model.BuildMappings()
                 .First()
@@ -708,7 +708,7 @@ namespace FluentNHibernate.Testing.ConventionsTests
             var model = new PersistenceModel();
 
             model.Conventions.Add(convention);
-            model.Add(getMapping());
+            model.AddMappingsSource(new StubMappingSource(getMapping()));
 
             return model.BuildMappings()
                 .First();

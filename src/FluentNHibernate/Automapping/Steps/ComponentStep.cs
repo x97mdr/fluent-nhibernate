@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using FluentNHibernate.Automapping.Results;
 using FluentNHibernate.Automapping.Rules;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel.Buckets;
 using FluentNHibernate.MappingModel.ClassBased;
 
@@ -8,23 +9,23 @@ namespace FluentNHibernate.Automapping.Steps
 {
     public class ComponentStep : IAutomappingStep
     {
-        private readonly IAutomappingDiscoveryRules rules;
         private readonly AutoMapper mapper;
+        readonly IAutomappingStrategy strategy;
 
-        public ComponentStep(IAutomappingDiscoveryRules rules, AutoMapper mapper)
+        public ComponentStep(IAutomappingStrategy strategy, AutoMapper mapper)
         {
-            this.rules = rules;
+            this.strategy = strategy;
             this.mapper = mapper;
         }
 
         public bool IsMappable(Member property)
         {
-            return rules.FindComponentRule(property.PropertyType);
+            return strategy.GetRules().FindComponentRule(property.PropertyType);
         }
 
-        public IAutomappingResult Map(MappingMetaData metaData)
+        public IMappingResult Map(MappingMetaData metaData)
         {
-            var mapping = new ComponentMapping
+            var mapping = new ComponentMapping(ComponentType.Component)
             {
                 Name = metaData.Member.Name,
                 Member = metaData.Member,
@@ -38,7 +39,7 @@ namespace FluentNHibernate.Automapping.Steps
             var members = new MemberBucket();
             members.AddComponent(mapping);
 
-            return new AutomappingResult(members);
+            return new AutomappingResult(metaData.EntityType, strategy, members);
         }
     }
 }

@@ -1,10 +1,11 @@
 using FluentNHibernate.Automapping.Results;
+using FluentNHibernate.Mapping;
 
 namespace FluentNHibernate.Automapping.Steps
 {
     public interface IAutomappingStep
     {
         bool IsMappable(Member member);
-        IAutomappingResult Map(MappingMetaData metaData);
+        IMappingResult Map(MappingMetaData metaData);
     }
 }

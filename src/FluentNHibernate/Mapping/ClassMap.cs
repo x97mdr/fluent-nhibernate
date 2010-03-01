@@ -9,12 +9,166 @@ using FluentNHibernate.Automapping.Steps;
 using FluentNHibernate.Conventions;
 using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
+using FluentNHibernate.MappingModel.Buckets;
 using FluentNHibernate.MappingModel.ClassBased;
+using FluentNHibernate.MappingModel.Collections;
+using FluentNHibernate.MappingModel.Identity;
 using FluentNHibernate.Utils;
 using NHibernate.Persister.Entity;
 
 namespace FluentNHibernate.Mapping
 {
+    public interface IMappingResult : IMemberBucketInspector
+    {
+        Type TypeBeingMapped { get; }
+        bool RequiresAutomapping { get; }
+        IAutomappingStrategy AutomappingStrategy { get; }
+        IMemberBucket Members { get; }
+        void ApplyTo(IMergableWithBucket bucket);
+    }
+
+    public class AutomappingResult : IMappingResult
+    {
+        public AutomappingResult(Type typeBeingMapped, IAutomappingStrategy strategy, IEnumerable<IMappingResult> results)
+            : this(typeBeingMapped, strategy)
+        {
+            Members = new MemberBucket();
+            results.Each(x => x.ApplyTo(Members));
+        }
+
+        public AutomappingResult(Type typeBeingMapped, IAutomappingStrategy strategy, IMappingResult result)
+            : this(typeBeingMapped, strategy, result.Members)
+        {}
+
+        public AutomappingResult(Type typeBeingMapped, IAutomappingStrategy strategy, IMemberBucket members)
+            : this(typeBeingMapped, strategy)
+        {
+            Members = members;
+        }
+
+        AutomappingResult(Type typeBeingMapped, IAutomappingStrategy strategy)
+        {
+            AutomappingStrategy = strategy;
+            RequiresAutomapping = true;
+            TypeBeingMapped = typeBeingMapped;
+        }
+
+        public Type TypeBeingMapped { get; private set; }
+        public bool RequiresAutomapping { get; private set; }
+        public IAutomappingStrategy AutomappingStrategy { get; private set; }
+        public IMemberBucket Members { get; private set; }
+        
+        public void ApplyTo(IMergableWithBucket bucket)
+        {
+            bucket.MergeWithBucket(Members);
+        }
+
+        public IEnumerable<PropertyMapping> Properties
+        {
+            get { return Members.Properties; }
+        }
+        public IEnumerable<ICollectionMapping> Collections
+        {
+            get { return Members.Collections; }
+        }
+        public IEnumerable<ManyToOneMapping> References
+        {
+            get { return Members.References; }
+        }
+        public IEnumerable<IComponentMapping> Components
+        {
+            get { return Members.Components; }
+        }
+        public IEnumerable<OneToOneMapping> OneToOnes
+        {
+            get { return Members.OneToOnes; }
+        }
+        public IEnumerable<AnyMapping> Anys
+        {
+            get { return Members.Anys; }
+        }
+        public IEnumerable<FilterMapping> Filters
+        {
+            get { return Members.Filters; }
+        }
+        public IEnumerable<JoinMapping> Joins
+        {
+            get { return Members.Joins; }
+        }
+        public IEnumerable<StoredProcedureMapping> StoredProcedures
+        {
+            get { return Members.StoredProcedures; }
+        }
+        public IIdentityMapping Id
+        {
+            get { return Members.Id; }
+        }
+        public VersionMapping Version
+        {
+            get { return Members.Version; }
+        }
+        public AttributeStore Attributes
+        {
+            get { return Members.Attributes; }
+        }
+    }
+
+    public interface IAutomappingStrategy
+    {
+        bool ShouldMap(Member member);
+        IAutomappingDiscoveryRules GetRules();
+        IAutomappingStepSet GetSteps();
+    }
+
+    public class NullStrategy : IAutomappingStrategy
+    {
+        public bool ShouldMap(Member member)
+        {
+            return false;
+        }
+
+        public IAutomappingDiscoveryRules GetRules()
+        {
+            return new DefaultDiscoveryRules();
+        }
+
+        public IAutomappingStepSet GetSteps()
+        {
+            return new DefaultAutomappingSteps(this);
+        }
+    }
+
+    public class PrivateAutomappingStrategy : AutomappingStrategyBase
+    {
+        public override bool ShouldMap(Member member)
+        {
+            return member.IsProperty && (member.IsPrivate || member.IsProtected);
+        }
+    }
+
+    public class DefaultAutomappingStrategy : AutomappingStrategyBase
+    {
+        public override bool ShouldMap(Member member)
+        {
+            return member.IsProperty && member.IsPublic;
+        }
+    }
+
+    public abstract class AutomappingStrategyBase : IAutomappingStrategy
+    {
+        public abstract bool ShouldMap(Member member);
+
+        public virtual IAutomappingDiscoveryRules GetRules()
+        {
+            return new DefaultDiscoveryRules();
+        }
+
+        public virtual IAutomappingStepSet GetSteps()
+        {
+            return new DefaultAutomappingSteps(this);
+        }
+    }
+
     public class ClassMap<T> : ClasslikeMapBase<T>, IMappingProvider
     {
         protected readonly AttributeStore<ClassMapping> attributes = new AttributeStore<ClassMapping>();
@@ -37,7 +191,8 @@ namespace FluentNHibernate.Mapping
         private readonly PolymorphismBuilder<ClassMap<T>> polymorphism;
         private SchemaActionBuilder<ClassMap<T>> schemaAction;
         protected TuplizerMapping tuplizerMapping;
-        private EntityAutomapper entityAutomapper;
+        bool shouldAutomap;
+        IAutomappingStrategy automappingStrategy;
 
         public ClassMap()
         {
@@ -47,21 +202,30 @@ namespace FluentNHibernate.Mapping
             Cache = new CachePart(typeof(T));
         }
 
-        ClassMapping IMappingProvider.GetClassMapping()
+        public Type Type
         {
-		    var mapping = new ClassMapping(attributes.CloneInner());
+            get { return typeof(T); }
+        }
 
-            mapping.Type = typeof(T);
-            mapping.Name = typeof(T).AssemblyQualifiedName;
+        IMappingResult IMappingProvider.GetClassMapping()
+        {
+            var mapping = new MemberBucket(attributes.CloneInner());
+
+            mapping.Attributes.Set("Type", typeof(T));
+            mapping.Attributes.Set("Name", typeof(T).AssemblyQualifiedName);
 
             foreach (var property in properties)
                 mapping.AddProperty(property.GetPropertyMapping());
 
             foreach (var component in components)
-                mapping.AddComponent(component.GetComponentMapping());
+            {
+                var componentMapping = CreateComponentMapping(component);
+
+                mapping.AddComponent(componentMapping);
+            }
 
             if (version != null)
-                mapping.Version = version.GetVersionMapping();
+                mapping.SetVersion(version.GetVersionMapping());
 
             foreach (var oneToOne in oneToOnes)
                 mapping.AddOneToOne(oneToOne.GetOneToOneMapping());
@@ -75,26 +239,26 @@ namespace FluentNHibernate.Mapping
             foreach (var any in anys)
                 mapping.AddAny(any.GetAnyMapping());
 
-            foreach (var subclass in subclasses.Values)
-                mapping.AddSubclass(subclass.GetSubclassMapping());
+            //foreach (var subclass in subclasses.Values)
+            //    mapping.AddSubclass(subclass.GetSubclassMapping());
 
 		    foreach (var join in joins)
 		        mapping.AddJoin(join);
 
-            if (discriminator != null)
-                mapping.Discriminator = ((IDiscriminatorMappingProvider)discriminator).GetDiscriminatorMapping();
+            //if (discriminator != null)
+            //    mapping.Discriminator = ((IDiscriminatorMappingProvider)discriminator).GetDiscriminatorMapping();
 
-            if (Cache.IsDirty)
-                mapping.Cache = ((ICacheMappingProvider)Cache).GetCacheMapping();
+            //if (Cache.IsDirty)
+            //    mapping.Cache = ((ICacheMappingProvider)Cache).GetCacheMapping();
 
             if (id != null)
-                mapping.Id = id.GetIdentityMapping();
+                mapping.SetId(id.GetIdentityMapping());
 
             if (compositeId != null)
-                mapping.Id = compositeId.GetCompositeIdMapping();
+                mapping.SetId(compositeId.GetCompositeIdMapping());
 
-            if (!mapping.IsSpecified("TableName"))
-                mapping.SetDefaultValue(x => x.TableName, GetDefaultTableName());
+            //if (!mapping.IsSpecified("TableName"))
+            //    mapping.SetDefaultValue(x => x.TableName, GetDefaultTableName());
 
             foreach (var filter in filters)
                 mapping.AddFilter(filter.GetFilterMapping());
@@ -102,16 +266,14 @@ namespace FluentNHibernate.Mapping
             foreach (var storedProcedure in storedProcedures)
                 mapping.AddStoredProcedure(storedProcedure.GetStoredProcedureMapping());
 
-            mapping.Tuplizer = tuplizerMapping;
+            mapping.Attributes.Set("Tupelizer", tuplizerMapping);
 
-            if (entityAutomapper != null)
-            {
-                var automappingResult = entityAutomapper.Map(typeof(T), GetMappedProperties(mapping));
+            IMappingResult result = new ManualResult(typeof(T), mapping);
 
-                automappingResult.ApplyTo(mapping);
-            }
+            if (shouldAutomap)
+                result = new AutomappingResult(typeof(T), automappingStrategy, result);
 
-            return mapping;
+            return result;
         }
 
         IList<string> GetMappedProperties(ClassMapping mapping)
@@ -155,11 +317,6 @@ namespace FluentNHibernate.Mapping
                 hibernateMapping.AddImport(import.GetImportMapping());
 
             return hibernateMapping;
-        }
-
-        IEnumerable<string> IMappingProvider.GetIgnoredProperties()
-        {
-            return new string[0];
         }
 
         public HibernateMappingPart HibernateMapping
@@ -495,18 +652,7 @@ namespace FluentNHibernate.Mapping
         /// </summary>
         public void Automap()
         {
-            Automap(new DefaultAutomappingSteps());
-        }
-
-        /// <summary>
-        /// Automap this entity. Any calls you make to <see cref="ClasslikeMapBase{T}.Map(System.Linq.Expressions.Expression{System.Func{T,object}})"/>,
-        /// <see cref="ClasslikeMapBase{T}.References{TOther}(System.Linq.Expressions.Expression{System.Func{T,TOther}})"/>, or any of the other methods
-        /// will stop those properties from being automapped.
-        /// </summary>
-        /// <param name="discoveryRules">Property discovery rules for use when automapping.</param>
-        public void Automap(IAutomappingDiscoveryRules discoveryRules)
-        {
-            Automap(new DefaultAutomappingSteps(new DefaultDiscoveryRules()));
+            Automap(new DefaultAutomappingStrategy());
         }
 
         /// <summary>
@@ -515,9 +661,11 @@ namespace FluentNHibernate.Mapping
         /// will stop those properties from being automapped.
         /// </summary>
         /// <param name="steps">Automapping steps used to identify and map specific properties.</param>
-        public void Automap(IAutomappingStepSet steps)
+        public void Automap(IAutomappingStrategy strategy)
         {
-            entityAutomapper = new EntityAutomapper(steps, new NullConventionFinder());
+            shouldAutomap = nextBool;
+            nextBool = true;
+            automappingStrategy = strategy;
         }
     }
 }

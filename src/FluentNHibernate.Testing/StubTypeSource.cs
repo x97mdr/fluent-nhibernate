@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using FluentNHibernate.Mapping;
+using FluentNHibernate.Sources;
 
 namespace FluentNHibernate.Testing
 {
@@ -11,7 +14,7 @@ namespace FluentNHibernate.Testing
             : this(new[] { type })
         {}
 
-        public StubTypeSource(IEnumerable<Type> types)
+        public StubTypeSource(params Type[] types)
         {
             this.types = types;
         }
@@ -21,4 +24,24 @@ namespace FluentNHibernate.Testing
             return types;
         }
     }
+
+    internal class StubMappingSource : IMappingSource
+    {
+        readonly IMappingProvider[] providers;
+
+        public StubMappingSource(IMappingProvider provider)
+            : this(new[] { provider })
+        { }
+
+        public StubMappingSource(params IMappingProvider[] providers)
+        {
+            this.providers = providers;
+        }
+
+        public IEnumerable<IMappingResult> GetResults()
+        {
+            return providers.Select(x => x.GetClassMapping());
+        }
+    }
+
 }

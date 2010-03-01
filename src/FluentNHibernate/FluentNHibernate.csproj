@@ -71,7 +71,6 @@
     <Compile Include="Automapping\Alterations\AutoMappingOverrideAlteration.cs" />
     <Compile Include="Automapping\Alterations\IAutoMappingAlteration.cs" />
     <Compile Include="Automapping\Alterations\IAutoMappingOverride.cs" />
-    <Compile Include="AssemblyTypeSource.cs" />
     <Compile Include="Automapping\AutoCollectionCreator.cs" />
     <Compile Include="Automapping\AutoCompositeIdentityPart.cs" />
     <Compile Include="Automapping\AutoEntityCollection.cs" />
@@ -80,6 +79,7 @@
     <Compile Include="Automapping\AutoMap.cs" />
     <Compile Include="Automapping\AutoMapping.cs" />
     <Compile Include="Automapping\Steps\MappingMetaData.cs" />
+    <Compile Include="AV2\TypeVisitor.cs" />
     <Compile Include="MappingModel\Buckets\IMemberBucketInspector.cs" />
     <Compile Include="MappingModel\Buckets\IMergableWithBucket.cs" />
     <Compile Include="Automapping\Results\EmptyResult.cs" />
@@ -109,11 +109,7 @@
     <Compile Include="Automapping\IAutoMappingAlteration.cs" />
     <Compile Include="Automapping\InlineOverride.cs" />
     <Compile Include="Automapping\IPropertyIgnorer.cs" />
-    <Compile Include="CombinedAssemblyTypeSource.cs" />
     <Compile Include="Conventions\NullConventionFinder.cs" />
-    <Compile Include="ITypeSource.cs" />
-    <Compile Include="Automapping\PrivateAutoMapper.cs" />
-    <Compile Include="Automapping\PrivateAutoPersistenceModel.cs" />
     <Compile Include="Automapping\SubclassStrategy.cs" />
     <Compile Include="Cfg\Db\DB2Configuration.cs" />
     <Compile Include="Cfg\Db\DB2ConnectionStringBuilder.cs" />
@@ -408,8 +404,14 @@
     <Compile Include="MappingModel\EqualityExtensions.cs" />
     <Compile Include="MappingModel\Buckets\IMemberBucket.cs" />
     <Compile Include="MappingModel\Buckets\IMemberBucketModifier.cs" />
+    <Compile Include="Mapping\ManualResult.cs" />
     <Compile Include="Mapping\Providers\IExternalComponentMappingProvider.cs" />
     <Compile Include="Mapping\Providers\IReferenceComponentMappingProvider.cs" />
+    <Compile Include="Sources\AssemblyTypeSource.cs" />
+    <Compile Include="Sources\CombinedAssemblyTypeSource.cs" />
+    <Compile Include="Sources\FluentTypeSource.cs" />
+    <Compile Include="Sources\ITypeSource.cs" />
+    <Compile Include="Sources\RestrictedTypeSource.cs" />
     <Compile Include="Utils\Extensions.cs" />
     <Compile Include="Visitors\AmbiguousComponentReferenceException.cs" />
     <Compile Include="Visitors\BiDirectionalManyToManyPairingVisitor.cs" />
@@ -460,7 +462,6 @@
     <Compile Include="Mapping\GeneratorBuilder.cs" />
     <Compile Include="Mapping\Providers\IAnyMappingProvider.cs" />
     <Compile Include="Mapping\Providers\ICacheMappingProvider.cs" />
-    <Compile Include="Mapping\Providers\IComponentMappingProvider.cs" />
     <Compile Include="Mapping\Providers\IIdentityMappingProvider.cs" />
     <Compile Include="Mapping\Providers\IJoinMappingProvider.cs" />
     <Compile Include="Mapping\Providers\IManyToOneMappingProvider.cs" />
@@ -552,7 +553,6 @@
     <Compile Include="MappingModel\ClassBased\ClassMappingBase.cs" />
     <Compile Include="MappingModel\ClassBased\ComponentMapping.cs" />
     <Compile Include="MappingModel\ClassBased\ComponentMappingBase.cs" />
-    <Compile Include="MappingModel\ClassBased\DynamicComponentMapping.cs" />
     <Compile Include="MappingModel\ClassBased\IComponentMapping.cs" />
     <Compile Include="MappingModel\ClassBased\SubclassMapping.cs" />
     <Compile Include="MappingModel\Collections\ArrayMapping.cs" />

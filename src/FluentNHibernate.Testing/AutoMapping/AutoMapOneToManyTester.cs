@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using FluentNHibernate.Automapping.Rules;
 using FluentNHibernate.Automapping.Steps;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Collections;
 using FluentNHibernate.Utils;
@@ -20,7 +21,7 @@ namespace FluentNHibernate.Testing.Automapping
         [SetUp]
         public void CreateMapper()
         {
-            mapper = new OneToManyStep(new DefaultDiscoveryRules());
+            mapper = new OneToManyStep(new DefaultAutomappingStrategy());
         }
 
         [Test]

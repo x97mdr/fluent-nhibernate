@@ -53,7 +53,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
 
         private void VerifyModel(Action<KeyPropertyMapping> modelVerification)
         {
-            model.Add(mapping);
+            model.AddMappingsSource(new StubMappingSource(mapping));
 
             var generatedModels = model.BuildMappings();
             var modelInstance = generatedModels

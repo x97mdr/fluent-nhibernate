@@ -62,6 +62,8 @@
     <Compile Include="Automapping\Fixtures\EntityWithStaticProperties.cs" />
     <Compile Include="Automapping\Fixtures\FakeMembers.cs" />
     <Compile Include="Automapping\Fixtures\StubTypeSource.cs" />
+    <Compile Include="Automapping\Steps\ManyToOneStepSpecs.cs" />
+    <Compile Include="Automapping\v2-AutomappingSpecs.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="FluentInterface\ClasslikeBehaviors.cs" />
     <Compile Include="FluentInterface\ClassMapSpecs\ClassMapSpecs.Automap.cs" />

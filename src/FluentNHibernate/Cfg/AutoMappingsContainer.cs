@@ -9,9 +9,9 @@ namespace FluentNHibernate.Cfg
     /// <summary>
     /// Container for automatic mappings
     /// </summary>
-    public class AutoMappingsContainer : IEnumerable<AutoPersistenceModel>
+    public class AutoMappingsContainer : IEnumerable<PersistenceModel>
     {
-        private readonly IList<AutoPersistenceModel> mappings = new List<AutoPersistenceModel>();
+        private readonly IList<PersistenceModel> mappings = new List<PersistenceModel>();
         private string exportPath;
 
         internal AutoMappingsContainer()
@@ -22,7 +22,7 @@ namespace FluentNHibernate.Cfg
         /// </summary>
         /// <param name="model">Lambda returning an auto mapping setup</param>
         /// <returns>Auto mappings configuration</returns>
-        public AutoMappingsContainer Add(Func<AutoPersistenceModel> model)
+        public AutoMappingsContainer Add(Func<AutomappingBuilder> model)
         {
             return Add(model());
         }
@@ -32,9 +32,9 @@ namespace FluentNHibernate.Cfg
         /// </summary>
         /// <param name="model">Auto mapping setup</param>
         /// <returns>Auto mappings configuration</returns>
-        public AutoMappingsContainer Add(AutoPersistenceModel model)
+        public AutoMappingsContainer Add(AutomappingBuilder model)
         {
-            mappings.Add(model);
+            mappings.Add(model.CreateModel());
             WasUsed = true;
             return this;
         }
@@ -70,7 +70,7 @@ namespace FluentNHibernate.Cfg
             }
         }
 
-        public IEnumerator<AutoPersistenceModel> GetEnumerator()
+        public IEnumerator<PersistenceModel> GetEnumerator()
         {
             return mappings.GetEnumerator();
         }

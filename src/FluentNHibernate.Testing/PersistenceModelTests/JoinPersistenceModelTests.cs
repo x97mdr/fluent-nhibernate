@@ -31,7 +31,7 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
             classMap.Id(x => x.Id);
             classMap.Join("other", m => m.Map(x => x.Property));
 
-            model.Add(classMap);
+            model.AddMappingsSource(new StubMappingSource(classMap));
             model.Configure(cfg);
 
             cfg.ClassMappings.First()

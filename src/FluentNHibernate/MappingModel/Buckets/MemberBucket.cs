@@ -10,6 +10,7 @@ namespace FluentNHibernate.MappingModel.Buckets
 {
     public class MemberBucket : IMappingBase, IMemberBucket
     {
+        AttributeStore attributes = new AttributeStore();
         private readonly List<PropertyMapping> properties;
         private readonly List<ICollectionMapping> collections;
         private readonly List<ManyToOneMapping> references;
@@ -21,6 +22,10 @@ namespace FluentNHibernate.MappingModel.Buckets
         private readonly List<StoredProcedureMapping> storedProcedures;
 
         public MemberBucket()
+            : this(new AttributeStore())
+        {}
+
+        public MemberBucket(AttributeStore underlyingStore)
         {
             properties = new List<PropertyMapping>();
             collections = new List<ICollectionMapping>();
@@ -31,6 +36,7 @@ namespace FluentNHibernate.MappingModel.Buckets
             joins = new List<JoinMapping>();
             filters = new List<FilterMapping>();
             storedProcedures = new List<StoredProcedureMapping>();
+            attributes = underlyingStore;
         }
 
         public IEnumerable<PropertyMapping> Properties
@@ -75,6 +81,10 @@ namespace FluentNHibernate.MappingModel.Buckets
 
         public IIdentityMapping Id { get; private set; }
         public VersionMapping Version { get; private set; }
+        public AttributeStore Attributes
+        {
+            get { return attributes; }
+        }
 
         public IEnumerable<StoredProcedureMapping> StoredProcedures
         {
@@ -285,6 +295,7 @@ namespace FluentNHibernate.MappingModel.Buckets
 
             Id = bucket.Id ?? Id;
             Version = bucket.Version ?? Version;
+            attributes = bucket.Attributes != null ? bucket.Attributes.Clone() : attributes;
         }
     }
 }

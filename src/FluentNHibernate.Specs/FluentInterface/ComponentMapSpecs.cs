@@ -4,6 +4,7 @@ using FluentNHibernate.Mapping;
 using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
+using FluentNHibernate.Specs.Automapping.Fixtures;
 using Machine.Specifications;
 
 namespace FluentNHibernate.Specs.FluentInterface
@@ -22,7 +23,11 @@ namespace FluentNHibernate.Specs.FluentInterface
         };
 
         Because of = () =>
-            mapping = (component as IExternalComponentMappingProvider).GetComponentMapping();
+        {
+            mapping = new ComponentMapping(ComponentType.Component);
+            var result = (component as IExternalComponentMappingProvider).GetClassMapping();
+            result.ApplyTo(mapping);
+        };
 
         It should_create_an_external_component_mapping = () =>
             mapping.ShouldBeOfType<ExternalComponentMapping>();
@@ -84,10 +89,10 @@ namespace FluentNHibernate.Specs.FluentInterface
         private class Target
         {
             public int Id { get; set; }
-            public Component Component { get; set;}
+            public Component Component { get; set; }
         }
 
-        private class Component {}
+        private class Component { }
     }
 
     public class when_compiling_the_mappings_with_a_reference_component_and_a_related_external_component
@@ -101,9 +106,8 @@ namespace FluentNHibernate.Specs.FluentInterface
             class_map.Id(x => x.Id);
             class_map.Component(x => x.Component);
 
-            persistence_model = new FluentNHibernate.PersistenceModel();
-            persistence_model.Add(class_map);
-            persistence_model.Add(component_map);
+            persistence_model = new PersistenceModel();
+            persistence_model.AddMappingsSource(new StubMappingSource(class_map, component_map));
         };
 
         Because of = () =>

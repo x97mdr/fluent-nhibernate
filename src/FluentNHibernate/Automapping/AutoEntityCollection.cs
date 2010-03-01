@@ -1,6 +1,7 @@
 using FluentNHibernate.Automapping.Results;
 using FluentNHibernate.Automapping.Rules;
 using FluentNHibernate.Automapping.Steps;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Buckets;
 using FluentNHibernate.MappingModel.ClassBased;
@@ -11,14 +12,14 @@ namespace FluentNHibernate.Automapping
 {
     public class AutoEntityCollection : IAutomappingStep
     {
-        readonly IAutomappingDiscoveryRules rules;
         readonly AutoKeyMapper keys;
-        AutoCollectionCreator collections;
+        readonly AutoCollectionCreator collections;
+        readonly IAutomappingStrategy strategy;
 
-        public AutoEntityCollection(IAutomappingDiscoveryRules rules)
+        public AutoEntityCollection(IAutomappingStrategy strategy)
         {
-            this.rules = rules;
-            keys = new AutoKeyMapper(rules);
+            this.strategy = strategy;
+            keys = new AutoKeyMapper(strategy.GetRules());
             collections = new AutoCollectionCreator();
         }
 
@@ -28,7 +29,7 @@ namespace FluentNHibernate.Automapping
                 property.PropertyType.Namespace.In("System.Collections.Generic", "Iesi.Collections.Generic");
         }
 
-        public IAutomappingResult Map(MappingMetaData metaData)
+        public IMappingResult Map(MappingMetaData metaData)
         {
             if (metaData.Member.DeclaringType != metaData.EntityType)
                 return new EmptyResult();
@@ -43,9 +44,9 @@ namespace FluentNHibernate.Automapping
             keys.SetKey(metaData, mapping);
 
             var members = new MemberBucket();
-            members.AddCollection(mapping);  
-            
-            return new AutomappingResult(members);
+            members.AddCollection(mapping);
+
+            return new AutomappingResult(metaData.EntityType, strategy, members);
         }
 
         private void SetRelationship(MappingMetaData metaData, ICollectionMapping mapping)

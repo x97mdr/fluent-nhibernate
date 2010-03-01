@@ -8,13 +8,13 @@ using FluentNHibernate.Utils;
 
 namespace FluentNHibernate.Mapping
 {
-    public class SubclassMap<T> : ClasslikeMapBase<T>, IIndeterminateSubclassMappingProvider
+    public class SubclassMap<T> : ClasslikeMapBase<T>, IMappingProvider
     {
         private readonly AttributeStore<SubclassMapping> attributes = new AttributeStore<SubclassMapping>();
 
         // this is a bit weird, but we need a way of delaying the generation of the subclass mappings until we know
         // what the parent subclass type is...
-        private readonly IDictionary<Type, IIndeterminateSubclassMappingProvider> indetermineateSubclasses = new Dictionary<Type, IIndeterminateSubclassMappingProvider>();
+        private readonly IDictionary<Type, IMappingProvider> indetermineateSubclasses = new Dictionary<Type, IMappingProvider>();
         private bool nextBool = true;
         private IList<JoinMapping> joins = new List<JoinMapping>();
 
@@ -28,56 +28,63 @@ namespace FluentNHibernate.Mapping
             }
         }
 
-        SubclassMapping IIndeterminateSubclassMappingProvider.GetSubclassMapping(SubclassMapping mapping)
+        public Type Type
         {
-            GenerateNestedSubclasses(mapping);
+            get { return typeof(T); }
+        }
 
-            attributes.SetDefault(x => x.Type, typeof(T));
-            attributes.SetDefault(x => x.Name, typeof(T).AssemblyQualifiedName);
-            attributes.SetDefault(x => x.DiscriminatorValue, typeof(T).Name);
+        IMappingResult IMappingProvider.GetClassMapping()
+        {
+            //GenerateNestedSubclasses(mapping);
 
-            // TODO: un-hardcode this
-            var key = new KeyMapping();
-            key.AddDefaultColumn(new ColumnMapping { Name = typeof(T).BaseType.Name + "_id" });
+            //attributes.SetDefault(x => x.Type, typeof(T));
+            //attributes.SetDefault(x => x.Name, typeof(T).AssemblyQualifiedName);
+            //attributes.SetDefault(x => x.DiscriminatorValue, typeof(T).Name);
 
-            attributes.SetDefault(x => x.TableName, GetDefaultTableName());
-            attributes.SetDefault(x => x.Key, key);
+            //// TODO: un-hardcode this
+            //var key = new KeyMapping();
+            //key.AddDefaultColumn(new ColumnMapping { Name = typeof(T).BaseType.Name + "_id" });
 
-            // TODO: this is nasty, we should find a better way
-            mapping.OverrideAttributes(attributes.CloneInner());
+            //attributes.SetDefault(x => x.TableName, GetDefaultTableName());
+            //attributes.SetDefault(x => x.Key, key);
 
-            foreach (var join in joins)
-                mapping.AddJoin(join);
+            //// TODO: this is nasty, we should find a better way
+            //mapping.OverrideAttributes(attributes.CloneInner());
 
-            foreach (var property in properties)
-                mapping.AddProperty(property.GetPropertyMapping());
+            //foreach (var join in joins)
+            //    mapping.AddJoin(join);
 
-            foreach (var component in components)
-                mapping.AddComponent(component.GetComponentMapping());
+            //foreach (var property in properties)
+            //    mapping.AddProperty(property.GetPropertyMapping());
 
-            foreach (var oneToOne in oneToOnes)
-                mapping.AddOneToOne(oneToOne.GetOneToOneMapping());
+            //foreach (var component in components)
+            //    mapping.AddComponent(component.GetComponentMapping());
 
-            foreach (var collection in collections)
-                mapping.AddCollection(collection.GetCollectionMapping());
+            //foreach (var oneToOne in oneToOnes)
+            //    mapping.AddOneToOne(oneToOne.GetOneToOneMapping());
 
-            foreach (var reference in references)
-                mapping.AddReference(reference.GetManyToOneMapping());
+            //foreach (var collection in collections)
+            //    mapping.AddCollection(collection.GetCollectionMapping());
 
-            foreach (var any in anys)
-                mapping.AddAny(any.GetAnyMapping());
+            //foreach (var reference in references)
+            //    mapping.AddReference(reference.GetManyToOneMapping());
 
-            return mapping;
+            //foreach (var any in anys)
+            //    mapping.AddAny(any.GetAnyMapping());
+
+            //return mapping;
+            throw new NotImplementedException();
         }
 
         private void GenerateNestedSubclasses(SubclassMapping mapping)
         {
             foreach (var subclassType in indetermineateSubclasses.Keys)
             {
-                var emptySubclassMapping = new SubclassMapping(mapping.SubclassType);
-                var subclassMapping = indetermineateSubclasses[subclassType].GetSubclassMapping(emptySubclassMapping);
+                //var emptySubclassMapping = new SubclassMapping(mapping.SubclassType);
+                //var subclassMapping = indetermineateSubclasses[subclassType].GetSubclassMapping(emptySubclassMapping);
 
-                mapping.AddSubclass(subclassMapping);
+                //mapping.AddSubclass(subclassMapping);
+                throw new NotImplementedException();
             }
         }
 

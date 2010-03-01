@@ -19,7 +19,7 @@ namespace FluentNHibernate.Testing.AutoMapping.Apm.Conventions
                 AutoMap.Source(new StubTypeSource(typeof(Target)))
                     .Conventions.Add<HasManyConvention>();
 
-            model.BuildMappings()
+            model.CreateModel().BuildMappings()
                 .First()
                 .Classes.First()
                 .Collections.First()
@@ -33,7 +33,7 @@ namespace FluentNHibernate.Testing.AutoMapping.Apm.Conventions
                 AutoMap.Source(new StubTypeSource(typeof(Target)))
                     .Conventions.Add<FKConvention>();
 
-            model.BuildMappings()
+            model.CreateModel().BuildMappings()
                 .First()
                 .Classes.First()
                 .Collections.First()

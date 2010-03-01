@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using FluentNHibernate.Automapping.Results;
 using FluentNHibernate.Automapping.Rules;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Buckets;
 using FluentNHibernate.MappingModel.ClassBased;
@@ -11,11 +12,11 @@ namespace FluentNHibernate.Automapping.Steps
 {
     public class ManyToManyStep : IAutomappingStep
     {
-        private readonly IAutomappingDiscoveryRules rules;
+        readonly IAutomappingStrategy strategy;
 
-        public ManyToManyStep(IAutomappingDiscoveryRules rules)
+        public ManyToManyStep(IAutomappingStrategy strategy)
         {
-            this.rules = rules;
+            this.strategy = strategy;
         }
 
         public bool IsMappable(Member property)
@@ -83,7 +84,7 @@ namespace FluentNHibernate.Automapping.Steps
             var columnName = metaData.Member.DeclaringType.Name + "_id";
 
             //if (container is ComponentMapping)
-            //    columnName = rules.ComponentColumnPrefixRule(((ComponentMapping)container).Member) + columnName;
+            //    columnName = strategy.ComponentColumnPrefixRule(((ComponentMapping)container).Member) + columnName;
 
             var key = new KeyMapping();
 
@@ -93,10 +94,10 @@ namespace FluentNHibernate.Automapping.Steps
             mapping.SetDefaultValue(x => x.Key, key);
         }
 
-        public IAutomappingResult Map(MappingMetaData metaData)
+        public IMappingResult Map(MappingMetaData metaData)
         {
             var inverseProperty = GetInverseProperty(metaData.Member);
-            var parentSide = rules.FindParentSideForManyToManyRule(metaData.Member.DeclaringType, inverseProperty.DeclaringType);
+            var parentSide = strategy.GetRules().FindParentSideForManyToManyRule(metaData.Member.DeclaringType, inverseProperty.DeclaringType);
             var mapping = GetCollection(metaData.Member);
 
             var members = new MemberBucket();
@@ -105,7 +106,7 @@ namespace FluentNHibernate.Automapping.Steps
 
             members.AddCollection(mapping);
 
-            return new AutomappingResult(members);
+            return new AutomappingResult(metaData.EntityType, strategy, members);
         }
     }
 }

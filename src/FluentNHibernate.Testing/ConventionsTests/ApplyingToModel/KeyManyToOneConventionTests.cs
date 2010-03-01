@@ -69,7 +69,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.ApplyingToModel
                 .KeyProperty(x => x.Id)
                 .KeyReference(x => x.Parent);
 
-            model.Add(classMap);
+            model.AddMappingsSource(new StubMappingSource(classMap));
 
             var generatedModels = model.BuildMappings();
             var modelInstance = generatedModels

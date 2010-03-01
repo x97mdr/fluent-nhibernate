@@ -14,7 +14,7 @@ namespace FluentNHibernate.Testing.Visitors
         {
             external_component_mapping = new ExternalComponentMapping(ComponentType.Component) { Type = typeof(ComponentTarget) };
             var external_component = Stub<IExternalComponentMappingProvider>.Create(cfg =>
-                cfg.Stub(x => x.GetComponentMapping()).Return(external_component_mapping));
+                cfg.Stub(x => x.GetClassMapping()).Return(null /* external_component_mapping */));
 
             visitor = new ComponentReferenceResolutionVisitor(new[] { external_component });
             reference_component_mapping = new ReferenceComponentMapping(ComponentType.Component, null, null, null, null);
@@ -88,13 +88,13 @@ namespace FluentNHibernate.Testing.Visitors
         {
             var external_component_one = Stub<IExternalComponentMappingProvider>.Create(cfg =>
             {
-                cfg.Stub(x => x.GetComponentMapping()).Return(new ExternalComponentMapping(ComponentType.Component) { Type = typeof(ComponentTarget) });
-                cfg.Stub(x => x.Type).Return(typeof(ComponentTarget));
+                cfg.Stub(x => x.GetClassMapping()).Return(null /* new ExternalComponentMapping { Type = typeof(ComponentType) } */);
+                cfg.Stub(x => x.Type).Return(typeof(ComponentType));
             });
             var external_component_two = Stub<IExternalComponentMappingProvider>.Create(cfg =>
             {
-                cfg.Stub(x => x.GetComponentMapping()).Return(new ExternalComponentMapping(ComponentType.Component) { Type = typeof(ComponentTarget) });
-                cfg.Stub(x => x.Type).Return(typeof(ComponentTarget));
+                cfg.Stub(x => x.GetClassMapping()).Return(null /* new ExternalComponentMapping { Type = typeof(ComponentType) } */);
+                cfg.Stub(x => x.Type).Return(typeof(ComponentType));
             });
 
             visitor = new ComponentReferenceResolutionVisitor(new[] { external_component_one, external_component_two});

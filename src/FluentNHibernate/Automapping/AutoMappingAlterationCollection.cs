@@ -72,7 +72,7 @@ namespace FluentNHibernate.Automapping
         /// Apply alterations to an AutoPersisteceModel
         /// </summary>
         /// <param name="model">AutoPersistenceModel instance to apply alterations to</param>
-        protected internal void Apply(AutoPersistenceModel model)
+        protected internal void Apply(PersistenceModel model)
         {
             foreach (var alteration in alterations)
             {
