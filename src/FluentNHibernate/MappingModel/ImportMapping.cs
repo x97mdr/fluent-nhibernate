@@ -1,21 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
-    public class ImportMapping : MappingBase
+    public class ImportMapping : MappingBase, IMapping, ITypeMapping
     {
-        private readonly AttributeStore<ImportMapping> attributes = new AttributeStore<ImportMapping>();
-
-        public ImportMapping()
-            : this(new AttributeStore())
-        {}
-
-        public ImportMapping(AttributeStore underlyingStore)
-        {
-            attributes = new AttributeStore<ImportMapping>(underlyingStore);
-        }
+        readonly ValueStore values = new ValueStore();
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
         {
@@ -24,36 +16,31 @@ namespace FluentNHibernate.MappingModel
 
         public string Rename
         {
-            get { return attributes.Get(x => x.Rename); }
-            set { attributes.Set(x => x.Rename, value); }
+            get { return values.Get(Attr.Rename); }
+            set { values.Set(Attr.Rename, value); }
         }
 
         public TypeReference Class
         {
-            get { return attributes.Get(x => x.Class); }
-            set { attributes.Set(x => x.Class, value); }
+            get { return values.Get<TypeReference>(Attr.Class); }
+            set { values.Set(Attr.Class, value); }
         }
 
         public override bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);
+            return false;
         }
 
-        public bool HasValue<TResult>(Expression<Func<ImportMapping, TResult>> property)
+        public bool HasValue(Attr attr)
         {
-            return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<ImportMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
+            return values.HasValue(attr);
         }
 
         public bool Equals(ImportMapping other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.attributes, attributes);
+            return Equals(other.values, values);
         }
 
         public override bool Equals(object obj)
@@ -66,7 +53,22 @@ namespace FluentNHibernate.MappingModel
 
         public override int GetHashCode()
         {
-            return (attributes != null ? attributes.GetHashCode() : 0);
+            return (values != null ? values.GetHashCode() : 0);
+        }
+
+        public void AddChild(IMapping child)
+        {
+            
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        {
+            values.Merge(otherValues);
+        }
+
+        public void Initialise(Type type)
+        {
+            Class = new TypeReference(type);
         }
     }
 }

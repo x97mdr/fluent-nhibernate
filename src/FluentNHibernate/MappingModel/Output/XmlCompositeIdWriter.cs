@@ -29,19 +29,19 @@ namespace FluentNHibernate.MappingModel.Output
 
             var element = document.AddElement("composite-id");
 
-            if (mapping.HasValue(x => x.Access))
+            if (mapping.HasValue(Attr.Access))
                 element.WithAtt("access", mapping.Access);
 
-            if (mapping.HasValue(x => x.Name))
+            if (mapping.HasValue(Attr.Name))
                 element.WithAtt("name", mapping.Name);
 
-            if (mapping.HasValue(x => x.Class))
+            if (mapping.HasValue(Attr.Class))
                 element.WithAtt("class", mapping.Class);
 
-            if (mapping.HasValue(x => x.Mapped))
+            if (mapping.HasValue(Attr.Mapped))
                 element.WithAtt("mapped", mapping.Mapped);
 
-            if (mapping.HasValue(x => x.UnsavedValue))
+            if (mapping.HasValue(Attr.UnsavedValue))
                 element.WithAtt("unsaved-value", mapping.UnsavedValue);
         }
 

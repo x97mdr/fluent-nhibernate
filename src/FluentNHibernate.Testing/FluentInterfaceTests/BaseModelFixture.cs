@@ -204,7 +204,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
                 structure.CreateMappingNode);
         }
 
-        protected static ModelTester<JoinPart<T>, JoinMapping> Join<T>(string table)
+        protected static ModelTester<JoinPart<T>, JoinMapping> Join<T>()
         {
             var structure = new FreeStructure<JoinMapping>();
             return new ModelTester<JoinPart<T>, JoinMapping>(
@@ -214,7 +214,8 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
 
         protected static ModelTester<HibernateMappingPart, HibernateMapping> HibernateMapping()
         {
-            var map = new HibernateMappingPart();
+            var structure = new FreeStructure<HibernateMapping>();
+            var map = new HibernateMappingPart(structure);
             return new ModelTester<HibernateMappingPart, HibernateMapping>(
                 () => map,
                 () => ((IHibernateMappingProvider)map).GetHibernateMapping());

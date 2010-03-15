@@ -9,7 +9,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         [Test]
         public void WithTableNameShouldSetModelTableNamePropertyToValue()
         {
-            Join<PropertyTarget>("table")
+            Join<PropertyTarget>()
                 .Mapping(m => { })
                 .ModelShouldMatch(x => x.TableName.ShouldEqual("table"));
         }
@@ -17,7 +17,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         [Test]
         public void SchemaIsShouldSetModelSchemaPropertyToValue()
         {
-            Join<PropertyTarget>("table")
+            Join<PropertyTarget>()
                 .Mapping(m => m.Schema("schema"))
                 .ModelShouldMatch(x => x.Schema.ShouldEqual("schema"));
         }
@@ -25,7 +25,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         [Test]
         public void FetchShouldSetModelFetchPropertyToValue()
         {
-            Join<PropertyTarget>("table")
+            Join<PropertyTarget>()
                 .Mapping(m => m.Fetch.Select())
                 .ModelShouldMatch(x => x.Fetch.ShouldEqual("select"));
         }
@@ -33,7 +33,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         [Test]
         public void InverseShouldSetModelInversePropertyToTrue()
         {
-            Join<PropertyTarget>("table")
+            Join<PropertyTarget>()
                 .Mapping(m => m.Inverse())
                 .ModelShouldMatch(x => x.Inverse.ShouldBeTrue());
         }
@@ -41,7 +41,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         [Test]
         public void NotInverseShouldSetModelInversePropertyToFalse()
         {
-            Join<PropertyTarget>("table")
+            Join<PropertyTarget>()
                 .Mapping(m => m.Not.Inverse())
                 .ModelShouldMatch(x => x.Inverse.ShouldBeFalse());
         }
@@ -49,7 +49,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         [Test]
         public void OptionalShouldSetModelOptionalPropertyToTrue()
         {
-            Join<PropertyTarget>("table")
+            Join<PropertyTarget>()
                 .Mapping(m => m.Optional())
                 .ModelShouldMatch(x => x.Optional.ShouldBeTrue());
         }
@@ -57,7 +57,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         [Test]
         public void NotOptionalShouldSetModelOptionalPropertyToFalse()
         {
-            Join<PropertyTarget>("table")
+            Join<PropertyTarget>()
                 .Mapping(m => m.Not.Optional())
                 .ModelShouldMatch(x => x.Optional.ShouldBeFalse());
         }
@@ -65,7 +65,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         [Test]
         public void CatalogShouldSetModelCatalogPropertyToValue()
         {
-            Join<PropertyTarget>("table")
+            Join<PropertyTarget>()
                 .Mapping(m => m.Catalog("catalog"))
                 .ModelShouldMatch(x => x.Catalog.ShouldEqual("catalog"));
         }
@@ -73,7 +73,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         [Test]
         public void SubselectShouldSetModelSubselectPropertyToValue()
         {
-            Join<PropertyTarget>("table")
+            Join<PropertyTarget>()
                 .Mapping(m => m.Subselect("subselect"))
                 .ModelShouldMatch(x => x.Subselect.ShouldEqual("subselect"));
         }

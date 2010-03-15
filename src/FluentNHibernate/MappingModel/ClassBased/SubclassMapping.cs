@@ -30,10 +30,6 @@ namespace FluentNHibernate.MappingModel.ClassBased
             base.AcceptVisitor(visitor);
         }
 
-        public override void MergeAttributes(AttributeStore store)
-        {
-        }
-
         public KeyMapping Key { get; set; }
 
         public override string Name

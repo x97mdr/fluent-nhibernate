@@ -416,7 +416,6 @@
     <Compile Include="Debugging.cs" />
     <Compile Include="DomainModel\Employees.cs" />
     <Compile Include="DomainModel\Music.cs" />
-    <Compile Include="MappingModel\AttributeStoreTester.cs" />
     <Compile Include="MappingModel\ClassMappingTester.cs" />
     <Compile Include="MappingModel\HibernateMappingTester.cs" />
     <Compile Include="MappingModel\MappingTestingExtensions.cs" />

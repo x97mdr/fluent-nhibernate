@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Xml;
-using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Output.Sorting;
 using FluentNHibernate.Utils;
@@ -33,28 +30,28 @@ namespace FluentNHibernate.MappingModel.Output
 
             element.WithAtt("xmlns", "urn:nhibernate-mapping-2.2");
 
-            if (mapping.HasValue(x => x.DefaultAccess))
+            if (mapping.HasValue(Attr.DefaultAccess))
                 element.WithAtt("default-access", mapping.DefaultAccess);
 
-            if (mapping.HasValue(x => x.AutoImport))
+            if (mapping.HasValue(Attr.AutoImport))
                 element.WithAtt("auto-import", mapping.AutoImport);
 
-            if (mapping.HasValue(x => x.Schema))
+            if (mapping.HasValue(Attr.Schema))
                 element.WithAtt("schema", mapping.Schema);
 
-            if (mapping.HasValue(x => x.DefaultCascade))
+            if (mapping.HasValue(Attr.DefaultCascade))
                 element.WithAtt("default-cascade", mapping.DefaultCascade);
 
-            if (mapping.HasValue(x => x.DefaultLazy))
+            if (mapping.HasValue(Attr.DefaultLazy))
                 element.WithAtt("default-lazy", mapping.DefaultLazy);
 
-            if (mapping.HasValue(x => x.Catalog))
+            if (mapping.HasValue(Attr.Catalog))
                 element.WithAtt("catalog", mapping.Catalog);
 
-            if (mapping.HasValue(x => x.Namespace))
+            if (mapping.HasValue(Attr.Namespace))
                 element.WithAtt("namespace", mapping.Namespace);
 
-            if (mapping.HasValue(x => x.Assembly))
+            if (mapping.HasValue(Attr.Assembly))
                 element.WithAtt("assembly", mapping.Assembly);
         }
 

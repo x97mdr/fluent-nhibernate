@@ -5,20 +5,10 @@ using NHibernate.Type;
 
 namespace FluentNHibernate.MappingModel
 {
-    public class FilterDefinitionMapping : MappingBase
+    public class FilterDefinitionMapping : MappingBase, IMapping
     {
-        private readonly AttributeStore<FilterMapping> attributes;
-        private readonly IDictionary<string, IType> parameters;
-
-        public FilterDefinitionMapping()
-            : this(new AttributeStore())
-        { }
-
-        public FilterDefinitionMapping(AttributeStore underlyingStore)
-        {
-            attributes = new AttributeStore<FilterMapping>(underlyingStore);
-            parameters = new Dictionary<string, IType>();
-        }
+        readonly ValueStore values = new ValueStore();
+        readonly IDictionary<string, IType> parameters = new Dictionary<string, IType>();
 
         public IDictionary<string, IType> Parameters
         {
@@ -27,14 +17,14 @@ namespace FluentNHibernate.MappingModel
 
         public string Name
         {
-            get { return attributes.Get(x => x.Name); }
-            set { attributes.Set(x => x.Name, value); }
+            get { return values.Get(Attr.Name); }
+            set { values.Set(Attr.Name, value); }
         }
 
         public string Condition
         {
-            get { return attributes.Get(x => x.Condition); }
-            set { attributes.Set(x => x.Condition, value); }
+            get { return values.Get(Attr.Condition); }
+            set { values.Set(Attr.Condition, value); }
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
@@ -44,14 +34,14 @@ namespace FluentNHibernate.MappingModel
 
         public override bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);
+            return false;
         }
 
         public bool Equals(FilterDefinitionMapping other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.attributes, attributes) &&
+            return Equals(other.values, values) &&
                 other.parameters.ContentEquals(parameters);
         }
 
@@ -67,8 +57,17 @@ namespace FluentNHibernate.MappingModel
         {
             unchecked
             {
-                return ((attributes != null ? attributes.GetHashCode() : 0) * 397) ^ (parameters != null ? parameters.GetHashCode() : 0);
+                return ((values != null ? values.GetHashCode() : 0) * 397) ^ (parameters != null ? parameters.GetHashCode() : 0);
             }
+        }
+
+        public void AddChild(IMapping child)
+        {
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        {
+            values.Merge(otherValues);
         }
     }
 }

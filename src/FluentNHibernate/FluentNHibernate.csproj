@@ -688,7 +688,6 @@
     <Compile Include="Mapping\SubClassPart.cs" />
     <Compile Include="Mapping\TypeMapping.cs" />
     <Compile Include="Mapping\VersionPart.cs" />
-    <Compile Include="MappingModel\AttributeStore.cs" />
     <Compile Include="MappingModel\Collections\IndexMapping.cs" />
     <Compile Include="MappingModel\Collections\ManyToManyMapping.cs" />
     <Compile Include="MappingModel\Collections\CollectionMapping.cs" />

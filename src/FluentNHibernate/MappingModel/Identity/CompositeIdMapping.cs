@@ -6,11 +6,11 @@ using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel.Identity
 {
-    public class CompositeIdMapping : MappingBase, IIdentityMapping, IMapping, IMemberMapping
+    public class CompositeIdMapping : MappingBase, IIdentityMapping, IMemberMapping
     {
-        private readonly AttributeStore<CompositeIdMapping> attributes = new AttributeStore<CompositeIdMapping>();
-        private readonly IList<KeyPropertyMapping> keyProperties = new List<KeyPropertyMapping>();
-        private readonly IList<KeyManyToOneMapping> keyManyToOnes = new List<KeyManyToOneMapping>();
+        readonly ValueStore values = new ValueStore();
+        readonly IList<KeyPropertyMapping> keyProperties = new List<KeyPropertyMapping>();
+        readonly IList<KeyManyToOneMapping> keyManyToOnes = new List<KeyManyToOneMapping>();
 
         public CompositeIdMapping()
         {
@@ -42,32 +42,32 @@ namespace FluentNHibernate.MappingModel.Identity
 
         public string Name
         {
-            get { return attributes.Get(x => x.Name); }
-            set { attributes.Set(x => x.Name, value); }
+            get { return values.Get(Attr.Name); }
+            set { values.Set(Attr.Name, value); }
         }
 
         public string Access
         {
-            get { return attributes.Get(x => x.Access); }
-            set { attributes.Set(x => x.Access, value); }
+            get { return values.Get(Attr.Access); }
+            set { values.Set(Attr.Access, value); }
         }
 
         public bool Mapped
         {
-            get { return attributes.Get(x => x.Mapped); }
-            set { attributes.Set(x => x.Mapped, value); }
+            get { return values.Get<bool>(Attr.Mapped); }
+            set { values.Set(Attr.Mapped, value); }
         }
 
         public TypeReference Class
         {
-            get { return attributes.Get(x => x.Class); }
-            set { attributes.Set(x => x.Class, value); }
+            get { return values.Get<TypeReference>(Attr.Class); }
+            set { values.Set(Attr.Class, value); }
         }
 
         public string UnsavedValue
         {
-            get { return attributes.Get(x => x.UnsavedValue); }
-            set { attributes.Set(x => x.UnsavedValue, value); }
+            get { return values.Get(Attr.UnsavedValue); }
+            set { values.Set(Attr.UnsavedValue, value); }
         }
 
         public IEnumerable<KeyPropertyMapping> KeyProperties
@@ -94,24 +94,19 @@ namespace FluentNHibernate.MappingModel.Identity
 
         public override bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);
+            return false;
         }
 
-        public bool HasValue<TResult>(Expression<Func<CompositeIdMapping, TResult>> property)
+        public bool HasValue(Attr attr)
         {
-            return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<CompositeIdMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
+            return values.HasValue(attr);
         }
 
         public bool Equals(CompositeIdMapping other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.attributes, attributes) &&
+            return Equals(other.values, values) &&
                 other.keyProperties.ContentEquals(keyProperties) &&
                 other.keyManyToOnes.ContentEquals(keyManyToOnes) &&
                 Equals(other.ContainingEntityType, ContainingEntityType);
@@ -129,7 +124,7 @@ namespace FluentNHibernate.MappingModel.Identity
         {
             unchecked
             {
-                int result = (attributes != null ? attributes.GetHashCode() : 0);
+                int result = (values != null ? values.GetHashCode() : 0);
                 result = (result * 397) ^ (keyProperties != null ? keyProperties.GetHashCode() : 0);
                 result = (result * 397) ^ (keyManyToOnes != null ? keyManyToOnes.GetHashCode() : 0);
                 result = (result * 397) ^ (ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0);
@@ -145,8 +140,9 @@ namespace FluentNHibernate.MappingModel.Identity
                 AddKeyManyToOne((KeyManyToOneMapping)child);
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> values)
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
         {
+            values.Merge(otherValues);
         }
     }
 }

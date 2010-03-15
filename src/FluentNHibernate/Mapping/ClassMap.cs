@@ -15,31 +15,23 @@ namespace FluentNHibernate.Mapping
 {
     public class ClassMap<T> : ClasslikeMapBase<T>, IMappingProvider
     {
-        private readonly OptimisticLockBuilder<ClassMap<T>> optimisticLock;
+        bool nextBool = true;
 
-        private readonly IList<ImportPart> imports = new List<ImportPart>();
-        private bool nextBool = true;
-
-        private readonly HibernateMappingPart hibernateMappingPart = new HibernateMappingPart();
-        private readonly PolymorphismBuilder<ClassMap<T>> polymorphism;
-        private SchemaActionBuilder<ClassMap<T>> schemaAction;
         protected TuplizerMapping tuplizerMapping;
 
         readonly IMappingStructure<ClassMapping> structure;
+        readonly IMappingStructure<HibernateMapping> mappingStructure;
         IMappingStructure<CacheMapping> cacheStructure;
 
         public ClassMap()
-            : this(new TypeStructure<ClassMapping>(typeof(T)))
+            : this(new TypeStructure<ClassMapping>(typeof(T)), new FreeStructure<HibernateMapping>())
         {}
 
-        ClassMap(IMappingStructure<ClassMapping> structure)
+        ClassMap(IMappingStructure<ClassMapping> structure, IMappingStructure<HibernateMapping> mappingStructure)
             : base(structure)
         {
             this.structure = structure;
-
-            optimisticLock = new OptimisticLockBuilder<ClassMap<T>>(this, value => structure.SetValue(Attr.OptimisticLock, value));
-            polymorphism = new PolymorphismBuilder<ClassMap<T>>(this, value => structure.SetValue(Attr.Polymorphism, value));
-            schemaAction = new SchemaActionBuilder<ClassMap<T>>(this, value => structure.SetValue(Attr.SchemaAction, value));
+            this.mappingStructure = mappingStructure;
         }
 
         /// <summary>
@@ -66,17 +58,12 @@ namespace FluentNHibernate.Mapping
 
         public HibernateMapping GetHibernateMapping()
         {
-            var hibernateMapping = ((IHibernateMappingProvider)hibernateMappingPart).GetHibernateMapping();
-
-            foreach (var import in imports)
-                hibernateMapping.AddImport(import.GetImportMapping());
-
-            return hibernateMapping;
+            return ((IHibernateMappingProvider)HibernateMapping).GetHibernateMapping();
         }
 
         public HibernateMappingPart HibernateMapping
         {
-            get { return hibernateMappingPart; }
+            get { return new HibernateMappingPart(mappingStructure); }
         }
 
         public virtual NaturalIdPart<T> NaturalId()
@@ -261,9 +248,10 @@ namespace FluentNHibernate.Mapping
         /// <typeparam name="TImport">Type to import.</typeparam>
         public ImportPart ImportType<TImport>()
         {
-            var part = new ImportPart(typeof(TImport));
+            var import = new TypeStructure<ImportMapping>(typeof(TImport));
+            var part = new ImportPart(import);
             
-            imports.Add(part);
+            mappingStructure.AddChild(import);
 
             return part;
         }
@@ -306,17 +294,17 @@ namespace FluentNHibernate.Mapping
         /// </summary>
         public OptimisticLockBuilder<ClassMap<T>> OptimisticLock
         {
-            get { return optimisticLock; }
+            get { return new OptimisticLockBuilder<ClassMap<T>>(this, value => structure.SetValue(Attr.OptimisticLock, value)); }
         }
 
         public PolymorphismBuilder<ClassMap<T>> Polymorphism
         {
-            get { return polymorphism; }
+            get { return new PolymorphismBuilder<ClassMap<T>>(this, value => structure.SetValue(Attr.Polymorphism, value)); }
         }
 
         public SchemaActionBuilder<ClassMap<T>> SchemaAction
         {
-            get { return schemaAction; }
+            get { return new SchemaActionBuilder<ClassMap<T>>(this, value => structure.SetValue(Attr.SchemaAction, value)); }
         }
 
         public void CheckConstraint(string constraint)

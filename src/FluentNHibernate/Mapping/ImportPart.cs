@@ -1,26 +1,23 @@
 using System;
 using System.Xml;
 using FluentNHibernate.MappingModel;
+using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Mapping
 {
     public class ImportPart
     {
-        private readonly AttributeStore<ImportMapping> attributes = new AttributeStore<ImportMapping>();
+        readonly IMappingStructure<ImportMapping> structure;
 
-        public ImportPart(Type importType)
+        public ImportPart(IMappingStructure<ImportMapping> structure)
         {
-            attributes.SetDefault(x => x.Class, new TypeReference(importType));
+            this.structure = structure;
         }
 
-        public void As(string alternativeName)
+        public ImportPart As(string alternativeName)
         {
-            attributes.Set( x=> x.Rename, alternativeName);
-        }
-
-        public ImportMapping GetImportMapping()
-        {
-            return new ImportMapping(attributes.CloneInner());
+            structure.SetValue(Attr.Rename, alternativeName);
+            return this;
         }
     }
 }

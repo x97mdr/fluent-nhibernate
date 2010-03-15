@@ -1,48 +1,46 @@
 using System.Diagnostics;
 using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
+using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Mapping
 {
     public class HibernateMappingPart : IHibernateMappingProvider
     {
-        private readonly CascadeExpression<HibernateMappingPart> defaultCascade;
-        private readonly AccessStrategyBuilder<HibernateMappingPart> defaultAccess;
-        private readonly AttributeStore<HibernateMapping> attributes = new AttributeStore<HibernateMapping>();
-        private bool nextBool = true;
+        readonly IMappingStructure<HibernateMapping> structure;
+        bool nextBool = true;
 
-        public HibernateMappingPart()
+        public HibernateMappingPart(IMappingStructure<HibernateMapping> structure)
         {
-            defaultCascade = new CascadeExpression<HibernateMappingPart>(this, value => attributes.Set(x => x.DefaultCascade, value));
-            defaultAccess = new AccessStrategyBuilder<HibernateMappingPart>(this, value => attributes.Set(x => x.DefaultAccess, value));
+            this.structure = structure;
         }
 
         public HibernateMappingPart Schema(string schema)
         {
-            attributes.Set(x => x.Schema, schema);
+            structure.SetValue(Attr.Schema, schema);
             return this;
         }
 
         public CascadeExpression<HibernateMappingPart> DefaultCascade
         {
-            get { return defaultCascade; }
+            get { return new CascadeExpression<HibernateMappingPart>(this, value => structure.SetValue(Attr.DefaultCascade, value)); }
         }
 
         public AccessStrategyBuilder<HibernateMappingPart> DefaultAccess
         {
-            get { return defaultAccess; }
+            get { return new AccessStrategyBuilder<HibernateMappingPart>(this, value => structure.SetValue(Attr.DefaultAccess, value)); }
         }
 
         public HibernateMappingPart AutoImport()
         {
-            attributes.Set(x => x.AutoImport, nextBool);
+            structure.SetValue(Attr.AutoImport, nextBool);
             nextBool = true;
             return this;
         }
 
         public HibernateMappingPart DefaultLazy()
         {
-            attributes.Set(x => x.DefaultLazy, nextBool);
+            structure.SetValue(Attr.DefaultLazy, nextBool);
             nextBool = true;
             return this;
         }
@@ -59,25 +57,30 @@ namespace FluentNHibernate.Mapping
 
         public HibernateMappingPart Catalog(string catalog)
         {
-            attributes.Set(x => x.Catalog, catalog);
+            structure.SetValue(Attr.Catalog, catalog);
             return this;
         }
 
         public HibernateMappingPart Namespace(string ns)
         {
-            attributes.Set(x => x.Namespace, ns);
+            structure.SetValue(Attr.Namespace, ns);
             return this;
         }
 
         public HibernateMappingPart Assembly(string assembly)
         {
-            attributes.Set(x => x.Assembly, assembly);
+            structure.SetValue(Attr.Assembly, assembly);
             return this;
         }
 
         HibernateMapping IHibernateMappingProvider.GetHibernateMapping()
         {
-            return new HibernateMapping(attributes.CloneInner());
+            // TODO: Extract this stuff into the PersistenceModel
+            var mapping = structure.CreateMappingNode();
+
+            structure.ApplyCustomisations();
+
+            return (HibernateMapping)mapping;
         }
     }
 }

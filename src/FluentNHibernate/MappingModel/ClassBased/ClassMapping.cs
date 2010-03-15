@@ -91,11 +91,6 @@ namespace FluentNHibernate.MappingModel.ClassBased
             base.AcceptVisitor(visitor);
         }
 
-        public override void MergeAttributes(AttributeStore store)
-        {
-            //values.Merge(new AttributeStore<ClassMapping>(store));
-        }
-
         public string TableName
         {
             get { return values.Get(Attr.Table); }

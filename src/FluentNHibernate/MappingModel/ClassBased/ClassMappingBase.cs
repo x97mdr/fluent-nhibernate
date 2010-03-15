@@ -165,8 +165,6 @@ namespace FluentNHibernate.MappingModel.ClassBased
             return string.Format("ClassMapping({0})", Type.Name);
         }
 
-        public abstract void MergeAttributes(AttributeStore store);
-
         public bool Equals(ClassMappingBase other)
         {
             if (ReferenceEquals(null, other)) return false;

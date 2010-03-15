@@ -7,23 +7,19 @@ namespace FluentNHibernate.MappingModel
 {
     public class NaturalIdMapping : MappingBase, IMapping
     {
-        private readonly AttributeStore<NaturalIdMapping> attributes;
-        private readonly IList<PropertyMapping> properties = new List<PropertyMapping>();
-        private readonly IList<ManyToOneMapping> manyToOnes = new List<ManyToOneMapping>();
+        readonly ValueStore values = new ValueStore();
+        readonly IList<PropertyMapping> properties = new List<PropertyMapping>();
+        readonly IList<ManyToOneMapping> manyToOnes = new List<ManyToOneMapping>();
 
         public NaturalIdMapping()
-            : this(new AttributeStore()) { }
-
-        public NaturalIdMapping(AttributeStore underlyingStore)
         {
-            attributes = new AttributeStore<NaturalIdMapping>(underlyingStore);
-            attributes.SetDefault(x => x.Mutable, false);
+            Mutable = false;
         }
 
         public bool Mutable
         {
-            get { return attributes.Get(x => x.Mutable); }
-            set { attributes.Set(x => x.Mutable, value); }
+            get { return values.Get<bool>(Attr.Mutable); }
+            set { values.Set(Attr.Mutable, value); }
         }
 
         public IEnumerable<PropertyMapping> Properties
@@ -59,25 +55,21 @@ namespace FluentNHibernate.MappingModel
 
         public override bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);
+            return false;
         }
 
-        public bool HasValue<TResult>(Expression<Func<NaturalIdMapping, TResult>> property)
+        public bool HasValue(Attr attr)
         {
-            return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<NaturalIdMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
+            return values.HasValue(attr);
         }
 
         public void AddChild(IMapping child)
         {
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> values)
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
         {
+            values.Merge(otherValues);
         }
     }
 }
