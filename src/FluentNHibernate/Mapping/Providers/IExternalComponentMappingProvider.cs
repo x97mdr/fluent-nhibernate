@@ -1,5 +1,4 @@
 using System;
-using FluentNHibernate.MappingModel.ClassBased;
 
 namespace FluentNHibernate.Mapping.Providers
 {

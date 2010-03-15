@@ -413,7 +413,6 @@
     <Compile Include="MappingModel\ValueStore.cs" />
     <Compile Include="Mapping\NaturalIdPart.cs" />
     <Compile Include="Mapping\Providers\IExternalComponentMappingProvider.cs" />
-    <Compile Include="Mapping\Providers\INaturalIdMappingProvider.cs" />
     <Compile Include="Mapping\Providers\IReferenceComponentMappingProvider.cs" />
     <Compile Include="Utils\StringLikeness.cs" />
     <Compile Include="Visitors\AmbiguousComponentReferenceException.cs" />
@@ -461,16 +460,7 @@
     <Compile Include="MappingModel\Output\Sorting\XmlNodeSorter.cs" />
     <Compile Include="MappingModel\TypeReference.cs" />
     <Compile Include="Mapping\GeneratorBuilder.cs" />
-    <Compile Include="Mapping\Providers\IAnyMappingProvider.cs" />
-    <Compile Include="Mapping\Providers\ICacheMappingProvider.cs" />
-    <Compile Include="Mapping\Providers\IComponentMappingProvider.cs" />
-    <Compile Include="Mapping\Providers\IIdentityMappingProvider.cs" />
-    <Compile Include="Mapping\Providers\IJoinMappingProvider.cs" />
-    <Compile Include="Mapping\Providers\IManyToOneMappingProvider.cs" />
-    <Compile Include="Mapping\Providers\IOneToOneMappingProvider.cs" />
-    <Compile Include="Mapping\Providers\IPropertyMappingProvider.cs" />
     <Compile Include="Mapping\Providers\IIndeterminateSubclassMappingProvider.cs" />
-    <Compile Include="Mapping\Providers\IVersionMappingProvider.cs" />
     <Compile Include="Mapping\SubclassMap.cs" />
     <Compile Include="Utils\CollectionExtensions.cs" />
     <Compile Include="Utils\Reflection\ExpressionBuilder.cs" />
@@ -642,10 +632,6 @@
     <Compile Include="Mapping\DynamicComponentPart.cs" />
     <Compile Include="Mapping\FetchTypeExpression.cs" />
     <Compile Include="Mapping\GenericEnumMapper.cs" />
-    <Compile Include="Mapping\Providers\ICollectionMappingProvider.cs" />
-    <Compile Include="Mapping\Providers\ICompositeElementMappingProvider.cs" />
-    <Compile Include="Mapping\Providers\ICompositeIdMappingProvider.cs" />
-    <Compile Include="Mapping\Providers\IDiscriminatorMappingProvider.cs" />
     <Compile Include="Mapping\Providers\IHibernateMappingProvider.cs" />
     <Compile Include="Mapping\IndexManyToManyPart.cs" />
     <Compile Include="Mapping\IndexPart.cs" />

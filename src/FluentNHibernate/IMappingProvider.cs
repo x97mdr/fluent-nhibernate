@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel;
-using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate
@@ -48,14 +45,5 @@ namespace FluentNHibernate
         {
             return Structure;
         }
-    }
-
-    /// <summary>
-    /// Represents a single user-defined value in a mapping, could be a class,
-    /// bag, attribute, anything...
-    /// </summary>
-    public interface IUserValue
-    {
-        IEnumerable<IUserValue> Values { get; }
     }
 }
