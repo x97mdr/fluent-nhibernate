@@ -1,11 +1,9 @@
 using System;
-using FluentNHibernate.MappingModel.ClassBased;
 
 namespace FluentNHibernate.Mapping.Providers
 {
-    public interface IIndeterminateSubclassMappingProvider
+    public interface IIndeterminateSubclassMappingProvider : IMappingProvider
     {
-        SubclassMapping GetSubclassMapping(SubclassMapping mapping);
         Type EntityType { get; }
     }
 }

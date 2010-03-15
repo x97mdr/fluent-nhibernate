@@ -6,6 +6,8 @@ using System.Reflection;
 using FluentNHibernate.Mapping;
 using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel.ClassBased;
+using FluentNHibernate.MappingModel.Identity;
+using FluentNHibernate.MappingModel.Structure;
 using FluentNHibernate.Utils;
 
 namespace FluentNHibernate.Automapping
@@ -24,63 +26,58 @@ namespace FluentNHibernate.Automapping
             DiscriminateSubClassesOnColumn(column);
         }
 
-        IEnumerable<string> IMappingProvider.GetIgnoredProperties()
-        {
-            return mappedProperties;
-        }
-
         void IAutoClasslike.AlterModel(ClassMappingBase mapping)
         {
-            mapping.MergeAttributes(attributes.CloneInner());
+            //mapping.MergeAttributes(attributes.CloneInner());
 
-            if (mapping is ClassMapping)
-            {
-                var classMapping = (ClassMapping)mapping;
+            //if (mapping is ClassMapping)
+            //{
+            //    var classMapping = (ClassMapping)mapping;
 
-                if (id != null)
-                    classMapping.Id = id.GetIdentityMapping();
+            //    if (id != null)
+            //        classMapping.Id = id.GetIdentityMapping();
 
-                if (compositeId != null)
-                    classMapping.Id = compositeId.GetCompositeIdMapping();
+            //    if (compositeId != null)
+            //        classMapping.Id = compositeId.GetCompositeIdMapping();
 
-                if (version != null)
-                    classMapping.Version = version.GetVersionMapping();
+            //    if (version != null)
+            //        classMapping.Version = version.GetVersionMapping();
 
-                if (discriminator != null)
-                    classMapping.Discriminator = ((IDiscriminatorMappingProvider)discriminator).GetDiscriminatorMapping();
+            //    if (discriminator != null)
+            //        classMapping.Discriminator = ((IDiscriminatorMappingProvider)discriminator).GetDiscriminatorMapping();
 
-                if (Cache.IsDirty)
-                    classMapping.Cache = ((ICacheMappingProvider)Cache).GetCacheMapping();
+            //    if (Cache.IsDirty)
+            //        classMapping.Cache = ((ICacheMappingProvider)Cache).GetCacheMapping();
 
-                classMapping.Tuplizer = tuplizerMapping;
-            }
+            //    classMapping.Tuplizer = tuplizerMapping;
+            //}
 
-            foreach (var property in Properties)
-                mapping.AddOrReplaceProperty(property.GetPropertyMapping());
+            //foreach (var property in Properties)
+            //    mapping.AddOrReplaceProperty(property.GetPropertyMapping());
 
-            foreach (var collection in collections)
-                mapping.AddOrReplaceCollection(collection.GetCollectionMapping());
+            //foreach (var collection in collections)
+            //    mapping.AddOrReplaceCollection(collection.GetCollectionMapping());
 
-            foreach (var component in Components)
-                mapping.AddOrReplaceComponent(component.GetComponentMapping());
+            //foreach (var component in Components)
+            //    mapping.AddOrReplaceComponent(component.GetComponentMapping());
 
-            foreach (var oneToOne in oneToOnes)
-                mapping.AddOrReplaceOneToOne(oneToOne.GetOneToOneMapping());
+            //foreach (var oneToOne in oneToOnes)
+            //    mapping.AddOrReplaceOneToOne(oneToOne.GetOneToOneMapping());
 
-            foreach (var reference in references)
-                mapping.AddOrReplaceReference(reference.GetManyToOneMapping());
+            //foreach (var reference in references)
+            //    mapping.AddOrReplaceReference(reference.GetManyToOneMapping());
 
-            foreach (var any in anys)
-                mapping.AddOrReplaceAny(any.GetAnyMapping());
+            //foreach (var any in anys)
+            //    mapping.AddOrReplaceAny(any.GetAnyMapping());
 
-            foreach (var storedProcedure in storedProcedures)
-                mapping.AddStoredProcedure(storedProcedure.GetStoredProcedureMapping());
+            //foreach (var storedProcedure in storedProcedures)
+            //    mapping.AddStoredProcedure(storedProcedure.GetStoredProcedureMapping());
         }
 
-        protected override OneToManyPart<TChild> HasMany<TChild>(Member property)
+        protected override OneToManyPart<TChild> HasMany<TChild>(Type type, Member property)
         {
             mappedProperties.Add(property.Name);
-            return base.HasMany<TChild>(property);
+            return base.HasMany<TChild>(type, property);
         }
 
         public void IgnoreProperty(Expression<Func<T, object>> expression)
@@ -114,7 +111,7 @@ namespace FluentNHibernate.Automapping
             return this;
         }
 
-        public override IdentityPart Id(Expression<Func<T, object>> expression)
+        public override IdentityPart<TReturn> Id<TReturn>(Expression<Func<T, TReturn>> expression)
         {
             mappedProperties.Add(expression.ToMember().Name);
             return base.Id(expression);
@@ -122,9 +119,10 @@ namespace FluentNHibernate.Automapping
 
         public override CompositeIdentityPart<T> CompositeId()
         {
-            var part = new AutoCompositeIdentityPart<T>(mappedProperties);
+            var compositeIdStructure = new FreeStructure<CompositeIdMapping>();
+            var part = new AutoCompositeIdentityPart<T>(compositeIdStructure, mappedProperties);
 
-            compositeId = part;
+            //compositeId = part;
 
             return part;
         }
@@ -141,10 +139,10 @@ namespace FluentNHibernate.Automapping
             return base.References<TOther>(property, columnName);
         }
 
-        protected override ManyToManyPart<TChild> HasManyToMany<TChild>(Member property)
+        protected override ManyToManyPart<TChild> HasManyToMany<TChild>(Type childType, Member property)
         {
             mappedProperties.Add(property.Name);
-            return base.HasManyToMany<TChild>(property);
+            return base.HasManyToMany<TChild>(childType, property);
         }
 
         protected override ComponentPart<TComponent> Component<TComponent>(Member property, Action<ComponentPart<TComponent>> action)
@@ -157,7 +155,7 @@ namespace FluentNHibernate.Automapping
             return base.Component(property, action);
         }
 
-        public override IdentityPart Id(Expression<Func<T, object>> expression, string column)
+        public override IdentityPart<TReturn> Id<TReturn>(Expression<Func<T, TReturn>> expression, string column)
         {
             mappedProperties.Add(expression.ToMember().Name);
             return base.Id(expression, column);
@@ -184,7 +182,7 @@ namespace FluentNHibernate.Automapping
             if (action != null)
                 action(joinedclass);
 
-            subclasses[typeof(TSubclass)] = joinedclass;
+            //subclasses[typeof(TSubclass)] = joinedclass;
 
 		    return joinedclass;
         }
@@ -195,7 +193,7 @@ namespace FluentNHibernate.Automapping
             var joinedclass = (ISubclassMappingProvider)Activator.CreateInstance(genericType, keyColumn);
 
             // remove any mappings for the same type, then re-add
-            subclasses[type] = joinedclass;
+            //subclasses[type] = joinedclass;
 
             return (IAutoClasslike)joinedclass;
         }
@@ -216,7 +214,7 @@ namespace FluentNHibernate.Automapping
                 action(subclass);
 
             // remove any mappings for the same type, then re-add
-            subclasses[typeof(TSubclass)] = subclass;
+            //subclasses[typeof(TSubclass)] = subclass;
 
 		    return subclass;
         }
@@ -233,7 +231,7 @@ namespace FluentNHibernate.Automapping
             var subclass = (ISubclassMappingProvider)Activator.CreateInstance(genericType, null, discriminatorValue);
 
             // remove any mappings for the same type, then re-add
-            subclasses[type] = subclass;
+            //subclasses[type] = subclass;
 
             return (IAutoClasslike)subclass;
         }

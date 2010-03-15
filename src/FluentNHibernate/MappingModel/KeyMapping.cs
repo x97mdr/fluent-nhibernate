@@ -1,24 +1,20 @@
 using System;
-using System.Linq.Expressions;
-using System.Reflection;
-using FluentNHibernate.Utils;
+using System.Collections.Generic;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
-    public class KeyMapping : MappingBase, IHasColumnMappings
+    public class KeyMapping : MappingBase, IHasColumnMappings, ITypeMapping
     {
-        private readonly AttributeStore<KeyMapping> attributes;
-        private readonly IDefaultableList<ColumnMapping> columns = new DefaultableList<ColumnMapping>();
+        readonly ValueStore values = new ValueStore();
+        readonly IDefaultableList<ColumnMapping> columns = new DefaultableList<ColumnMapping>();
         public Type ContainingEntityType { get; set; }
 
-        public KeyMapping()
-            : this(new AttributeStore())
-        {}
-
-        public KeyMapping(AttributeStore underlyingStore)
+        public void Initialise(Type type)
         {
-            attributes = new AttributeStore<KeyMapping>(underlyingStore);
+            var column = new ColumnMapping { Name = type.Name + "_id" };
+            column.SpecifyParentValues(values);
+            AddDefaultColumn(column);
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
@@ -31,38 +27,38 @@ namespace FluentNHibernate.MappingModel
 
         public string ForeignKey
         {
-            get { return attributes.Get(x => x.ForeignKey); }
-            set { attributes.Set(x => x.ForeignKey, value); }
+            get { return values.Get(Attr.ForeignKey); }
+            set { values.Set(Attr.ForeignKey, value); }
         }
 
         public string PropertyRef
         {
-            get { return attributes.Get(x => x.PropertyRef); }
-            set { attributes.Set(x => x.PropertyRef, value); }
+            get { return values.Get(Attr.PropertyRef); }
+            set { values.Set(Attr.PropertyRef, value); }
         }
 
         public string OnDelete
         {
-            get { return attributes.Get(x => x.OnDelete); }
-            set { attributes.Set(x => x.OnDelete, value); }
+            get { return values.Get(Attr.OnDelete); }
+            set { values.Set(Attr.OnDelete, value); }
         }
 
         public bool NotNull
         {
-            get { return attributes.Get(x => x.NotNull); }
-            set { attributes.Set(x => x.NotNull, value); }
+            get { return values.Get<bool>(Attr.NotNull); }
+            set { values.Set(Attr.NotNull, value); }
         }
 
         public bool Update
         {
-            get { return attributes.Get(x => x.Update); }
-            set { attributes.Set(x => x.Update, value); }
+            get { return values.Get<bool>(Attr.Update); }
+            set { values.Set(Attr.Update, value); }
         }
 
         public bool Unique
         {
-            get { return attributes.Get(x => x.Unique); }
-            set { attributes.Set(x => x.Unique, value); }
+            get { return values.Get<bool>(Attr.Unique); }
+            set { values.Set(Attr.Unique, value); }
         }
 
         public IDefaultableEnumerable<ColumnMapping> Columns
@@ -87,24 +83,19 @@ namespace FluentNHibernate.MappingModel
 
         public override bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);
+            return false;
         }
 
-        public bool HasValue<TResult>(Expression<Func<KeyMapping, TResult>> property)
+        public bool HasValue(Attr attr)
         {
-            return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<KeyMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
+            return values.HasValue(attr);
         }
 
         public bool Equals(KeyMapping other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.attributes, attributes) &&
+            return Equals(other.values, values) &&
                 other.columns.ContentEquals(columns) &&
                 Equals(other.ContainingEntityType, ContainingEntityType);
         }
@@ -121,11 +112,22 @@ namespace FluentNHibernate.MappingModel
         {
             unchecked
             {
-                int result = (attributes != null ? attributes.GetHashCode() : 0);
+                int result = (values != null ? values.GetHashCode() : 0);
                 result = (result * 397) ^ (columns != null ? columns.GetHashCode() : 0);
                 result = (result * 397) ^ (ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0);
                 return result;
             }
+        }
+
+        public void AddChild(IMapping child)
+        {
+            if (child is ColumnMapping)
+                AddColumn((ColumnMapping)child);
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        {
+            values.Merge(otherValues);
         }
     }
 }

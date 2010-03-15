@@ -30,7 +30,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteForeignKey()
         {
-            var mapping = new IndexManyToManyMapping();
+            var mapping = new IndexManyToManyMapping(null);
 
             mapping.ForeignKey = "FKTest";
 
@@ -41,7 +41,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteColumns()
         {
-            var mapping = new IndexManyToManyMapping();
+            var mapping = new IndexManyToManyMapping(null);
 
             mapping.AddColumn(new ColumnMapping());
 

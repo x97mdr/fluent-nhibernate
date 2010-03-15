@@ -43,7 +43,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
                      c => c.Expect(x => x.Insert, Is.Set));
 
             acceptance
-               .Matches(new PropertyInspector(new PropertyMapping { Name = "Property1", Type= new TypeReference(typeof(string)), Insert = true}))
+               .Matches(new PropertyInspector(new PropertyMapping { Name = "Property1", Type = new TypeReference(typeof(string)), Insert = true }))
                .ShouldBeTrue();
         }
 
@@ -72,7 +72,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
             acceptance.Any(subCriteria1, subCriteria2);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping { Name = "Property1"}))
+                .Matches(new PropertyInspector(new PropertyMapping { Name = "Property1" }))
                 .ShouldBeTrue();
         }
 

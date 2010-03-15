@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
+using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Mapping
 {
@@ -10,31 +8,40 @@ namespace FluentNHibernate.Mapping
     /// Maps to the Join element in NH 2.0
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class JoinPart<T> : ClasslikeMapBase<T>, IJoinMappingProvider
+    public class JoinPart<T> : ClasslikeMapBase<T>
     {
-        private readonly IList<string> columns = new List<string>();
-        private readonly FetchTypeExpression<JoinPart<T>> fetch;
-        private readonly AttributeStore<JoinMapping> attributes = new AttributeStore<JoinMapping>();
-        private bool nextBool = true;
+        readonly IMappingStructure<JoinMapping> structure;
+        readonly FetchTypeExpression<JoinPart<T>> fetch;
+        readonly IMappingStructure<KeyMapping> keyStructure;
+        bool nextBool = true;
 
-        public JoinPart(string tableName)
+        public JoinPart(IMappingStructure<JoinMapping> structure)
+            : base(structure)
         {
-            fetch = new FetchTypeExpression<JoinPart<T>>(this, value => attributes.Set(x => x.Fetch, value));
+            this.structure = structure;
+            this.keyStructure = new TypeStructure<KeyMapping>(typeof(T));
+            structure.AddChild(keyStructure);
 
-            attributes.SetDefault(x => x.TableName, tableName);
-            attributes.Set(x => x.Key, new KeyMapping { ContainingEntityType = typeof(T) });
+            fetch = new FetchTypeExpression<JoinPart<T>>(this, value => structure.SetValue(Attr.Fetch, value));
         }
 
-        public JoinPart<T> KeyColumn(string column)
+        public JoinPart<T> KeyColumn(string columnName)
         {
-            columns.Clear(); // only one supported currently
-            columns.Add(column);
+            keyStructure.RemoveChildrenMatching(x => x is IMappingStructure<ColumnMapping>);
+
+            var column = new ColumnStructure(structure);
+
+            new ColumnPart(column)
+                .Name(columnName);
+
+            keyStructure.AddChild(column);
+
             return this;
         }
 
         public JoinPart<T> Schema(string schema)
         {
-            attributes.Set(x => x.Schema, schema);
+            structure.SetValue(Attr.Schema, schema);
             return this;
         }
 
@@ -45,27 +52,27 @@ namespace FluentNHibernate.Mapping
 
         public JoinPart<T> Inverse()
         {
-            attributes.Set(x => x.Inverse, nextBool);
+            structure.SetValue(Attr.Inverse, nextBool);
             nextBool = true;
             return this;
         }
 
         public JoinPart<T> Optional()
         {
-            attributes.Set(x => x.Optional, nextBool);
+            structure.SetValue(Attr.Optional, nextBool);
             nextBool = true;
             return this;
         }
 
         public JoinPart<T> Catalog(string catalog)
         {
-            attributes.Set(x => x.Catalog, catalog);
+            structure.SetValue(Attr.Catalog, catalog);
             return this;
         }
 
         public JoinPart<T> Subselect(string subselect)
         {
-            attributes.Set(x => x.Subselect, subselect);
+            structure.SetValue(Attr.Subselect, subselect);
             return this;
         }
 
@@ -79,36 +86,9 @@ namespace FluentNHibernate.Mapping
             }
         }
 
-        JoinMapping IJoinMappingProvider.GetJoinMapping()
-        {
-            var mapping = new JoinMapping(attributes.CloneInner());
-
-            mapping.ContainingEntityType = typeof(T);
-
-            if (columns.Count == 0)
-                mapping.Key.AddDefaultColumn(new ColumnMapping { Name = typeof(T).Name + "_id" });
-            else
-                foreach (var column in columns)
-                    mapping.Key.AddColumn(new ColumnMapping { Name = column });
-
-            foreach (var property in properties)
-                mapping.AddProperty(property.GetPropertyMapping());
-
-            foreach (var component in components)
-                mapping.AddComponent(component.GetComponentMapping());
-
-            foreach (var reference in references)
-                mapping.AddReference(reference.GetManyToOneMapping());
-
-            foreach (var any in anys)
-                mapping.AddAny(any.GetAnyMapping());
-
-            return mapping;
-        }
-
         public void Table(string tableName)
         {
-            attributes.Set(x => x.TableName, tableName);
+            structure.SetValue(Attr.Table, tableName);
         }
     }
 }

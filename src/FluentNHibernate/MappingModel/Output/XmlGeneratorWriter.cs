@@ -22,13 +22,13 @@ namespace FluentNHibernate.MappingModel.Output
 
             var element = document.AddElement("generator");
 
-            if (mapping.HasValue(x => x.Class))
+            if (mapping.HasValue(Attr.Class))
                 element.WithAtt("class", mapping.Class);
 
             foreach (var param in mapping.Params)
             {
                 element.AddElement("param")
-                    .WithAtt("name", param.Key)
+                    .WithAtt("name", param.Name)
                     .InnerXml = param.Value;
             }
         }

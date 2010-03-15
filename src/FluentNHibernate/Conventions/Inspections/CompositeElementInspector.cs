@@ -42,7 +42,7 @@ namespace FluentNHibernate.Conventions.Inspections
             get
             {
                 if (mapping.Parent == null)
-                    return new ParentInspector(new ParentMapping());
+                    return new ParentInspector(new ParentMapping(null));
 
                 return new ParentInspector(mapping.Parent);
             }

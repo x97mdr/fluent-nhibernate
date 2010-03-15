@@ -1,26 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reflection;
-using FluentNHibernate.Mapping;
-using FluentNHibernate.Utils;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel.Collections
 {
-    public class CompositeElementMapping : MappingBase
+    public class CompositeElementMapping : MappingBase, ITypeMapping
     {
-        private readonly MappedMembers mappedMembers;
-        protected readonly AttributeStore<CompositeElementMapping> attributes;
+        readonly MappedMembers mappedMembers = new MappedMembers();
+        readonly ValueStore values = new ValueStore();
 
         public CompositeElementMapping()
-            : this(new AttributeStore())
-        { }
+        {}
 
-        public CompositeElementMapping(AttributeStore store)
+        public CompositeElementMapping(Type type)
         {
-            attributes = new AttributeStore<CompositeElementMapping>(store);
-            mappedMembers = new MappedMembers();
+            Initialise(type);
+        }
+
+        public void Initialise(Type type)
+        {
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
@@ -35,15 +33,11 @@ namespace FluentNHibernate.MappingModel.Collections
 
         public TypeReference Class
         {
-            get { return attributes.Get(x => x.Class); }
-            set { attributes.Set(x => x.Class, value); }
+            get { return values.Get<TypeReference>(Attr.Class); }
+            set { values.Set(Attr.Class, value); }
         }
 
-        public ParentMapping Parent
-        {
-            get { return attributes.Get(x => x.Parent); }
-            set { attributes.Set(x => x.Parent, value); }
-        }
+        public ParentMapping Parent { get; set; }
 
         public IEnumerable<PropertyMapping> Properties
         {
@@ -69,24 +63,19 @@ namespace FluentNHibernate.MappingModel.Collections
 
         public override bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);
+            return false;
         }
 
-        public bool HasValue<TResult>(Expression<Func<CompositeElementMapping, TResult>> property)
+        public bool HasValue(Attr attr)
         {
-            return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<CompositeElementMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
+            return values.HasValue(attr);
         }
 
         public bool Equals(CompositeElementMapping other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.mappedMembers, mappedMembers) && Equals(other.attributes, attributes) && Equals(other.ContainingEntityType, ContainingEntityType);
+            return Equals(other.mappedMembers, mappedMembers) && Equals(other.values, values) && Equals(other.ContainingEntityType, ContainingEntityType);
         }
 
         public override bool Equals(object obj)
@@ -102,10 +91,23 @@ namespace FluentNHibernate.MappingModel.Collections
             unchecked
             {
                 int result = (mappedMembers != null ? mappedMembers.GetHashCode() : 0);
-                result = (result * 397) ^ (attributes != null ? attributes.GetHashCode() : 0);
+                result = (result * 397) ^ (values != null ? values.GetHashCode() : 0);
                 result = (result * 397) ^ (ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0);
                 return result;
             }
+        }
+
+        public void AddChild(IMapping child)
+        {
+            mappedMembers.AddChild(child);
+
+            if (child is ParentMapping)
+                Parent = (ParentMapping)child;
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        {
+            values.Merge(otherValues);
         }
     }
 }

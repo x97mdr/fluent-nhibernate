@@ -21,34 +21,34 @@ namespace FluentNHibernate.MappingModel.Output
 
             var element = document.AddElement("one-to-one");
 
-            if (mapping.HasValue(x => x.Access))
+            if (mapping.HasValue(Attr.Access))
                 element.WithAtt("access", mapping.Access);
 
-            if (mapping.HasValue(x => x.Cascade))
+            if (mapping.HasValue(Attr.Cascade))
                 element.WithAtt("cascade", mapping.Cascade);
 
-            if (mapping.HasValue(x => x.Class))
+            if (mapping.HasValue(Attr.Class))
                 element.WithAtt("class", mapping.Class);
 
-            if (mapping.HasValue(x => x.Constrained))
+            if (mapping.HasValue(Attr.Constrained))
                 element.WithAtt("constrained", mapping.Constrained);
 
-            if (mapping.HasValue(x => x.Fetch))
+            if (mapping.HasValue(Attr.Fetch))
                 element.WithAtt("fetch", mapping.Fetch);
 
-            if (mapping.HasValue(x => x.ForeignKey))
+            if (mapping.HasValue(Attr.ForeignKey))
                 element.WithAtt("foreign-key", mapping.ForeignKey);
 
-            if (mapping.HasValue(x => x.Lazy))
+            if (mapping.HasValue(Attr.Lazy))
                 element.WithAtt("lazy", mapping.Lazy ? "proxy" : "false");
 
-            if (mapping.HasValue(x => x.Name))
+            if (mapping.HasValue(Attr.Name))
                 element.WithAtt("name", mapping.Name);
 
-            if (mapping.HasValue(x => x.PropertyRef))
+            if (mapping.HasValue(Attr.PropertyRef))
                 element.WithAtt("property-ref", mapping.PropertyRef);
 
-            if (mapping.HasValue(x => x.EntityName))
+            if (mapping.HasValue(Attr.EntityName))
                 element.WithAtt("entity-name", mapping.EntityName);
         }
     }

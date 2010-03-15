@@ -22,10 +22,10 @@ namespace FluentNHibernate.MappingModel.Output
 
             var element = document.CreateElement("tuplizer");
 
-            if (tuplizerMapping.HasValue(x => x.Mode))
+            if (tuplizerMapping.HasValue(Attr.Mode))
                 element.WithAtt("entity-mode", GetModeString(tuplizerMapping.Mode));
 
-            if (tuplizerMapping.HasValue(x => x.Type))
+            if (tuplizerMapping.HasValue(Attr.Type))
                 element.WithAtt("class", tuplizerMapping.Type);
 
             document.AppendChild(element);

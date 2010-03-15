@@ -1,3 +1,4 @@
+using FluentNHibernate.Automapping.TestFixtures;
 using FluentNHibernate.MappingModel.Collections;
 using NUnit.Framework;
 using FluentNHibernate.MappingModel.ClassBased;
@@ -9,42 +10,42 @@ namespace FluentNHibernate.Testing.MappingModel.Defaults
         [Test]
         public void MutableShouldBeTrueByDefaultOnClassMapping()
         {
-            var mapping = new ClassMapping();
+            var mapping = new ClassMapping(typeof(ExampleClass));
             mapping.Mutable.ShouldBeTrue();
         }
 
         [Test]
         public void MutableShouldBeTrueByDefaultOnBagMapping()
         {
-            var mapping = new BagMapping();
+            var mapping = new CollectionMapping();
             mapping.Mutable.ShouldBeTrue();
         }
 
         [Test]
         public void MutableShouldBeTrueByDefaultOnListMapping()
         {
-            var mapping = new ListMapping();
+            var mapping = new CollectionMapping();
             mapping.Mutable.ShouldBeTrue();
         }
 
         [Test]
         public void MutableShouldBeTrueByDefaultOnSetMapping()
         {
-            var mapping = new SetMapping();
+            var mapping = new CollectionMapping();
             mapping.Mutable.ShouldBeTrue();
         }
 
         [Test]
         public void MutableShouldBeTrueByDefaultOnMapMapping()
         {
-            var mapping = new MapMapping();
+            var mapping = new CollectionMapping();
             mapping.Mutable.ShouldBeTrue();
         }
 
         [Test]
         public void MutableShouldBeTrueByDefaultOnArrayMapping()
         {
-            var mapping = new ArrayMapping();
+            var mapping = new CollectionMapping();
             mapping.Mutable.ShouldBeTrue();
         }
         

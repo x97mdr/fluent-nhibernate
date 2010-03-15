@@ -2,33 +2,17 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
-    public class JoinMapping : IMappingBase
+    public class JoinMapping : IMappingBase, IMapping
     {
-        private readonly AttributeStore<JoinMapping> attributes;
+        readonly ValueStore values = new ValueStore();
+        readonly MappedMembers mappedMembers = new MappedMembers();
 
-        private readonly MappedMembers mappedMembers;
-
-        public JoinMapping()
-            : this(new AttributeStore())
-        {}
-
-        public JoinMapping(AttributeStore underlyingStore)
-        {
-            attributes = new AttributeStore<JoinMapping>(underlyingStore);
-            mappedMembers = new MappedMembers();
-        }
-
-        public KeyMapping Key
-        {
-            get { return attributes.Get(x => x.Key); }
-            set { attributes.Set(x => x.Key, value); }
-        }
+        public KeyMapping Key { get; set; }
 
         public IEnumerable<PropertyMapping> Properties
         {
@@ -72,44 +56,44 @@ namespace FluentNHibernate.MappingModel
 
         public string TableName
         {
-            get { return attributes.Get(x => x.TableName); }
-            set { attributes.Set(x => x.TableName, value); }
+            get { return values.Get(Attr.Table); }
+            set { values.Set(Attr.Table, value); }
         }
 
         public string Schema
         {
-            get { return attributes.Get(x => x.Schema); }
-            set { attributes.Set(x => x.Schema, value); }
+            get { return values.Get(Attr.Schema); }
+            set { values.Set(Attr.Schema, value); }
         }
 
         public string Catalog
         {
-            get { return attributes.Get(x => x.Catalog); }
-            set { attributes.Set(x => x.Catalog, value); }
+            get { return values.Get(Attr.Catalog); }
+            set { values.Set(Attr.Catalog, value); }
         }
 
         public string Subselect
         {
-            get { return attributes.Get(x => x.Subselect); }
-            set { attributes.Set(x => x.Subselect, value); }
+            get { return values.Get(Attr.Subselect); }
+            set { values.Set(Attr.Subselect, value); }
         }
 
         public string Fetch
         {
-            get { return attributes.Get(x => x.Fetch); }
-            set { attributes.Set(x => x.Fetch, value); }
+            get { return values.Get(Attr.Fetch); }
+            set { values.Set(Attr.Fetch, value); }
         }
 
         public bool Inverse
         {
-            get { return attributes.Get(x => x.Inverse); }
-            set { attributes.Set(x => x.Inverse, value); }
+            get { return values.Get<bool>(Attr.Inverse); }
+            set { values.Set(Attr.Inverse, value); }
         }
 
         public bool Optional
         {
-            get { return attributes.Get(x => x.Optional); }
-            set { attributes.Set(x => x.Optional, value); }
+            get { return values.Get<bool>(Attr.Optional); }
+            set { values.Set(Attr.Optional, value); }
         }
 
         public Type ContainingEntityType { get; set; }
@@ -126,24 +110,19 @@ namespace FluentNHibernate.MappingModel
 
         public bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);
+            return false;
         }
 
-        public bool HasValue<TResult>(Expression<Func<JoinMapping, TResult>> property)
+        public bool HasValue(Attr attr)
         {
-            return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<JoinMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
+            return values.HasValue(attr);
         }
 
         public bool Equals(JoinMapping other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.attributes, attributes) &&
+            return Equals(other.values, values) &&
                 Equals(other.mappedMembers, mappedMembers) &&
                 Equals(other.ContainingEntityType, ContainingEntityType);
         }
@@ -160,11 +139,24 @@ namespace FluentNHibernate.MappingModel
         {
             unchecked
             {
-                int result = (attributes != null ? attributes.GetHashCode() : 0);
+                int result = (values != null ? values.GetHashCode() : 0);
                 result = (result * 397) ^ (mappedMembers != null ? mappedMembers.GetHashCode() : 0);
                 result = (result * 397) ^ (ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0);
                 return result;
             }
+        }
+
+        public void AddChild(IMapping child)
+        {
+            mappedMembers.AddChild(child);
+
+            if (child is KeyMapping)
+                Key = (KeyMapping)child;
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        {
+            values.Merge(otherValues);
         }
     }
 }

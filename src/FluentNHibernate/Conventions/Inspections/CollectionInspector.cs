@@ -7,10 +7,10 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class CollectionInspector : ICollectionInspector
     {
-        private readonly InspectorModelMapper<ICollectionInspector, ICollectionMapping> propertyMappings = new InspectorModelMapper<ICollectionInspector, ICollectionMapping>();
-        private readonly ICollectionMapping mapping;
+        private readonly InspectorModelMapper<ICollectionInspector, CollectionMapping> propertyMappings = new InspectorModelMapper<ICollectionInspector, CollectionMapping>();
+        private readonly CollectionMapping mapping;
 
-        public CollectionInspector(ICollectionMapping mapping)
+        public CollectionInspector(CollectionMapping mapping)
         {
             this.mapping = mapping;
             propertyMappings.Map(x => x.LazyLoad, x => x.Lazy);
@@ -141,7 +141,7 @@ namespace FluentNHibernate.Conventions.Inspections
             get
             {
                 if (mapping.CompositeElement == null)
-                    return new CompositeElementInspector(new CompositeElementMapping());
+                    return new CompositeElementInspector(new CompositeElementMapping(ChildType));
 
                 return new CompositeElementInspector(mapping.CompositeElement);
             }

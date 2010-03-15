@@ -13,7 +13,7 @@ namespace FluentNHibernate.Automapping
             this.expressions = expressions;
         }
 
-        public void SetKey(Member property, ClassMappingBase classMap, ICollectionMapping mapping)
+        public void SetKey(Member property, ClassMappingBase classMap, CollectionMapping mapping)
         {
             var columnName = property.DeclaringType.Name + "_id";
 
@@ -23,9 +23,9 @@ namespace FluentNHibernate.Automapping
             var key = new KeyMapping();
 
             key.ContainingEntityType = classMap.Type;
-            key.AddDefaultColumn(new ColumnMapping { Name = columnName });
+            key.AddDefaultColumn(new ColumnMapping() { Name = columnName });
 
-            mapping.SetDefaultValue(x => x.Key, key);
+            mapping.Key = key;
         }
     }
 }

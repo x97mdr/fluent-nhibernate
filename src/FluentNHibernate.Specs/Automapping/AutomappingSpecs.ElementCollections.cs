@@ -117,7 +117,7 @@ namespace FluentNHibernate.Specs.Automapping
             container.Collections.Count().ShouldEqual(1);
 
         It should_create_a_collection_that_s_a_bag = () =>
-            container.Collections.Single().ShouldBeOfType<BagMapping>();
+            container.Collections.Single().Type.ShouldEqual(Collection.Bag);
 
         It should_create_an_element_for_the_collection = () =>
             container.Collections.Single().Element.ShouldNotBeNull();
@@ -159,10 +159,7 @@ namespace FluentNHibernate.Specs.Automapping
         {
             expressions = new AutoMappingExpressions();
             step = new AutoMapOneToMany(expressions);
-            container = new ClassMapping
-            {
-                Type = FakeMembers.Type
-            };
+            container = new ClassMapping(FakeMembers.Type);
         };
 
         protected static AutoMapOneToMany step;

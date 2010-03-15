@@ -13,17 +13,18 @@ namespace FluentNHibernate.Specs.FluentInterface
 
             setup(provider);
 
-            return ((IMappingProvider)provider).GetClassMapping();
+            return (ClassMapping)((IMappingProvider)provider).GetUserDefinedMappings().Structure;
         }
 
         public static SubclassMapping map_as_subclass<T>(Action<SubclassMap<T>> setup)
         {
             var provider = new SubclassMap<T>();
-            var mapping = new SubclassMapping(SubclassType.Subclass);
 
             setup(provider);
 
-            ((IIndeterminateSubclassMappingProvider)provider).GetSubclassMapping(mapping);
+            var userMappings = ((IIndeterminateSubclassMappingProvider)provider).GetUserDefinedMappings();
+            var mapping = (SubclassMapping)userMappings.Structure;
+            mapping.SubclassType = SubclassType.Subclass;
 
             return mapping;
         }

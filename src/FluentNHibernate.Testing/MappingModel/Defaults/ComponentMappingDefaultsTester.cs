@@ -1,4 +1,5 @@
-﻿using FluentNHibernate.MappingModel.ClassBased;
+﻿using FluentNHibernate.Automapping.TestFixtures;
+using FluentNHibernate.MappingModel.ClassBased;
 using NUnit.Framework;
 
 namespace FluentNHibernate.Testing.MappingModel.Defaults

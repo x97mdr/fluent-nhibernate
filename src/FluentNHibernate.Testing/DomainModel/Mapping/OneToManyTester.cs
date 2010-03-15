@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using FluentNHibernate.Cfg.Db;
-using FluentNHibernate.Conventions;
-using FluentNHibernate.Conventions.AcceptanceCriteria;
-using FluentNHibernate.Conventions.Instances;
-using FluentNHibernate.Conventions.Inspections;
 using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel.Collections;
 using Iesi.Collections.Generic;

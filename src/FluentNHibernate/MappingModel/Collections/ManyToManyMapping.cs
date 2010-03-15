@@ -1,23 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using FluentNHibernate.Utils;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel.Collections
 {
-    public class ManyToManyMapping : MappingBase, ICollectionRelationshipMapping, IHasColumnMappings
+    public class ManyToManyMapping : MappingBase, ICollectionRelationshipMapping, IHasColumnMappings, IMapping, ITypeMapping
     {
-        private readonly AttributeStore<ManyToManyMapping> attributes;
-        private readonly IDefaultableList<ColumnMapping> columns = new DefaultableList<ColumnMapping>();
-        
+        readonly ValueStore values = new ValueStore();
+        readonly IDefaultableList<ColumnMapping> columns = new DefaultableList<ColumnMapping>();
+
         public ManyToManyMapping()
-            : this(new AttributeStore())
         {}
 
-        public ManyToManyMapping(AttributeStore underlyingStore)
+        public ManyToManyMapping(Type type)
         {
-            attributes = new AttributeStore<ManyToManyMapping>(underlyingStore);
+            Initialise(type);
+        }
+
+        public void Initialise(Type type)
+        {
+            Class = new TypeReference(type);
+
+            var column = new ColumnMapping { Name = type.Name + "_id" };
+            column.SpecifyParentValues(values);
+            AddDefaultColumn(column);
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
@@ -30,56 +36,56 @@ namespace FluentNHibernate.MappingModel.Collections
 
         public Type ChildType
         {
-            get { return attributes.Get(x => x.ChildType); }
-            set { attributes.Set(x => x.ChildType, value); }
+            get { return values.Get<Type>(Attr.ChildType); }
+            set { values.Set(Attr.ChildType, value); }
         }
 
         public Type ParentType
         {
-            get { return attributes.Get(x => x.ParentType); }
-            set { attributes.Set(x => x.ParentType, value); }
+            get { return values.Get<Type>(Attr.ParentType); }
+            set { values.Set(Attr.ParentType, value); }
         }
 
         public TypeReference Class
         {
-            get { return attributes.Get(x => x.Class); }
-            set { attributes.Set(x => x.Class, value); }
+            get { return values.Get<TypeReference>(Attr.Class); }
+            set { values.Set(Attr.Class, value); }
         }
 
         public string ForeignKey
         {
-            get { return attributes.Get(x => x.ForeignKey); }
-            set { attributes.Set(x => x.ForeignKey, value); }
+            get { return values.Get(Attr.ForeignKey); }
+            set { values.Set(Attr.ForeignKey, value); }
         }
 
         public string Fetch
         {
-            get { return attributes.Get(x => x.Fetch); }
-            set { attributes.Set(x => x.Fetch, value); }
+            get { return values.Get(Attr.Fetch); }
+            set { values.Set(Attr.Fetch, value); }
         }
 
         public string NotFound
         {
-            get { return attributes.Get(x => x.NotFound); }
-            set { attributes.Set(x => x.NotFound, value); }
+            get { return values.Get(Attr.NotFound); }
+            set { values.Set(Attr.NotFound, value); }
         }
 
         public string Where
         {
-            get { return attributes.Get(x => x.Where); }
-            set { attributes.Set(x => x.Where, value); }
+            get { return values.Get(Attr.Where); }
+            set { values.Set(Attr.Where, value); }
         }
 
         public bool Lazy
         {
-            get { return attributes.Get(x => x.Lazy); }
-            set { attributes.Set(x => x.Lazy, value); }
+            get { return values.Get<bool>(Attr.Lazy); }
+            set { values.Set(Attr.Lazy, value); }
         }
 
         public string EntityName
         {
-            get { return attributes.Get(x => x.EntityName); }
-            set { attributes.Set(x => x.EntityName, value); }
+            get { return values.Get(Attr.EntityName); }
+            set { values.Set(Attr.EntityName, value); }
         }
 
         public IDefaultableEnumerable<ColumnMapping> Columns
@@ -106,24 +112,19 @@ namespace FluentNHibernate.MappingModel.Collections
 
         public override bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);
+            return false;
         }
 
-        public bool HasValue<TResult>(Expression<Func<ManyToManyMapping, TResult>> property)
+        public bool HasValue(Attr attr)
         {
-            return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<ManyToManyMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
+            return values.HasValue(attr);
         }
 
         public bool Equals(ManyToManyMapping other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.attributes, attributes) &&
+            return Equals(other.values, values) &&
                 other.columns.ContentEquals(columns) &&
                 Equals(other.ContainingEntityType, ContainingEntityType);
         }
@@ -140,11 +141,22 @@ namespace FluentNHibernate.MappingModel.Collections
         {
             unchecked
             {
-                int result = (attributes != null ? attributes.GetHashCode() : 0);
+                int result = (values != null ? values.GetHashCode() : 0);
                 result = (result * 397) ^ (columns != null ? columns.GetHashCode() : 0);
                 result = (result * 397) ^ (ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0);
                 return result;
             }
+        }
+
+        public void AddChild(IMapping child)
+        {
+            if (child is ColumnMapping)
+                AddColumn((ColumnMapping)child);
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        {
+            values.Merge(otherValues);
         }
     }
 }

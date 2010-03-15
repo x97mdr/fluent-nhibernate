@@ -1,49 +1,41 @@
 using System;
-using System.Collections.Generic;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Collections;
-using FluentNHibernate.Utils;
+using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Mapping
 {
     public class IndexManyToManyPart
     {
-        private readonly Type entity;
-        private readonly IList<string> columns = new List<string>();
-        private readonly AttributeStore<IndexManyToManyMapping> attributes = new AttributeStore<IndexManyToManyMapping>();
+        readonly IMappingStructure<IndexManyToManyMapping> structure;
 
-        public IndexManyToManyPart(Type entity)
+        public IndexManyToManyPart(IMappingStructure<IndexManyToManyMapping> structure)
         {
-            this.entity = entity;
+            this.structure = structure;
         }
 
         public IndexManyToManyPart Column(string indexColumnName)
         {
-            columns.Add(indexColumnName);
+            var column = new ColumnStructure(structure);
+
+            new ColumnPart(column)
+                .Name(indexColumnName);
+            
+            structure.AddChild(column);
+
             return this;
         }
 
         public IndexManyToManyPart Type<TIndex>()
         {
-            attributes.Set(x => x.Class, new TypeReference(typeof(TIndex)));
+            structure.SetValue(Attr.Class, new TypeReference(typeof(TIndex)));
             return this;
         }
 
         public IndexManyToManyPart Type(Type indexType)
         {
-            attributes.Set(x => x.Class, new TypeReference(indexType));
+            structure.SetValue(Attr.Class, new TypeReference(indexType));
             return this;
-        }
-
-        public IndexManyToManyMapping GetIndexMapping()
-        {
-            var mapping = new IndexManyToManyMapping(attributes.CloneInner());
-
-            mapping.ContainingEntityType = entity;
-
-            columns.Each(x => mapping.AddColumn(new ColumnMapping { Name = x }));
-
-            return mapping;
         }
     }
 }

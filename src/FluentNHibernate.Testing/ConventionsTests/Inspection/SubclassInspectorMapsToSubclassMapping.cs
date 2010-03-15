@@ -22,7 +22,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [SetUp]
         public void CreateDsl()
         {
-            mapping = new SubclassMapping(SubclassType.Subclass);
+            mapping = new SubclassMapping(SubclassType.JoinedSubclass);
             inspector = new SubclassInspector(mapping);
         }
 
@@ -71,14 +71,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void CollectionsCollectionHasSameCountAsMapping()
         {
-            mapping.AddCollection(new BagMapping());
+            mapping.AddCollection(new CollectionMapping());
             inspector.Collections.Count().ShouldEqual(1);
         }
 
         [Test]
         public void CollectionsCollectionOfInspectors()
         {
-            mapping.AddCollection(new BagMapping());
+            mapping.AddCollection(new CollectionMapping());
             inspector.Collections.First().ShouldBeOfType<ICollectionInspector>();
         }
 
@@ -243,14 +243,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void OneToOnesCollectionHasSameCountAsMapping()
         {
-            mapping.AddOneToOne(new OneToOneMapping());
+            mapping.AddOneToOne(new OneToOneMapping(null));
             inspector.OneToOnes.Count().ShouldEqual(1);
         }
 
         [Test]
         public void OneToOnesCollectionOfInspectors()
         {
-            mapping.AddOneToOne(new OneToOneMapping());
+            mapping.AddOneToOne(new OneToOneMapping(null));
             inspector.OneToOnes.First().ShouldBeOfType<IOneToOneInspector>();
         }
 
@@ -347,14 +347,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void SubclassesCollectionHasSameCountAsMapping()
         {
-            mapping.AddSubclass(new SubclassMapping(SubclassType.Subclass));
+            mapping.AddSubclass(new SubclassMapping(SubclassType.JoinedSubclass));
             inspector.Subclasses.Count().ShouldEqual(1);
         }
 
         [Test]
         public void SubclassesCollectionOfInspectors()
         {
-            mapping.AddSubclass(new SubclassMapping(SubclassType.Subclass));
+            mapping.AddSubclass(new SubclassMapping(SubclassType.JoinedSubclass));
             inspector.Subclasses.First().ShouldBeOfType<ISubclassInspector>();
         }
 

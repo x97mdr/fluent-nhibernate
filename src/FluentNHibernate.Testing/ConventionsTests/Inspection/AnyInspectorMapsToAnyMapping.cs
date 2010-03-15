@@ -178,14 +178,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void MetaValuesCollectionHasSameCountAsMapping()
         {
-            mapping.AddMetaValue(new MetaValueMapping());
+            mapping.AddMetaValue(new MetaValueMapping(null));
             inspector.MetaValues.Count().ShouldEqual(1);
         }
 
         [Test]
         public void MetaValuesCollectionOfInspectors()
         {
-            mapping.AddMetaValue(new MetaValueMapping());
+            mapping.AddMetaValue(new MetaValueMapping(null));
             inspector.MetaValues.First().ShouldBeOfType<IMetaValueInspector>();
         }
 

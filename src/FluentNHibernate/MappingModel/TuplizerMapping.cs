@@ -1,21 +1,11 @@
-using System;
-using System.Linq.Expressions;
+using System.Collections.Generic;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
-    public class TuplizerMapping : MappingBase
+    public class TuplizerMapping : MappingBase, IMapping
     {
-        private readonly AttributeStore<TuplizerMapping> attributes;
-
-        public TuplizerMapping()
-            : this(new AttributeStore())
-        {}
-
-        public TuplizerMapping(AttributeStore underlyingStore)
-        {
-            attributes = new AttributeStore<TuplizerMapping>(underlyingStore);
-        }
+        readonly ValueStore values = new ValueStore();
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
         {
@@ -24,31 +14,31 @@ namespace FluentNHibernate.MappingModel
 
         public TuplizerMode Mode
         {
-            get { return attributes.Get(x => x.Mode); }
-            set { attributes.Set(x => x.Mode, value); }
+            get { return values.Get<TuplizerMode>(Attr.Mode); }
+            set { values.Set(Attr.Mode, value); }
         }
 
         public TypeReference Type
         {
-            get { return attributes.Get(x => x.Type); }
-            set { attributes.Set(x => x.Type, value); }
+            get { return values.Get<TypeReference>(Attr.Type); }
+            set { values.Set(Attr.Type, value); }
         }
 
         public override bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);            
+            return false;
         }
 
-        public bool HasValue<TResult>(Expression<Func<TuplizerMapping, TResult>> property)
+        public bool HasValue(Attr attr)
         {
-            return attributes.HasValue(property);
+            return values.HasValue(attr);
         }
 
         public bool Equals(TuplizerMapping other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.attributes, attributes);
+            return Equals(other.values, values);
         }
 
         public override bool Equals(object obj)
@@ -61,7 +51,17 @@ namespace FluentNHibernate.MappingModel
 
         public override int GetHashCode()
         {
-            return (attributes != null ? attributes.GetHashCode() : 0);
+            return (values != null ? values.GetHashCode() : 0);
+        }
+
+        public void AddChild(IMapping child)
+        {
+            
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        {
+            values.Merge(otherValues);
         }
     }
 

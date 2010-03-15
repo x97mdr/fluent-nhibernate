@@ -93,14 +93,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void CollectionsCollectionHasSameCountAsMapping()
         {
-            mapping.AddCollection(new BagMapping());
+            mapping.AddCollection(new CollectionMapping());
             inspector.Collections.Count().ShouldEqual(1);
         }
 
         [Test]
         public void CollectionsCollectionOfInspectors()
         {
-            mapping.AddCollection(new BagMapping());
+            mapping.AddCollection(new CollectionMapping());
             inspector.Collections.First().ShouldBeOfType<ICollectionInspector>();
         }
 
@@ -267,14 +267,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void OneToOnesCollectionHasSameCountAsMapping()
         {
-            mapping.AddOneToOne(new OneToOneMapping());
+            mapping.AddOneToOne(new OneToOneMapping(null));
             inspector.OneToOnes.Count().ShouldEqual(1);
         }
 
         [Test]
         public void OneToOnesCollectionOfInspectors()
         {
-            mapping.AddOneToOne(new OneToOneMapping());
+            mapping.AddOneToOne(new OneToOneMapping(null));
             inspector.OneToOnes.First().ShouldBeOfType<IOneToOneInspector>();
         }
 

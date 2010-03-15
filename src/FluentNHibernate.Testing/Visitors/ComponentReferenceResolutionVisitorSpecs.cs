@@ -1,5 +1,7 @@
-﻿using FluentNHibernate.Mapping.Providers;
+﻿using FluentNHibernate.Mapping;
+using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel.ClassBased;
+using FluentNHibernate.MappingModel.Structure;
 using FluentNHibernate.Testing.Utils;
 using FluentNHibernate.Visitors;
 using NUnit.Framework;
@@ -12,9 +14,10 @@ namespace FluentNHibernate.Testing.Visitors
     {
         public override void establish_context()
         {
-            external_component_mapping = new ExternalComponentMapping(ComponentType.Component) { Type = typeof(ComponentTarget) };
+            var user_defined_mappings = Stub<IUserDefinedMapping>.Create(cfg =>
+                cfg.Stub(x => x.Structure).Return(null));
             var external_component = Stub<IExternalComponentMappingProvider>.Create(cfg =>
-                cfg.Stub(x => x.GetComponentMapping()).Return(external_component_mapping));
+                cfg.Stub(x => x.GetUserDefinedMappings()).Return(user_defined_mappings));
 
             visitor = new ComponentReferenceResolutionVisitor(new[] { external_component });
             reference_component_mapping = new ReferenceComponentMapping(ComponentType.Component, null, null, null, null);
@@ -86,15 +89,26 @@ namespace FluentNHibernate.Testing.Visitors
     {
         public override void establish_context()
         {
+            var udm_one = Stub<IUserDefinedMapping>.Create(cfg =>
+                cfg.Stub(x => x.Structure).Return(new TypeStructure<ExternalComponentMapping>(typeof(ComponentType))));
             var external_component_one = Stub<IExternalComponentMappingProvider>.Create(cfg =>
             {
-                cfg.Stub(x => x.GetComponentMapping()).Return(new ExternalComponentMapping(ComponentType.Component) { Type = typeof(ComponentTarget) });
-                cfg.Stub(x => x.Type).Return(typeof(ComponentTarget));
+                cfg.Stub(x => x.GetUserDefinedMappings())
+                    .Return(udm_one);
+
+                cfg.Stub(x => x.Type)
+                    .Return(typeof(ComponentTarget));
             });
+
+            var udm_two = Stub<IUserDefinedMapping>.Create(cfg =>
+                cfg.Stub(x => x.Structure).Return(new TypeStructure<ExternalComponentMapping>(typeof(ComponentType))));
             var external_component_two = Stub<IExternalComponentMappingProvider>.Create(cfg =>
             {
-                cfg.Stub(x => x.GetComponentMapping()).Return(new ExternalComponentMapping(ComponentType.Component) { Type = typeof(ComponentTarget) });
-                cfg.Stub(x => x.Type).Return(typeof(ComponentTarget));
+                cfg.Stub(x => x.GetUserDefinedMappings())
+                    .Return(udm_two);
+
+                cfg.Stub(x => x.Type)
+                    .Return(typeof(ComponentTarget));
             });
 
             visitor = new ComponentReferenceResolutionVisitor(new[] { external_component_one, external_component_two});

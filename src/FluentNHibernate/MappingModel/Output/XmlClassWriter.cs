@@ -29,64 +29,64 @@ namespace FluentNHibernate.MappingModel.Output
             var classElement = document.AddElement("class")
                 .WithAtt("xmlns", "urn:nhibernate-mapping-2.2");
 
-            if (classMapping.HasValue(x => x.BatchSize))
+            if (classMapping.HasValue(Attr.BatchSize))
                 classElement.WithAtt("batch-size", classMapping.BatchSize);
 
-            if (classMapping.HasValue(x => x.DiscriminatorValue))
+            if (classMapping.HasValue(Attr.DiscriminatorValue))
                 classElement.WithAtt("discriminator-value", classMapping.DiscriminatorValue.ToString());
 
-            if (classMapping.HasValue(x => x.DynamicInsert))
+            if (classMapping.HasValue(Attr.DynamicInsert))
                 classElement.WithAtt("dynamic-insert", classMapping.DynamicInsert);
 
-            if (classMapping.HasValue(x => x.DynamicUpdate))
+            if (classMapping.HasValue(Attr.DynamicUpdate))
                 classElement.WithAtt("dynamic-update", classMapping.DynamicUpdate);
 
-            if (classMapping.HasValue(x => x.Lazy))
+            if (classMapping.HasValue(Attr.Lazy))
                 classElement.WithAtt("lazy", classMapping.Lazy);
 
-            if (classMapping.HasValue(x => x.Schema))
+            if (classMapping.HasValue(Attr.Schema))
                 classElement.WithAtt("schema", classMapping.Schema);
 
-            if (classMapping.HasValue(x => x.Mutable))
+            if (classMapping.HasValue(Attr.Mutable))
                 classElement.WithAtt("mutable", classMapping.Mutable);
 
-            if (classMapping.HasValue(x => x.Polymorphism))
+            if (classMapping.HasValue(Attr.Polymorphism))
                 classElement.WithAtt("polymorphism", classMapping.Polymorphism);
 
-            if (classMapping.HasValue(x => x.Persister))
+            if (classMapping.HasValue(Attr.Persister))
                 classElement.WithAtt("persister", classMapping.Persister);
 
-            if (classMapping.HasValue(x => x.Where))
+            if (classMapping.HasValue(Attr.Where))
                 classElement.WithAtt("where", classMapping.Where);
 
-            if (classMapping.HasValue(x => x.OptimisticLock))
+            if (classMapping.HasValue(Attr.OptimisticLock))
                 classElement.WithAtt("optimistic-lock", classMapping.OptimisticLock);
 
-            if (classMapping.HasValue(x => x.Check))
+            if (classMapping.HasValue(Attr.Check))
                 classElement.WithAtt("check", classMapping.Check);
 
-            if (classMapping.HasValue(x => x.Name))
+            if (classMapping.HasValue(Attr.Name))
                 classElement.WithAtt("name", classMapping.Name);
 
-            if (classMapping.HasValue(x => x.TableName))
+            if (classMapping.HasValue(Attr.Table))
                 classElement.WithAtt("table", classMapping.TableName);
 
-            if (classMapping.HasValue(x => x.Proxy))
+            if (classMapping.HasValue(Attr.Proxy))
                 classElement.WithAtt("proxy", classMapping.Proxy);
 
-            if (classMapping.HasValue(x => x.SelectBeforeUpdate))
+            if (classMapping.HasValue(Attr.SelectBeforeUpdate))
                 classElement.WithAtt("select-before-update", classMapping.SelectBeforeUpdate);
 
-            if (classMapping.HasValue(x => x.Abstract))
+            if (classMapping.HasValue(Attr.Abstract))
                 classElement.WithAtt("abstract", classMapping.Abstract);
 
-            if (classMapping.HasValue(x => x.Subselect))
+            if (classMapping.HasValue(Attr.Subselect))
                 classElement.WithAtt("subselect", classMapping.Subselect);
 
-            if (classMapping.HasValue(x => x.SchemaAction))
+            if (classMapping.HasValue(Attr.SchemaAction))
                 classElement.WithAtt("schema-action", classMapping.SchemaAction);
 
-            if (classMapping.HasValue(x => x.EntityName))
+            if (classMapping.HasValue(Attr.EntityName))
                 classElement.WithAtt("entity-name", classMapping.EntityName);
         }
 

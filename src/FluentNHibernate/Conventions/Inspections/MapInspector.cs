@@ -6,10 +6,10 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class MapInspector : CollectionInspector, IMapInspector
     {
-        private readonly InspectorModelMapper<IMapInspector, MapMapping> mappedProperties = new InspectorModelMapper<IMapInspector, MapMapping>();
-        private readonly MapMapping mapping;
+        private readonly InspectorModelMapper<IMapInspector, CollectionMapping> mappedProperties = new InspectorModelMapper<IMapInspector, CollectionMapping>();
+        private readonly CollectionMapping mapping;
 
-        public MapInspector(MapMapping mapping)
+        public MapInspector(CollectionMapping mapping)
             : base(mapping)
         {
             this.mapping = mapping;

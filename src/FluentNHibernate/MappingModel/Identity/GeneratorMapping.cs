@@ -1,19 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reflection;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel.Identity
 {
-    public class GeneratorMapping : MappingBase
+    public class GeneratorMapping : MappingBase, IMapping
     {
-        private readonly AttributeStore<GeneratorMapping> attributes = new AttributeStore<GeneratorMapping>();
-
-        public GeneratorMapping()
-        {
-            Params = new Dictionary<string, string>();
-        }
+        readonly ValueStore values = new ValueStore();
+        readonly List<ParamMapping> parameters = new List<ParamMapping>();
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
         {
@@ -22,33 +16,37 @@ namespace FluentNHibernate.MappingModel.Identity
 
         public string Class
         {
-            get { return attributes.Get(x => x.Class); }
-            set { attributes.Set(x => x.Class, value); }
+            get { return values.Get(Attr.Class); }
+            set { values.Set(Attr.Class, value); }
         }
 
-        public IDictionary<string, string> Params { get; private set; }
+        public void AddParam(ParamMapping param)
+        {
+            parameters.Add(param);
+        }
+
+        public IEnumerable<ParamMapping> Params
+        {
+            get { return parameters; }
+        }
+
         public Type ContainingEntityType { get; set; }
 
         public override bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);
+            return false;
         }
 
-        public bool HasValue<TResult>(Expression<Func<GeneratorMapping, TResult>> property)
+        public bool HasValue(Attr attr)
         {
-            return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<GeneratorMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
+            return values.HasValue(attr);
         }
 
         public bool Equals(GeneratorMapping other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.attributes, attributes) &&
+            return Equals(other.values, values) &&
                 other.Params.ContentEquals(Params) &&
                 Equals(other.ContainingEntityType, ContainingEntityType);
         }
@@ -65,11 +63,22 @@ namespace FluentNHibernate.MappingModel.Identity
         {
             unchecked
             {
-                int result = (attributes != null ? attributes.GetHashCode() : 0);
+                int result = (values != null ? values.GetHashCode() : 0);
                 result = (result * 397) ^ (Params != null ? Params.GetHashCode() : 0);
                 result = (result * 397) ^ (ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0);
                 return result;
             }
+        }
+
+        public void AddChild(IMapping child)
+        {
+            if (child is ParamMapping)
+                AddParam((ParamMapping)child);
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        {
+            values.Merge(otherValues);
         }
     }
 }

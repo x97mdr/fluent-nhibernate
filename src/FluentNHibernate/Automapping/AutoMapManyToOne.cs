@@ -30,11 +30,9 @@ namespace FluentNHibernate.Automapping
 
         private ManyToOneMapping CreateMapping(Member property)
         {
-            var mapping = new ManyToOneMapping { Member = property };
+            var mapping = new ManyToOneMapping();
 
-            mapping.SetDefaultValue(x => x.Name, property.Name);
-            mapping.SetDefaultValue(x => x.Class, new TypeReference(property.PropertyType));
-            mapping.AddDefaultColumn(new ColumnMapping { Name = property.Name + "_id" });
+            mapping.Initialise(property);
 
             return mapping;
         }

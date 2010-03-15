@@ -11,14 +11,27 @@ namespace FluentNHibernate.MappingModel.ClassBased
     /// A reference to a component which is declared externally. Contains properties
     /// that can't be declared externally (property name, for example)
     /// </summary>
-    public class ReferenceComponentMapping : IComponentMapping
+    public class ReferenceComponentMapping : IComponentMapping, IMapping, IMemberMapping
     {
         public ComponentType ComponentType { get; set; }
-        private readonly Member property;
+        private Member property;
         private readonly Type componentType;
         private ExternalComponentMapping mergedComponent;
         private Type containingEntityType;
         private readonly string columnPrefix;
+
+        public ReferenceComponentMapping()
+        {}
+
+        public ReferenceComponentMapping(Member member)
+        {
+            Initialise(member);
+        }
+
+        public void Initialise(Member member)
+        {
+            this.property = member;
+        }
 
         public ReferenceComponentMapping(ComponentType componentType, Member property, Type componentEntityType, Type containingEntityType, string columnPrefix)
         {
@@ -53,7 +66,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
             get { return mergedComponent.References; }
         }
 
-        public IEnumerable<ICollectionMapping> Collections
+        public IEnumerable<CollectionMapping> Collections
         {
             get { return mergedComponent.Collections; }
         }
@@ -83,7 +96,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
             mergedComponent.AddProperty(property);
         }
 
-        public void AddCollection(ICollectionMapping collection)
+        public void AddCollection(CollectionMapping collection)
         {
             mergedComponent.AddCollection(collection);
         }
@@ -198,12 +211,12 @@ namespace FluentNHibernate.MappingModel.ClassBased
             get { return mergedComponent; }
         }
 
-        public bool HasValue(string property)
+        public bool HasValue(Attr attr)
         {
             if (!IsAssociated)
                 return false;
 
-            return mergedComponent.HasValue(property);
+            return mergedComponent.HasValue(attr);
         }
 
         public bool Equals(ReferenceComponentMapping other)
@@ -234,6 +247,16 @@ namespace FluentNHibernate.MappingModel.ClassBased
                 result = (result * 397) ^ (containingEntityType != null ? containingEntityType.GetHashCode() : 0);
                 return result;
             }
+        }
+
+        public void AddChild(IMapping child)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> values)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -28,13 +28,13 @@ namespace FluentNHibernate.MappingModel.Output
 
             var element = document.AddElement("element");
 
-            if (mapping.HasValue(x => x.Type))
+            if (mapping.HasValue(Attr.Type))
                 element.WithAtt("type", mapping.Type);
 
-            if (mapping.HasValue(x => x.Length))
+            if (mapping.HasValue(Attr.Length))
                 element.WithAtt("length", mapping.Length);
 
-            if (mapping.HasValue(x => x.Formula))
+            if (mapping.HasValue(Attr.Formula))
                 element.WithAtt("formula", mapping.Formula);
         }
 

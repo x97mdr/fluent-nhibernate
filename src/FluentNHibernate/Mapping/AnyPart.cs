@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
-using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
+using FluentNHibernate.MappingModel.Structure;
 using FluentNHibernate.Utils;
 
 namespace FluentNHibernate.Mapping
@@ -14,24 +11,19 @@ namespace FluentNHibernate.Mapping
     /// Represents the "Any" mapping in NHibernate. It is impossible to specify a foreign key constraint for this kind of association. For more information
     /// please reference chapter 5.2.4 in the NHibernate online documentation
     /// </summary>
-    public class AnyPart<T> : IAnyMappingProvider
+    public class AnyPart<T>
     {
-        private readonly AttributeStore<AnyMapping> attributes = new AttributeStore<AnyMapping>();
-        private readonly Type entity;
-        private readonly Member property;
+        readonly IMappingStructure<AnyMapping> structure;
         private readonly AccessStrategyBuilder<AnyPart<T>> access;
         private readonly CascadeExpression<AnyPart<T>> cascade;
-        private readonly IList<string> typeColumns = new List<string>();
-        private readonly IList<string> identifierColumns = new List<string>();
-        private readonly IList<MetaValueMapping> metaValues = new List<MetaValueMapping>();
         private bool nextBool = true;
 
-        public AnyPart(Type entity, Member property)
+        public AnyPart(IMappingStructure<AnyMapping> structure)
         {
-            this.entity = entity;
-            this.property = property;
-            access = new AccessStrategyBuilder<AnyPart<T>>(this, value => attributes.Set(x => x.Access, value));
-            cascade = new CascadeExpression<AnyPart<T>>(this, value => attributes.Set(x => x.Cascade, value));
+            this.structure = structure;
+
+            access = new AccessStrategyBuilder<AnyPart<T>>(this, value => structure.SetValue(Attr.Access, value));
+            cascade = new CascadeExpression<AnyPart<T>>(this, value => structure.SetValue(Attr.Cascade, value));
         }
 
         /// <summary>
@@ -62,65 +54,69 @@ namespace FluentNHibernate.Mapping
 
         public AnyPart<T> IdentityType(Type type)
         {
-            attributes.Set(x => x.IdType, type.AssemblyQualifiedName);
+            structure.SetValue(Attr.IdType, type.AssemblyQualifiedName);
             return this;
         }
 
         public AnyPart<T> EntityTypeColumn(string columnName)
         {
-            typeColumns.Add(columnName);
+            var column = new ColumnStructure(structure);
+            var part = new ColumnPart(column);
+            part.Name(columnName);
+            structure.AddChild(column);
             return this;
         }
 
         public AnyPart<T> EntityIdentifierColumn(string columnName)
         {
-            identifierColumns.Add(columnName);
+            var column = new ColumnStructure(structure);
+            var part = new ColumnPart(column);
+            part.Name(columnName);
+            structure.AddChild(column);
             return this;
         }
 
         public AnyPart<T> AddMetaValue<TModel>(string valueMap)
         {
-            metaValues.Add(new MetaValueMapping
-            {
-                Class = new TypeReference(typeof(TModel)),
-                Value = valueMap,
-                ContainingEntityType = entity
-            });
+            structure.SetValue(Attr.MetaType, new TypeReference(typeof(string)));
+            var metaValue = new TypeStructure<MetaValueMapping>(typeof(TModel));
+            metaValue.SetValue(Attr.Value, valueMap);
+            structure.AddChild(metaValue);
             return this;
         }
 
         public AnyPart<T> Insert()
         {
-            attributes.Set(x => x.Insert, nextBool);
+            structure.SetValue(Attr.Insert, nextBool);
             nextBool = true;
             return this;
         }
 
         public AnyPart<T> Update()
         {
-            attributes.Set(x => x.Update, nextBool);
+            structure.SetValue(Attr.Update, nextBool);
             nextBool = true;
             return this;
         }
 
         public AnyPart<T> ReadOnly()
         {
-            attributes.Set(x => x.Insert, !nextBool);
-            attributes.Set(x => x.Update, !nextBool);
+            structure.SetValue(Attr.Insert, !nextBool);
+            structure.SetValue(Attr.Update, !nextBool);
             nextBool = true;
             return this;
         }
 
         public AnyPart<T> LazyLoad()
         {
-            attributes.Set(x => x.Lazy, nextBool);
+            structure.SetValue(Attr.Lazy, nextBool);
             nextBool = true;
             return this;
         }
 
         public AnyPart<T> OptimisticLock()
         {
-            attributes.Set(x => x.OptimisticLock, nextBool);
+            structure.SetValue(Attr.OptimisticLock, nextBool);
             nextBool = true;
             return this;
         }
@@ -133,42 +129,6 @@ namespace FluentNHibernate.Mapping
                 nextBool = !nextBool;
                 return this;
             }
-        }
-
-        AnyMapping IAnyMappingProvider.GetAnyMapping()
-        {
-            var mapping = new AnyMapping(attributes.CloneInner());
-
-            if (typeColumns.Count() == 0)
-                throw new InvalidOperationException("<any> mapping is not valid without specifying an Entity Type Column");
-            if (identifierColumns.Count() == 0)
-                throw new InvalidOperationException("<any> mapping is not valid without specifying an Entity Identifier Column");
-            if (!mapping.IsSpecified("IdType"))
-                throw new InvalidOperationException("<any> mapping is not valid without specifying an IdType");
-
-            mapping.ContainingEntityType = entity;
-
-            if (!mapping.IsSpecified("Name"))
-                mapping.Name = property.Name;
-
-            if (!mapping.IsSpecified("MetaType"))
-            {
-                if (metaValues.Count() > 0)
-                {
-                    metaValues.Each(mapping.AddMetaValue);
-                    mapping.MetaType = new TypeReference(typeof(string));
-                }
-                else
-                    mapping.MetaType = new TypeReference(property.PropertyType);
-            }
-
-            foreach (var column in typeColumns)
-                mapping.AddTypeColumn(new ColumnMapping { Name = column });
-
-            foreach (var column in identifierColumns)
-                mapping.AddIdentifierColumn(new ColumnMapping { Name = column });
-
-            return mapping;
         }
     }
 }

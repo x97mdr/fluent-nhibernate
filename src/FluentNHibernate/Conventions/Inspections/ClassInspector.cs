@@ -103,7 +103,7 @@ namespace FluentNHibernate.Conventions.Inspections
             get
             {
                 if (mapping.Version == null)
-                    return new VersionInspector(new VersionMapping());
+                    return new VersionInspector(new VersionMapping(null));
 
                 return new VersionInspector(mapping.Version);
             }
@@ -264,7 +264,7 @@ namespace FluentNHibernate.Conventions.Inspections
             get
             {
                 if (mapping.Id == null)
-                    return new IdentityInspector(new IdMapping());
+                    return new IdentityInspector(new IdMapping(null));
                 if (mapping.Id is CompositeIdMapping)
                     return new CompositeIdentityInspector((CompositeIdMapping)mapping.Id);
 

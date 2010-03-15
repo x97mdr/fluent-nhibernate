@@ -2,31 +2,32 @@ using System;
 using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
+using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Mapping
 {
     public class ComponentMap<T> : ComponentPartBase<T>, IExternalComponentMappingProvider
     {
-        private readonly AttributeStore<ComponentMapping> attributes;
+        readonly IMappingStructure<ComponentMapping> structure;
 
         public ComponentMap()
-            : this(new AttributeStore())
+            : this(new TypeStructure<ComponentMapping>(typeof(T)))
         {}
 
-        internal ComponentMap(AttributeStore underlyingStore)
-            : base(underlyingStore, "")
+        ComponentMap(IMappingStructure<ComponentMapping> structure)
+            : base(structure)
         {
-            attributes = new AttributeStore<ComponentMapping>(underlyingStore);
+            this.structure = structure;
         }
 
-        protected override ComponentMapping CreateComponentMappingRoot(AttributeStore store)
+        IUserDefinedMapping IMappingProvider.GetUserDefinedMappings()
         {
-            return new ExternalComponentMapping(ComponentType.Component, attributes.CloneInner());
+            return new FluentMapUserDefinedMappings(typeof(T), structure);
         }
 
-        ExternalComponentMapping IExternalComponentMappingProvider.GetComponentMapping()
+        public HibernateMapping GetHibernateMapping()
         {
-            return (ExternalComponentMapping)CreateComponentMapping();
+            throw new NotImplementedException();
         }
 
         Type IExternalComponentMappingProvider.Type

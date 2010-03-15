@@ -1,84 +1,71 @@
 using System;
 using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
+using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Mapping
 {
-    public class CachePart : ICacheMappingProvider
+    public class CachePart
     {
-        private readonly Type entityType;
-        private readonly AttributeStore<CacheMapping> attributes = new AttributeStore<CacheMapping>();
+        readonly IMappingStructure<CacheMapping> structure;
 
-        public CachePart(Type entityType)
+        public CachePart(IMappingStructure<CacheMapping> structure)
         {
-            this.entityType = entityType;
-        }
-
-        CacheMapping ICacheMappingProvider.GetCacheMapping()
-        {
-            var mapping = new CacheMapping(attributes.CloneInner());
-            mapping.ContainedEntityType = entityType;
-
-            return mapping;
+            this.structure = structure;
         }
 
         public CachePart ReadWrite()
         {
-            attributes.Set(x => x.Usage, "read-write");
+            structure.SetValue(Attr.Usage, "read-write");
             return this;
         }
 
         public CachePart NonStrictReadWrite()
         {
-            attributes.Set(x => x.Usage, "nonstrict-read-write");
+            structure.SetValue(Attr.Usage, "nonstrict-read-write");
             return this;
         }
 
         public CachePart ReadOnly()
         {
-            attributes.Set(x => x.Usage, "read-only");
+            structure.SetValue(Attr.Usage, "read-only");
             return this;
         }
 
         public CachePart Transactional()
         {
-            attributes.Set(x => x.Usage, "transactional");
+            structure.SetValue(Attr.Usage, "transactional");
             return this;
         }
 
         public CachePart CustomUsage(string custom)
         {
-            attributes.Set(x => x.Usage, custom);
+            structure.SetValue(Attr.Usage, custom);
             return this;
         }
 
         public CachePart Region(string name)
         {
-            attributes.Set(x => x.Region, name);
+            structure.SetValue(Attr.Region, name);
             return this;
         }
 
         public CachePart IncludeAll()
         {
-            attributes.Set(x => x.Include, "all");
+            structure.SetValue(Attr.Include, "all");
             return this;
         }
 
         public CachePart IncludeNonLazy()
         {
-            attributes.Set(x => x.Include, "non-lazy");
+            structure.SetValue(Attr.Include, "non-lazy");
             return this;
         }
 
         public CachePart CustomInclude(string custom)
         {
-            attributes.Set(x => x.Include, custom);
+            structure.SetValue(Attr.Include, custom);
             return this;
-        }
-
-        public bool IsDirty
-        {
-            get { return attributes.IsSpecified(x => x.Region) || attributes.IsSpecified(x => x.Usage) || attributes.IsSpecified(x => x.Include); }
         }
     }
 }

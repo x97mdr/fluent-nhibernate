@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using FluentNHibernate.Automapping.TestFixtures;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Collections;
@@ -17,13 +18,13 @@ namespace FluentNHibernate.Testing.MappingModel
         [SetUp]
         public void SetUp()
         {
-            _classMapping = new ClassMapping();
+            _classMapping = new ClassMapping(typeof(ExampleClass));
         }
 
         [Test]
         public void CanSetIdToBeStandardIdMapping()
         {
-            var idMapping = new IdMapping();
+            var idMapping = new IdMapping(null);
             _classMapping.Id = idMapping;
 
             _classMapping.Id.ShouldEqual(idMapping);
@@ -32,7 +33,7 @@ namespace FluentNHibernate.Testing.MappingModel
         [Test]
         public void CanSetIdToBeCompositeIdMapping()
         {
-            var idMapping = new CompositeIdMapping();
+            var idMapping = new CompositeIdMapping(null);
             _classMapping.Id = idMapping;
 
             _classMapping.Id.ShouldEqual(idMapping);
@@ -41,7 +42,7 @@ namespace FluentNHibernate.Testing.MappingModel
         [Test]
         public void CanAddProperty()
         {
-            var property = new PropertyMapping() { Name = "Property1" };
+            var property = new PropertyMapping { Name = "Property1" };
             _classMapping.AddProperty(property);
 
             _classMapping.Properties.ShouldContain(property);
@@ -50,11 +51,11 @@ namespace FluentNHibernate.Testing.MappingModel
         [Test]
         public void CanAddBag()
         {
-            var bag = new BagMapping
+            var bag = new CollectionMapping
                           {
                               Name = "bag1",
                               Key = new KeyMapping(),
-                              Relationship = new OneToManyMapping { Class = new TypeReference("class1") }
+                              Relationship = new OneToManyMapping(null) { Class = new TypeReference("class1") }
                           };
             _classMapping.AddCollection(bag);
 
@@ -73,8 +74,8 @@ namespace FluentNHibernate.Testing.MappingModel
         [Test]
         public void Should_pass_id_to_the_visitor()
         {
-            var classMap = new ClassMapping {Name = "class1" };
-            classMap.Id = new IdMapping();
+            var classMap = new ClassMapping(typeof(ExampleClass)) { Name = "class1" };
+            classMap.Id = new IdMapping(null);
 
             var visitor = MockRepository.GenerateMock<IMappingModelVisitor>();
             visitor.Expect(x => x.Visit(classMap.Id));
@@ -87,7 +88,7 @@ namespace FluentNHibernate.Testing.MappingModel
         [Test]
         public void Should_not_pass_null_id_to_the_visitor()
         {
-            var classMap = new ClassMapping {Name = "class1" };
+            var classMap = new ClassMapping(typeof(ExampleClass)) { Name = "class1" };
             classMap.Id = null;
 
             var visitor = MockRepository.GenerateMock<IMappingModelVisitor>();            
@@ -109,7 +110,7 @@ namespace FluentNHibernate.Testing.MappingModel
         [Test]
         public void Should_pass_subclasses_to_the_visitor()
         {
-            var classMap = new ClassMapping {Name = "class1" };
+            var classMap = new ClassMapping(typeof(ExampleClass)) { Name = "class1" };
             classMap.AddSubclass(new SubclassMapping(SubclassType.JoinedSubclass));
 
             var visitor = MockRepository.GenerateMock<IMappingModelVisitor>();
@@ -131,7 +132,7 @@ namespace FluentNHibernate.Testing.MappingModel
         [Test]
         public void Should_pass_stored_procedure_to_the_visitor()
         {
-            var classMap = new ClassMapping { Name = "class1" };
+            var classMap = new ClassMapping(typeof(ExampleClass)) { Name = "class1" };
             classMap.AddStoredProcedure(new StoredProcedureMapping());
 
             var visitor = MockRepository.GenerateMock<IMappingModelVisitor>();
@@ -145,7 +146,7 @@ namespace FluentNHibernate.Testing.MappingModel
         [Test]
         public void Should_pass_the_discriminator_to_the_visitor()
         {
-            var classMap = new ClassMapping {Name = "class1" };
+            var classMap = new ClassMapping(typeof(ExampleClass)) { Name = "class1" };
             classMap.Discriminator = new DiscriminatorMapping();
 
             var visitor = MockRepository.GenerateMock<IMappingModelVisitor>();

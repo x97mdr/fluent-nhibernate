@@ -1,25 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Reflection;
-using FluentNHibernate.Utils;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel.Collections
 {
-    public class ElementMapping : MappingBase
+    public class ElementMapping : MappingBase, IMapping
     {
-        private readonly IDefaultableList<ColumnMapping> columns = new DefaultableList<ColumnMapping>();
-        private readonly AttributeStore<ElementMapping> attributes;
-
-        public ElementMapping()
-            : this(new AttributeStore())
-        {}
-
-        public ElementMapping(AttributeStore underlyingStore)
-        {
-            attributes = new AttributeStore<ElementMapping>(underlyingStore);
-        }
+        readonly IDefaultableList<ColumnMapping> columns = new DefaultableList<ColumnMapping>();
+        readonly ValueStore values = new ValueStore();
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
         {
@@ -31,20 +20,20 @@ namespace FluentNHibernate.MappingModel.Collections
 
         public TypeReference Type
         {
-            get { return attributes.Get(x => x.Type); }
-            set { attributes.Set(x => x.Type, value); }
+            get { return values.Get<TypeReference>(Attr.Type); }
+            set { values.Set(Attr.Type, value); }
         }
 
         public string Formula
         {
-            get { return attributes.Get(x => x.Formula); }
-            set { attributes.Set(x => x.Formula, value); }
+            get { return values.Get(Attr.Formula); }
+            set { values.Set(Attr.Formula, value); }
         }
 
         public int Length
         {
-            get { return attributes.Get(x => x.Length); }
-            set { attributes.Set(x => x.Length, value); }
+            get { return values.Get<int>(Attr.Length); }
+            set { values.Set(Attr.Length, value); }
         }
 
         public void AddColumn(ColumnMapping mapping)
@@ -66,17 +55,12 @@ namespace FluentNHibernate.MappingModel.Collections
 
         public override bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);
+            return false;
         }
 
-        public bool HasValue<TResult>(Expression<Func<ElementMapping, TResult>> property)
+        public bool HasValue(Attr attr)
         {
-            return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<ElementMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
+            return values.HasValue(attr);
         }
 
         public bool Equals(ElementMapping other)
@@ -84,7 +68,7 @@ namespace FluentNHibernate.MappingModel.Collections
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return other.columns.ContentEquals(columns) &&
-                Equals(other.attributes, attributes) &&
+                Equals(other.values, values) &&
                 Equals(other.ContainingEntityType, ContainingEntityType);
         }
 
@@ -101,10 +85,21 @@ namespace FluentNHibernate.MappingModel.Collections
             unchecked
             {
                 int result = (columns != null ? columns.GetHashCode() : 0);
-                result = (result * 397) ^ (attributes != null ? attributes.GetHashCode() : 0);
+                result = (result * 397) ^ (values != null ? values.GetHashCode() : 0);
                 result = (result * 397) ^ (ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0);
                 return result;
             }
+        }
+
+        public void AddChild(IMapping child)
+        {
+            if (child is ColumnMapping)
+                AddColumn((ColumnMapping)child);
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        {
+            values.Merge(otherValues);
         }
     }
 }

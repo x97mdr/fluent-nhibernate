@@ -10,6 +10,7 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
 		{
 			new MappingTester<CompIdTarget>()
 				.ForMapping(c => c.CompositeId().KeyProperty(x => x.LongId))
+                .Element("class/composite-id").Exists()
 				.Element("class/composite-id/key-property")
 					.HasAttribute("name", "LongId");
 		}

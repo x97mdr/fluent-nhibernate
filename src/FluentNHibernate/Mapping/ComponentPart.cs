@@ -1,41 +1,23 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq.Expressions;
-using System.Reflection;
-using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
+using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Mapping
 {
-    public class ComponentPart<T> : ComponentPartBase<T>, IComponentMappingProvider
+    public class ComponentPart<T> : ComponentPartBase<T>
     {
-        private readonly Type entity;
-        private readonly AccessStrategyBuilder<ComponentPart<T>> access;
-        private readonly AttributeStore<ComponentMapping> attributes;
+        readonly IMappingStructure<ComponentMapping> structure;
+        readonly AccessStrategyBuilder<ComponentPart<T>> access;
 
-        public ComponentPart(Type entity, Member property)
-            : this(entity, property.Name, new AttributeStore())
-        {}
-
-        private ComponentPart(Type entity, string propertyName, AttributeStore underlyingStore)
-            : base(underlyingStore, propertyName)
+        public ComponentPart(IMappingStructure<ComponentMapping> structure)
+            : base(structure)
         {
-            attributes = new AttributeStore<ComponentMapping>(underlyingStore);
-            access = new AccessStrategyBuilder<ComponentPart<T>>(this, value => attributes.Set(x => x.Access, value));
-            this.entity = entity;
+            this.structure = structure;
 
-            Insert();
-            Update();
-        }
-
-        protected override ComponentMapping CreateComponentMappingRoot(AttributeStore store)
-        {
-            return new ComponentMapping(ComponentType.Component, store)
-            {
-                ContainingEntityType = entity,
-                Class = new TypeReference(typeof(T))
-            };
+            access = new AccessStrategyBuilder<ComponentPart<T>>(this, value => structure.SetValue(Attr.Access, value));
         }
 
         /// <summary>
@@ -82,7 +64,7 @@ namespace FluentNHibernate.Mapping
 
         public ComponentPart<T> LazyLoad()
         {
-            attributes.Set(x => x.Lazy, nextBool);
+            structure.SetValue(Attr.Lazy, nextBool);
             nextBool = true;
             return this;
         }
@@ -91,11 +73,6 @@ namespace FluentNHibernate.Mapping
         {
             base.OptimisticLock();
             return this;
-        }
-
-        IComponentMapping IComponentMappingProvider.GetComponentMapping()
-        {
-            return CreateComponentMapping();
         }
     }
 }

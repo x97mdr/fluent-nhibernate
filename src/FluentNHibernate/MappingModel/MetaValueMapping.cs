@@ -1,20 +1,25 @@
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
-    public class MetaValueMapping : MappingBase
+    public class MetaValueMapping : MappingBase, ITypeMapping
     {
-        private readonly AttributeStore<MetaValueMapping> attributes;
+        readonly ValueStore values = new ValueStore();
 
         public MetaValueMapping()
-            : this(new AttributeStore())
         {}
 
-        protected MetaValueMapping(AttributeStore underlyingStore)
+        public MetaValueMapping(Type type)
         {
-            attributes = new AttributeStore<MetaValueMapping>(underlyingStore);
+            Initialise(type);
+        }
+
+        public void Initialise(Type type)
+        {
+            Class = new TypeReference(type);
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
@@ -24,36 +29,31 @@ namespace FluentNHibernate.MappingModel
 
         public string Value
         {
-            get { return attributes.Get(x => x.Value); }
-            set { attributes.Set(x => x.Value, value); }
+            get { return values.Get(Attr.Value); }
+            set { values.Set(Attr.Value, value); }
         }
 
         public TypeReference Class
         {
-            get { return attributes.Get(x => x.Class); }
-            set { attributes.Set(x => x.Class, value); }
+            get { return values.Get<TypeReference>(Attr.Class); }
+            set { values.Set(Attr.Class, value); }
         }
 
         public Type ContainingEntityType { get; set; }
 
         public override bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);
+            return false;
         }
 
-        public bool HasValue<TResult>(Expression<Func<MetaValueMapping, TResult>> property)
+        public bool HasValue(Attr attr)
         {
-            return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<MetaValueMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
+            return values.HasValue(attr);
         }
 
         public bool Equals(MetaValueMapping other)
         {
-            return Equals(other.attributes, attributes) && Equals(other.ContainingEntityType, ContainingEntityType);
+            return Equals(other.values, values) && Equals(other.ContainingEntityType, ContainingEntityType);
         }
 
         public override bool Equals(object obj)
@@ -66,9 +66,18 @@ namespace FluentNHibernate.MappingModel
         {
             unchecked
             {
-                return ((attributes != null ? attributes.GetHashCode() : 0) * 397) ^
+                return ((values != null ? values.GetHashCode() : 0) * 397) ^
                     (ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0);
             }
+        }
+
+        public void AddChild(IMapping child)
+        {
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        {
+            values.Merge(otherValues);
         }
     }
 }

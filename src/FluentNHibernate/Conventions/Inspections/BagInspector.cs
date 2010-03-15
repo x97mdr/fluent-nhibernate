@@ -6,10 +6,10 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class BagInspector : CollectionInspector, IBagInspector
     {
-        private readonly InspectorModelMapper<IBagInspector, BagMapping> mappedProperties = new InspectorModelMapper<IBagInspector, BagMapping>();
-        private readonly BagMapping mapping;
+        private readonly InspectorModelMapper<IBagInspector, CollectionMapping> mappedProperties = new InspectorModelMapper<IBagInspector, CollectionMapping>();
+        private readonly CollectionMapping mapping;
 
-        public BagInspector(BagMapping mapping)
+        public BagInspector(CollectionMapping mapping)
             : base(mapping)
         {
             this.mapping = mapping;

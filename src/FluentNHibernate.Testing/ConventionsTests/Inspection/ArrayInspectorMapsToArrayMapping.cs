@@ -13,13 +13,13 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
     [TestFixture, Category("Inspection DSL")]
     public class ArrayInspectorMapsToArrayMapping
     {
-        private ArrayMapping mapping;
+        private CollectionMapping mapping;
         private IArrayInspector inspector;
 
         [SetUp]
         public void CreateDsl()
         {
-            mapping = new ArrayMapping();
+            mapping = new CollectionMapping();
             inspector = new ArrayInspector(mapping);
         }
 
@@ -48,14 +48,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void MapsIndexManyToManyToInspector()
         {
-            mapping.Index = new IndexManyToManyMapping();
+            mapping.Index = new IndexManyToManyMapping(null);
             inspector.Index.ShouldBeOfType<IIndexManyToManyInspector>();
         }
 
         [Test]
         public void IndexManyToManyIsSet()
         {
-            mapping.Index = new IndexManyToManyMapping();
+            mapping.Index = new IndexManyToManyMapping(null);
             inspector.IsSet(Prop(x => x.Index))
                 .ShouldBeTrue();
         }

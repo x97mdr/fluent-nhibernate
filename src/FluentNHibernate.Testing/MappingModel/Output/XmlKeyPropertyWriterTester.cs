@@ -48,7 +48,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteColumns()
         {
-            var mapping = new KeyPropertyMapping();
+            var mapping = new KeyPropertyMapping(null);
 
             mapping.AddColumn(new ColumnMapping());
 

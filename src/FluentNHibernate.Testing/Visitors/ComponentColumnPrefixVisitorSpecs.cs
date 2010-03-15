@@ -1,4 +1,5 @@
 using System.Linq;
+using FluentNHibernate.Automapping.TestFixtures;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Collections;
@@ -20,7 +21,7 @@ namespace FluentNHibernate.Testing.Visitors
             visitor = new ComponentColumnPrefixVisitor();
             reference_with_a_prefix = new ReferenceComponentMapping(ComponentType.Component, new DummyPropertyInfo("PROPERTY", typeof(Target)).ToMember(), typeof(ComponentTarget), typeof(Target), column_prefix);
 
-            var external_mapping = new ExternalComponentMapping(ComponentType.Component);
+            var external_mapping = new ExternalComponentMapping(typeof(Target));
             external_mapping.AddProperty(property_with_column("propertyColumn"));
 
             reference_with_a_prefix.AssociateExternalMapping(external_mapping);
@@ -51,16 +52,16 @@ namespace FluentNHibernate.Testing.Visitors
         {
             visitor = new ComponentColumnPrefixVisitor();
             reference_with_a_prefix = new ReferenceComponentMapping(ComponentType.Component, new DummyPropertyInfo("PROPERTY", typeof(Target)).ToMember(), typeof(ComponentTarget), typeof(Target), first_prefix);
-            reference_with_a_prefix.AssociateExternalMapping(new ExternalComponentMapping(ComponentType.Component));
+            reference_with_a_prefix.AssociateExternalMapping(new ExternalComponentMapping(typeof(Target)));
 
             var sub_component = new ReferenceComponentMapping(ComponentType.Component, new DummyPropertyInfo("PROPERTY", typeof(Target)).ToMember(), typeof(ComponentTarget), typeof(Target), second_prefix);
 
-            var sub_component_mapping = new ExternalComponentMapping(ComponentType.Component);
+            var sub_component_mapping = new ExternalComponentMapping(typeof(Target));
             sub_component_mapping.AddProperty(property_with_column("propertyColumn"));
 
             sub_component.AssociateExternalMapping(sub_component_mapping);
 
-            reference_with_a_prefix.AssociateExternalMapping(new ExternalComponentMapping(ComponentType.Component));
+            reference_with_a_prefix.AssociateExternalMapping(new ExternalComponentMapping(typeof(Target)));
             reference_with_a_prefix.AddComponent(sub_component);
         }
 
@@ -89,11 +90,11 @@ namespace FluentNHibernate.Testing.Visitors
         {
             visitor = new ComponentColumnPrefixVisitor();
             reference_with_a_prefix = new ReferenceComponentMapping(ComponentType.Component, new DummyPropertyInfo("PROPERTY", typeof(Target)).ToMember(), typeof(ComponentTarget), typeof(Target), column_prefix);
-            reference_with_a_prefix.AssociateExternalMapping(new ExternalComponentMapping(ComponentType.Component));
+            reference_with_a_prefix.AssociateExternalMapping(new ExternalComponentMapping(typeof(Target)));
 
             reference_without_a_prefix = new ReferenceComponentMapping(ComponentType.Component, new DummyPropertyInfo("PROPERTY", typeof(Target)).ToMember(), typeof(ComponentTarget), typeof(Target), null);
 
-            var external_mapping = new ExternalComponentMapping(ComponentType.Component);
+            var external_mapping = new ExternalComponentMapping(typeof(Target));
             external_mapping.AddProperty(property_with_column("propertyColumn"));
 
             reference_without_a_prefix.AssociateExternalMapping(external_mapping);
@@ -125,7 +126,7 @@ namespace FluentNHibernate.Testing.Visitors
             visitor = new ComponentColumnPrefixVisitor();
             reference_with_a_prefix = new ReferenceComponentMapping(ComponentType.Component, new DummyPropertyInfo("PROPERTY", typeof(Target)).ToMember(), typeof(ComponentTarget), typeof(Target), column_prefix);
 
-            var external_mapping = new ExternalComponentMapping(ComponentType.Component);
+            var external_mapping = new ExternalComponentMapping(typeof(Target));
 
             external_mapping.AddAny(any_with_column("anyColumn"));
             external_mapping.AddCollection(collection_with_column("collectionColumn"));
@@ -135,7 +136,7 @@ namespace FluentNHibernate.Testing.Visitors
 
             external_mapping.AddComponent(component);
             external_mapping.AddProperty(property_with_column("propertyColumn"));
-            external_mapping.AddReference(reference_with_column("referenceColumn"));
+            external_mapping.AddReference(ReferenceWithColumn());
 
             reference_with_a_prefix.AssociateExternalMapping(external_mapping);
         }
@@ -190,18 +191,18 @@ namespace FluentNHibernate.Testing.Visitors
         {
             var any = new AnyMapping();
 
-            any.AddIdentifierDefaultColumn(new ColumnMapping { Name = column });
-            any.AddTypeDefaultColumn(new ColumnMapping { Name = column });
+            any.AddIdentifierDefaultColumn(new ColumnMapping() { Name = column });
+            any.AddTypeDefaultColumn(new ColumnMapping() { Name = column });
             
             return any;
         }
 
-        protected ICollectionMapping collection_with_column(string column)
+        protected CollectionMapping collection_with_column(string column)
         {
-            var collection = new BagMapping();
+            var collection = new CollectionMapping();
 
             collection.Key = new KeyMapping();
-            collection.Key.AddDefaultColumn(new ColumnMapping { Name = column });
+            collection.Key.AddDefaultColumn(new ColumnMapping() { Name = column });
 
             return collection;
         }
@@ -213,7 +214,7 @@ namespace FluentNHibernate.Testing.Visitors
             return property;
         }
 
-        protected ManyToOneMapping reference_with_column(string column)
+        protected ManyToOneMapping ReferenceWithColumn()
         {
             var reference = new ManyToOneMapping();
             reference.AddDefaultColumn(new ColumnMapping { Name = "propertyColumn" });

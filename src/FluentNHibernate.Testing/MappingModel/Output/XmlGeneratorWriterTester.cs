@@ -1,3 +1,4 @@
+using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Identity;
 using FluentNHibernate.MappingModel.Output;
 using FluentNHibernate.Testing.Testing;
@@ -25,8 +26,8 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new GeneratorMapping();
 
-            mapping.Params.Add("first", "value");
-            mapping.Params.Add("second", "another-value");
+            mapping.AddParam(new ParamMapping { Name = "left", Value = "value" });
+            mapping.AddParam(new ParamMapping { Name = "second", Value = "another-value" });
 
             writer = new XmlGeneratorWriter();
             writer.VerifyXml(mapping)

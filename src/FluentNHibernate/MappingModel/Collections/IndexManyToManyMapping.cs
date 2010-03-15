@@ -1,23 +1,27 @@
 using System;
-using System.Linq.Expressions;
-using System.Reflection;
-using FluentNHibernate.Utils;
+using System.Collections.Generic;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel.Collections
 {
-    public class IndexManyToManyMapping : MappingBase, IIndexMapping, IHasColumnMappings
+    public class IndexManyToManyMapping : MappingBase, IIndexMapping, IHasColumnMappings, IMapping, ITypeMapping
     {
-        private readonly AttributeStore<IndexManyToManyMapping> attributes;
-        private readonly IDefaultableList<ColumnMapping> columns = new DefaultableList<ColumnMapping>();
+        readonly ValueStore values = new ValueStore();
+        readonly IDefaultableList<ColumnMapping> columns = new DefaultableList<ColumnMapping>();
 
         public IndexManyToManyMapping()
-            : this(new AttributeStore())
         {}
 
-        public IndexManyToManyMapping(AttributeStore underlyingStore)
+        public IndexManyToManyMapping(Type type)
         {
-            attributes = new AttributeStore<IndexManyToManyMapping>(underlyingStore);
+            Initialise(type);
+        }
+
+        public void Initialise(Type type)
+        {
+            var column = new ColumnMapping { Name = type.Name + "_id" };
+            column.SpecifyParentValues(values);
+            AddDefaultColumn(column);
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
@@ -32,8 +36,8 @@ namespace FluentNHibernate.MappingModel.Collections
 
         public TypeReference Class
         {
-            get { return attributes.Get(x => x.Class); }
-            set { attributes.Set(x => x.Class, value); }
+            get { return values.Get<TypeReference>(Attr.Class); }
+            set { values.Set(Attr.Class, value); }
         }
 
         public IDefaultableEnumerable<ColumnMapping> Columns
@@ -58,36 +62,31 @@ namespace FluentNHibernate.MappingModel.Collections
 
         public string ForeignKey
         {
-            get { return attributes.Get(x => x.ForeignKey); }
-            set { attributes.Set(x => x.ForeignKey, value); }
+            get { return values.Get(Attr.ForeignKey); }
+            set { values.Set(Attr.ForeignKey, value); }
         }
 
         public string EntityName
         {
-            get { return attributes.Get(x => x.EntityName); }
-            set { attributes.Set(x => x.EntityName, value); }
+            get { return values.Get(Attr.EntityName); }
+            set { values.Set(Attr.EntityName, value); }
         }     
 
         public override bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);
+            return false;
         }
 
-        public bool HasValue<TResult>(Expression<Func<IndexManyToManyMapping, TResult>> property)
+        public bool HasValue(Attr attr)
         {
-            return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<IndexManyToManyMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
+            return values.HasValue(attr);
         }
 
         public bool Equals(IndexManyToManyMapping other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.attributes, attributes) &&
+            return Equals(other.values, values) &&
                 other.columns.ContentEquals(columns) &&
                 Equals(other.ContainingEntityType, ContainingEntityType);
         }
@@ -104,11 +103,22 @@ namespace FluentNHibernate.MappingModel.Collections
         {
             unchecked
             {
-                int result = (attributes != null ? attributes.GetHashCode() : 0);
+                int result = (values != null ? values.GetHashCode() : 0);
                 result = (result * 397) ^ (columns != null ? columns.GetHashCode() : 0);
                 result = (result * 397) ^ (ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0);
                 return result;
             }
+        }
+
+        public void AddChild(IMapping child)
+        {
+            if (child is ColumnMapping)
+                AddColumn((ColumnMapping)child);
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        {
+            values.Merge(otherValues);
         }
     }
 }

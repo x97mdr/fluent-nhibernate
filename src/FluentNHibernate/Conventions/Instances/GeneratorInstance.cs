@@ -16,7 +16,7 @@ namespace FluentNHibernate.Conventions.Instances
             : base(mapping)
         {
             this.mapping = mapping;
-            builder = new GeneratorBuilder(mapping, type);
+            builder = null; // new GeneratorBuilder(mapping, type);
         }
 
 		/// <summary>

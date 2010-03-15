@@ -8,6 +8,64 @@ using FluentNHibernate.Utils;
 
 namespace FluentNHibernate
 {
+    // TODO: Find a better way to do this
+    public class OverriddenReturnTypeMember : Member
+    {
+        readonly Member member;
+        readonly Type overriddenReturnType;
+
+        public OverriddenReturnTypeMember(Member innnerMember, Type overriddenReturnType)
+        {
+            this.member = innnerMember;
+            this.overriddenReturnType = overriddenReturnType;
+        }
+
+        public override string Name
+        {
+            get { return member.Name; }
+        }
+        public override Type PropertyType
+        {
+            get { return overriddenReturnType; }
+        }
+        public override bool CanWrite
+        {
+            get { return member.CanWrite; }
+        }
+        public override MemberInfo MemberInfo
+        {
+            get { return member.MemberInfo; }
+        }
+        public override Type DeclaringType
+        {
+            get { return member.DeclaringType; }
+        }
+        public override bool HasIndexParameters
+        {
+            get { return member.HasIndexParameters; }
+        }
+        public override bool IsMethod
+        {
+            get { return member.IsMethod; }
+        }
+        public override bool IsField
+        {
+            get { return member.IsField; }
+        }
+        public override bool IsProperty
+        {
+            get { return member.IsProperty; }
+        }
+        public override void SetValue(object target, object value)
+        {
+            member.SetValue(target, value);
+        }
+
+        public override object GetValue(object target)
+        {
+            return member.GetValue(target);
+        }
+    }
     public abstract class Member : IEquatable<Member>
     {
         public abstract string Name { get; }

@@ -1,6 +1,7 @@
 using System;
 using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel.ClassBased;
+using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Mapping
 {
@@ -12,14 +13,12 @@ namespace FluentNHibernate.Mapping
     /// <typeparam name="T">Component type</typeparam>
     public class ReferenceComponentPart<T> : IReferenceComponentMappingProvider
     {
-        private readonly Member property;
-        private readonly Type containingEntityType;
+        readonly IMappingStructure<ReferenceComponentMapping> structure;
         private string columnPrefix;
 
-        public ReferenceComponentPart(Member property, Type containingEntityType)
+        public ReferenceComponentPart(IMappingStructure<ReferenceComponentMapping> structure)
         {
-            this.property = property;
-            this.containingEntityType = containingEntityType;
+            this.structure = structure;
         }
 
         /// <summary>
@@ -36,14 +35,10 @@ namespace FluentNHibernate.Mapping
         /// ColumnPrefix("{property}_") will result in any columns of Person.Address being prefixed with "PostalAddress_".
         /// </example>
         /// <param name="prefix">Prefix for column names</param>
-        public void ColumnPrefix(string prefix)
+        public ReferenceComponentPart<T> ColumnPrefix(string prefix)
         {
             columnPrefix = prefix;
-        }
-
-        IComponentMapping IComponentMappingProvider.GetComponentMapping()
-        {
-            return new ReferenceComponentMapping(ComponentType.Component, property, typeof(T), containingEntityType, columnPrefix);
+            return this;
         }
 
         Type IReferenceComponentMappingProvider.Type

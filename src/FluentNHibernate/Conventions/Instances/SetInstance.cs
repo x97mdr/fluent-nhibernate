@@ -6,8 +6,8 @@ namespace FluentNHibernate.Conventions.Instances
 {
     public class SetInstance : SetInspector, ISetInstance
     {
-        private readonly SetMapping mapping;
-        public SetInstance(SetMapping mapping)
+        private readonly CollectionMapping mapping;
+        public SetInstance(CollectionMapping mapping)
             : base(mapping)
         {
             this.mapping = mapping;

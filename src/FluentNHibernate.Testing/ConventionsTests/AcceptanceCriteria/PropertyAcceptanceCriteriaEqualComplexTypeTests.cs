@@ -33,7 +33,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
             acceptance.Expect(x => x.Access == Access.Field);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Access = "property" }))
+                .Matches(new PropertyInspector(new PropertyMapping { Access = "property" }))
                 .ShouldBeFalse();
         }
 
@@ -53,7 +53,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
             acceptance.Expect(x => x.Access != Access.Field);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Access = "property" }))
+                .Matches(new PropertyInspector(new PropertyMapping { Access = "property" }))
                 .ShouldBeTrue();
         }
 
@@ -63,7 +63,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
             acceptance.Expect(x => x.Access != Access.Field);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Access = "field" }))
+                .Matches(new PropertyInspector(new PropertyMapping { Access = "field" }))
                 .ShouldBeFalse();
         }
 

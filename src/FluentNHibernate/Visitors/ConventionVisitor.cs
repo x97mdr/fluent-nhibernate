@@ -72,29 +72,6 @@ namespace FluentNHibernate.Visitors
                 new ColumnInstance(currentType, columnMapping));
         }
 
-        protected override void ProcessCollection(ICollectionMapping mapping)
-        {
-            var generalConventions = finder.Find<ICollectionConvention>();
-
-            Apply<ICollectionInspector, ICollectionInstance>(generalConventions,
-                new CollectionInstance(mapping));
-
-            if (mapping.Relationship is ManyToManyMapping)
-            {
-                var conventions = finder.Find<IHasManyToManyConvention>();
-
-                Apply<IManyToManyCollectionInspector, IManyToManyCollectionInstance>(conventions,
-                    new ManyToManyCollectionInstance(mapping));
-            }
-            else
-            {
-                var conventions = finder.Find<IHasManyConvention>();
-
-                Apply<IOneToManyCollectionInspector, IOneToManyCollectionInstance>(conventions,
-                    new OneToManyCollectionInstance(mapping));
-            }
-        }
-
         public override void ProcessManyToOne(ManyToOneMapping mapping)
         {
             var conventions = finder.Find<IReferenceConvention>();
@@ -171,55 +148,78 @@ namespace FluentNHibernate.Visitors
                 new IndexManyToManyInstance(indexMapping));
         }
 
-        public override void ProcessArray(ArrayMapping mapping)
+        public override void ProcessCollection(CollectionMapping mapping)
         {
-            var conventions = finder.Find<IArrayConvention>();
+            var generalConventions = finder.Find<ICollectionConvention>();
 
-            Apply<IArrayInspector, IArrayInstance>(conventions,
-                new ArrayInstance(mapping));
+            Apply<ICollectionInspector, ICollectionInstance>(generalConventions,
+                new CollectionInstance(mapping));
 
-            ApplyCollectionConventions(mapping);
+            if (mapping.Relationship is ManyToManyMapping)
+            {
+                var conventions = finder.Find<IHasManyToManyConvention>();
+
+                Apply<IManyToManyCollectionInspector, IManyToManyCollectionInstance>(conventions,
+                    new ManyToManyCollectionInstance(mapping));
+            }
+            else
+            {
+                var conventions = finder.Find<IHasManyConvention>();
+
+                Apply<IOneToManyCollectionInspector, IOneToManyCollectionInstance>(conventions,
+                    new OneToManyCollectionInstance(mapping));
+            }
         }
 
-        public override void ProcessBag(BagMapping bagMapping)
-        {
-            var conventions = finder.Find<IBagConvention>();
+        //public override void ProcessArray(CollectionMapping mapping)
+        //{
+        //    var conventions = finder.Find<IArrayConvention>();
 
-            Apply<IBagInspector, IBagInstance>(conventions,
-                new BagInstance(bagMapping));
+        //    Apply<IArrayInspector, IArrayInstance>(conventions,
+        //        new ArrayInstance(mapping));
 
-            ApplyCollectionConventions(bagMapping);
-        }
+        //    ApplyCollectionConventions(mapping);
+        //}
 
-        public override void ProcessList(ListMapping listMapping)
-        {
-            var conventions = finder.Find<IListConvention>();
+        //public override void ProcessBag(CollectionMapping collectionMapping)
+        //{
+        //    var conventions = finder.Find<IBagConvention>();
 
-            Apply<IListInspector, IListInstance>(conventions,
-                new ListInstance(listMapping));
+        //    Apply<IBagInspector, IBagInstance>(conventions,
+        //        new BagInstance(collectionMapping));
 
-            ApplyCollectionConventions(listMapping);
-        }
+        //    ApplyCollectionConventions(collectionMapping);
+        //}
 
-        public override void ProcessMap(MapMapping mapping)
-        {
-            var conventions = finder.Find<IMapConvention>();
+        //public override void ProcessList(CollectionMapping collectionMapping)
+        //{
+        //    var conventions = finder.Find<IListConvention>();
 
-            Apply<IMapInspector, IMapInstance>(conventions,
-                new MapInstance(mapping));
+        //    Apply<IListInspector, IListInstance>(conventions,
+        //        new ListInstance(collectionMapping));
 
-            ApplyCollectionConventions(mapping);
-        }
+        //    ApplyCollectionConventions(collectionMapping);
+        //}
 
-        public override void ProcessSet(SetMapping setMapping)
-        {
-            var conventions = finder.Find<ISetConvention>();
+        //public override void ProcessMap(CollectionMapping mapping)
+        //{
+        //    var conventions = finder.Find<IMapConvention>();
 
-            Apply<ISetInspector, ISetInstance>(conventions,
-                new SetInstance(setMapping));
+        //    Apply<IMapInspector, IMapInstance>(conventions,
+        //        new MapInstance(mapping));
 
-            ApplyCollectionConventions(setMapping);
-        }
+        //    ApplyCollectionConventions(mapping);
+        //}
+
+        //public override void ProcessSet(CollectionMapping collectionMapping)
+        //{
+        //    var conventions = finder.Find<ISetConvention>();
+
+        //    Apply<ISetInspector, ISetInstance>(conventions,
+        //        new SetInstance(collectionMapping));
+
+        //    ApplyCollectionConventions(collectionMapping);
+        //}
 
         public override void ProcessJoin(JoinMapping joinMapping)
         {
@@ -270,7 +270,7 @@ namespace FluentNHibernate.Visitors
             }
         }
 
-        private void ApplyCollectionConventions(ICollectionMapping mapping)
+        private void ApplyCollectionConventions(CollectionMapping mapping)
         {
             if (mapping.Relationship is ManyToManyMapping)
                 Apply<IManyToManyCollectionInspector, IManyToManyCollectionInstance>(finder.Find<IHasManyToManyConvention>(),

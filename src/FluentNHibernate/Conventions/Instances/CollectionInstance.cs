@@ -11,10 +11,10 @@ namespace FluentNHibernate.Conventions.Instances
 {
     public class CollectionInstance : CollectionInspector, ICollectionInstance
     {
-        private readonly ICollectionMapping mapping;
+        private readonly CollectionMapping mapping;
         protected bool nextBool = true;
 
-        public CollectionInstance(ICollectionMapping mapping)
+        public CollectionInstance(CollectionMapping mapping)
             : base(mapping)
         {
             this.mapping = mapping;

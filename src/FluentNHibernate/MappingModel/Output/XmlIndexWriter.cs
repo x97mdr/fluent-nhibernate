@@ -28,7 +28,7 @@ namespace FluentNHibernate.MappingModel.Output
 
             var element = document.AddElement("index");
 
-            if (mapping.HasValue(x => x.Type))
+            if (mapping.HasValue(Attr.Type))
                 element.WithAtt("type", mapping.Type);
         }
 

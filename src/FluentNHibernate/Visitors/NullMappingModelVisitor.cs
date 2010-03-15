@@ -69,27 +69,12 @@ namespace FluentNHibernate.Visitors
 
         }
 
-        public virtual void ProcessBag(BagMapping bagMapping)
-        {
-
-        }
-
         public virtual void ProcessOneToMany(OneToManyMapping oneToManyMapping)
         {
 
         }
 
         public virtual void ProcessManyToMany(ManyToManyMapping manyToManyMapping)
-        {
-            
-        }
-
-        public virtual void ProcessSet(SetMapping setMapping)
-        {
-
-        }
-
-        public virtual void ProcessMap(MapMapping mapping)
         {
             
         }
@@ -110,11 +95,6 @@ namespace FluentNHibernate.Visitors
         }
 
         public virtual void ProcessComponent(ReferenceComponentMapping componentMapping)
-        {
-            
-        }
-
-        public virtual void ProcessList(ListMapping listMapping)
         {
             
         }
@@ -164,11 +144,6 @@ namespace FluentNHibernate.Visitors
             
         }
 
-        public virtual void ProcessArray(ArrayMapping mapping)
-        {
-            
-        }
-
         public virtual void ProcessFilter(FilterMapping mapping)
         {
 
@@ -209,6 +184,11 @@ namespace FluentNHibernate.Visitors
             
         }
 
+        public virtual void ProcessCollection(CollectionMapping mapping)
+        {
+            
+        }
+
         public virtual void Visit(IEnumerable<HibernateMapping> mappings)
         {
             
@@ -240,11 +220,6 @@ namespace FluentNHibernate.Visitors
         }
 
         public virtual void Visit(IIdentityMapping identityMapping)
-        {
-
-        }
-
-        public virtual void Visit(ICollectionMapping collectionMapping)
         {
 
         }
@@ -358,7 +333,7 @@ namespace FluentNHibernate.Visitors
             
         }
 
-        public virtual void Visit(ArrayMapping mapping)
+        public virtual void Visit(CollectionMapping mapping)
         {
             
         }
@@ -379,6 +354,11 @@ namespace FluentNHibernate.Visitors
         }
 
         public virtual void Visit(TuplizerMapping mapping)
+        {
+            
+        }
+
+        public virtual void Visit(ParamMapping mapping)
         {
             
         }

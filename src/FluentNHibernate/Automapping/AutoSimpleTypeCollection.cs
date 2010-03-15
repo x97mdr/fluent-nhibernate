@@ -37,11 +37,10 @@ namespace FluentNHibernate.Automapping
             if (property.DeclaringType != classMap.Type)
                 return;
 
-            var mapping = collections.CreateCollectionMapping(property.PropertyType);
+            var mapping = collections.CreateCollectionMapping(property.PropertyType, property);
 
             mapping.ContainingEntityType = classMap.Type;
             mapping.Member = property;
-            mapping.SetDefaultValue(x => x.Name, property.Name);
 
             keys.SetKey(property, classMap, mapping);
             SetElement(property, classMap, mapping);
@@ -49,7 +48,7 @@ namespace FluentNHibernate.Automapping
             classMap.AddCollection(mapping);
         }
 
-        private void SetElement(Member property, ClassMappingBase classMap, ICollectionMapping mapping)
+        private void SetElement(Member property, ClassMappingBase classMap, CollectionMapping mapping)
         {
             var element = new ElementMapping
             {
@@ -57,8 +56,8 @@ namespace FluentNHibernate.Automapping
                 Type = new TypeReference(property.PropertyType.GetGenericArguments()[0])
             };
 
-            element.AddDefaultColumn(new ColumnMapping { Name = expressions.SimpleTypeCollectionValueColumn(property) });
-            mapping.SetDefaultValue(x => x.Element, element);
+            element.AddDefaultColumn(new ColumnMapping() { Name = expressions.SimpleTypeCollectionValueColumn(property) });
+            mapping.Element = element;
         }
     }
 }

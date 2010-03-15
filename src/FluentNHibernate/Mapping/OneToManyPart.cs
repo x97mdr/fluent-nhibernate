@@ -1,39 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Collections;
+using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Mapping
 {
     public class OneToManyPart<TChild> : ToManyBase<OneToManyPart<TChild>, TChild, OneToManyMapping>
     {
-        private readonly Type entity;
+        readonly Type entity;
+        readonly IMappingStructure<CollectionMapping> structure;
+        readonly IMappingStructure<KeyMapping> keyStructure;
+        readonly IMappingStructure relationshipStructure;
         private readonly ColumnMappingCollection<OneToManyPart<TChild>> keyColumns;
         private readonly CollectionCascadeExpression<OneToManyPart<TChild>> cascade;
         private readonly NotFoundExpression<OneToManyPart<TChild>> notFound;
-        private IndexManyToManyPart manyToManyIndex;
-        private readonly Type childType;
-        private Type valueType;
-        private bool isTernary;
 
-        public OneToManyPart(Type entity, Member property)
-            : this(entity, property, property.PropertyType)
-        {
-        }
-
-        protected OneToManyPart(Type entity, Member member, Type collectionType)
-            : base(entity, member, collectionType)
+        public OneToManyPart(Type entity, IMappingStructure<CollectionMapping> structure, IMappingStructure<KeyMapping> keyStructure, IMappingStructure relationshipStructure)
+            : base(structure, keyStructure, relationshipStructure)
         {
             this.entity = entity;
-            childType = collectionType;
+            this.structure = structure;
+            this.keyStructure = keyStructure;
+            this.relationshipStructure = relationshipStructure;
 
-            keyColumns = new ColumnMappingCollection<OneToManyPart<TChild>>(this);
-            cascade = new CollectionCascadeExpression<OneToManyPart<TChild>>(this, value => collectionAttributes.Set(x => x.Cascade, value));
-            notFound = new NotFoundExpression<OneToManyPart<TChild>>(this, value => relationshipAttributes.Set(x => x.NotFound, value));
-
-            collectionAttributes.SetDefault(x => x.Name, member.Name);
+            keyColumns = new ColumnMappingCollection<OneToManyPart<TChild>>(this, keyStructure);
+            cascade = new CollectionCascadeExpression<OneToManyPart<TChild>>(this, value => structure.SetValue(Attr.Cascade, value));
+            notFound = new NotFoundExpression<OneToManyPart<TChild>>(this, value => relationshipStructure.SetValue(Attr.NotFound, value));
         }
 
         public NotFoundExpression<OneToManyPart<TChild>> NotFound
@@ -46,50 +40,29 @@ namespace FluentNHibernate.Mapping
             get { return cascade; }
         }
 
-        public override ICollectionMapping GetCollectionMapping()
-        {
-            var collection = base.GetCollectionMapping();
-
-            if (keyColumns.Count() == 0)
-                collection.Key.AddDefaultColumn(new ColumnMapping { Name = entity.Name + "_id" });
-
-            foreach (var column in keyColumns)
-            {
-                collection.Key.AddColumn(column);
-            }
-
-            // HACK: shouldn't have to do this!
-            if (manyToManyIndex != null && collection is MapMapping)
-                ((MapMapping)collection).Index = manyToManyIndex.GetIndexMapping();
-
-            return collection;
-        }
-
         private void EnsureGenericDictionary()
         {
+            var childType = typeof(TChild);
             if (!(childType.IsGenericType && childType.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
-                throw new ArgumentException(member.Name + " must be of type IDictionary<> to be used in a ternary assocation. Type was: " + childType);
+                throw new ArgumentException(" must be of type IDictionary<> to be used in a ternary assocation. Type was: " + childType);
         }
 
         public OneToManyPart<TChild> AsTernaryAssociation()
         {
-            var keyType = childType.GetGenericArguments()[0];
-            return AsTernaryAssociation(keyType.Name + "_id");
+            return AsTernaryAssociation(null);
         }
 
         public OneToManyPart<TChild> AsTernaryAssociation(string indexColumnName)
         {
-            EnsureGenericDictionary();
+            //EnsureGenericDictionary();
 
-            var keyType = childType.GetGenericArguments()[0];
-            var valType = childType.GetGenericArguments()[1];
+            var indexStructure = new TypeStructure<IndexManyToManyMapping>(entity);
+            var part = new IndexManyToManyPart(indexStructure);
 
-            manyToManyIndex = new IndexManyToManyPart(typeof(ManyToManyPart<TChild>));
-            manyToManyIndex.Column(indexColumnName);
-            manyToManyIndex.Type(keyType);
+            if (!string.IsNullOrEmpty(indexColumnName))
+                part.Column(indexColumnName);
 
-            valueType = valType;
-            isTernary = true;
+            structure.AddChild(indexStructure);
 
             return this;
         }
@@ -106,19 +79,6 @@ namespace FluentNHibernate.Mapping
             return AsMap(null).AsTernaryAssociation(indexColumnName);
         }
 
-        protected override ICollectionRelationshipMapping GetRelationship()
-        {
-            var mapping = new OneToManyMapping(relationshipAttributes.CloneInner())
-            {
-                ContainingEntityType = entity
-            };
-
-            if (isTernary && valueType != null)
-                mapping.Class = new TypeReference(valueType);
-
-            return mapping;
-        }
-
         public OneToManyPart<TChild> KeyColumn(string columnName)
         {
             KeyColumns.Clear();
@@ -133,7 +93,7 @@ namespace FluentNHibernate.Mapping
 
         public OneToManyPart<TChild> ForeignKeyConstraintName(string foreignKeyName)
         {
-            keyMapping.ForeignKey = foreignKeyName;
+            keyStructure.SetValue(Attr.ForeignKey, foreignKeyName);
             return this;
         }
 
@@ -142,33 +102,33 @@ namespace FluentNHibernate.Mapping
         /// </summary>
         public OneToManyPart<TChild> OrderBy(string orderBy)
         {
-            collectionAttributes.Set(x => x.OrderBy, orderBy);
+            structure.SetValue(Attr.OrderBy, orderBy);
             return this;
         }
 
         public OneToManyPart<TChild> ReadOnly()
         {
-            collectionAttributes.Set(x => x.Mutable, !nextBool);
+            structure.SetValue(Attr.Mutable, !nextBool);
             nextBool = true;
             return this;
         }
 
         public OneToManyPart<TChild> Subselect(string subselect)
         {
-            collectionAttributes.Set(x => x.Subselect, subselect);
+            structure.SetValue(Attr.Subselect, subselect);
             return this;
         }
 
         public OneToManyPart<TChild> KeyUpdate()
         {
-            keyMapping.Update = nextBool;
+            keyStructure.SetValue(Attr.Update, nextBool);
             nextBool = true;
             return this;
         }
 
         public OneToManyPart<TChild> KeyNullable()
         {
-            keyMapping.NotNull = !nextBool;
+            keyStructure.SetValue(Attr.NotNull, !nextBool);
             nextBool = true;
             return this;
         }

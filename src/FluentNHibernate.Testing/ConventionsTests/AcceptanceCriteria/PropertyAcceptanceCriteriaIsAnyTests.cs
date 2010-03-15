@@ -27,11 +27,11 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
             acceptance.Expect(x => x.Access.IsAny(Access.Property, Access.Field));
                 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Access = Access.Field.ToString()}))
+                .Matches(new PropertyInspector(new PropertyMapping { Access = Access.Field.ToString()}))
                 .ShouldBeTrue();
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Access = Access.Property.ToString() }))
+                .Matches(new PropertyInspector(new PropertyMapping { Access = Access.Property.ToString() }))
                 .ShouldBeTrue();
         }
 
@@ -41,7 +41,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
             acceptance.Expect(x => x.Access.IsAny(Access.Property, Access.Field));
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Access = Access.CamelCaseField().ToString() }))
+                .Matches(new PropertyInspector(new PropertyMapping { Access = Access.CamelCaseField().ToString() }))
                 .ShouldBeFalse();
         }
 
@@ -51,11 +51,11 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
             acceptance.Expect(x => x.Access.IsNotAny(Access.Property, Access.Field));
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Access = Access.Field.ToString() }))
+                .Matches(new PropertyInspector(new PropertyMapping { Access = Access.Field.ToString() }))
                 .ShouldBeFalse();
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Access = Access.Property.ToString() }))
+                .Matches(new PropertyInspector(new PropertyMapping { Access = Access.Property.ToString() }))
                 .ShouldBeFalse();
         }
 
@@ -65,7 +65,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
             acceptance.Expect(x => x.Access.IsNotAny(Access.Property, Access.Field));
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Access = Access.CamelCaseField().ToString() }))
+                .Matches(new PropertyInspector(new PropertyMapping { Access = Access.CamelCaseField().ToString() }))
                 .ShouldBeTrue();
         }
     }

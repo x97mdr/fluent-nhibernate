@@ -1,3 +1,4 @@
+using FluentNHibernate.Automapping.TestFixtures;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Output;
@@ -142,7 +143,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         public void ShouldWriteAny()
         {
             var mapping = new JoinMapping();
-            
+
             mapping.AddAny(new AnyMapping());
 
             writer.VerifyXml(mapping)

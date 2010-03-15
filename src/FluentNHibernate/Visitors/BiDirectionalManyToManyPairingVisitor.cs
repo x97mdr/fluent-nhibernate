@@ -7,12 +7,12 @@ using FluentNHibernate.Utils;
 
 namespace FluentNHibernate.Visitors
 {
-    public delegate void PairBiDirectionalManyToManySidesDelegate(ICollectionMapping current, IEnumerable<ICollectionMapping> possibles, bool wasResolved);
+    public delegate void PairBiDirectionalManyToManySidesDelegate(CollectionMapping current, IEnumerable<CollectionMapping> possibles, bool wasResolved);
 
     public class BiDirectionalManyToManyPairingVisitor : DefaultMappingModelVisitor
     {
         readonly PairBiDirectionalManyToManySidesDelegate userControlledPair;
-        readonly List<ICollectionMapping> relationships = new List<ICollectionMapping>();
+        readonly List<CollectionMapping> relationships = new List<CollectionMapping>();
 
         public BiDirectionalManyToManyPairingVisitor(PairBiDirectionalManyToManySidesDelegate userControlledPair)
         {
@@ -27,7 +27,7 @@ namespace FluentNHibernate.Visitors
             return member.Name;
         }
 
-        private static LikenessContainer GetLikeness(ICollectionMapping currentMapping, ICollectionMapping mapping)
+        private static LikenessContainer GetLikeness(CollectionMapping currentMapping, CollectionMapping mapping)
         {
             var currentMemberName = GetMemberName(currentMapping.Member);
             var mappingMemberName = GetMemberName(mapping.Member);
@@ -43,7 +43,7 @@ namespace FluentNHibernate.Visitors
 
         private class LikenessContainer
         {
-            public ICollectionMapping Collection { get; set; }
+            public CollectionMapping Collection { get; set; }
             public string CurrentMemberName { get; set; }
             public string MappingMemberName { get; set; }
             public int Differences { get; set; }
@@ -70,7 +70,7 @@ namespace FluentNHibernate.Visitors
             }
         }
 
-        protected override void ProcessCollection(ICollectionMapping mapping)
+        public override void ProcessCollection(CollectionMapping mapping)
         {
             if (!(mapping.Relationship is ManyToManyMapping))
                 return;
@@ -85,13 +85,13 @@ namespace FluentNHibernate.Visitors
             PairCollections(relationships);
         }
 
-        private static bool both_collections_point_to_each_others_types(ICollectionMapping left, ICollectionMapping right)
+        private static bool both_collections_point_to_each_others_types(CollectionMapping left, CollectionMapping right)
         {
             return left.ContainingEntityType == right.ChildType &&
                 left.ChildType == right.ContainingEntityType;
         }
 
-        void PairCollections(IEnumerable<ICollectionMapping> rs)
+        void PairCollections(IEnumerable<CollectionMapping> rs)
         {
             if (!rs.Any()) return;
 
@@ -130,7 +130,7 @@ namespace FluentNHibernate.Visitors
             return current.Differences != current.CurrentMemberName.Length;
         }
 
-        static ICollectionMapping PairFuzzyMatches(IEnumerable<ICollectionMapping> rs, ICollectionMapping current, IEnumerable<ICollectionMapping> potentialOtherSides)
+        static CollectionMapping PairFuzzyMatches(IEnumerable<CollectionMapping> rs, CollectionMapping current, IEnumerable<CollectionMapping> potentialOtherSides)
         {
             // no exact matches found, drop down to a levenshtein distance
             var mapping = current;
@@ -162,7 +162,7 @@ namespace FluentNHibernate.Visitors
             return mapping;
         }
 
-        static ICollectionMapping PairExactMatches(IEnumerable<ICollectionMapping> rs, ICollectionMapping current, IEnumerable<ICollectionMapping> potentialOtherSides)
+        static CollectionMapping PairExactMatches(IEnumerable<CollectionMapping> rs, CollectionMapping current, IEnumerable<CollectionMapping> potentialOtherSides)
         {
             var otherSide = potentialOtherSides.Single();
                 
@@ -177,7 +177,7 @@ namespace FluentNHibernate.Visitors
             return mapping;
         }
 
-        static ICollectionMapping FindAlternative(IEnumerable<ICollectionMapping> rs, ICollectionMapping current, ICollectionMapping otherSide)
+        static CollectionMapping FindAlternative(IEnumerable<CollectionMapping> rs, CollectionMapping current, CollectionMapping otherSide)
         {
             var alternative = rs
                 .Where(x => x.ContainingEntityType == current.ContainingEntityType)

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using FluentNHibernate.Mapping;
-using FluentNHibernate.Mapping.Providers;
+using FluentNHibernate.MappingModel;
+using FluentNHibernate.MappingModel.Structure;
 using FluentNHibernate.Testing.DomainModel.Mapping;
 using FluentNHibernate.Utils.Reflection;
 using NUnit.Framework;
@@ -13,38 +13,27 @@ namespace FluentNHibernate.Testing.MappingModel.Defaults
     [TestFixture]
     public class PropertyColumnDefaultsTester
     {
-        [Test]
-        public void ShouldHaveDefaultColumnIfNoneSpecified()
-        {
-            var mapping = ((IPropertyMappingProvider)new PropertyPart(Prop(x => x.Name), typeof(PropertyTarget)))
-                .GetPropertyMapping();
+        IMappingStructure<PropertyMapping> structure;
+        PropertyPart part;
 
-            mapping.Columns.Defaults.Count().ShouldEqual(1);
-            mapping.Columns.UserDefined.Count().ShouldEqual(0);
-            mapping.Columns.Count().ShouldEqual(1);
+        [SetUp]
+        public void CreatePart()
+        {
+            structure = new MemberStructure<PropertyMapping>(Prop(x => x.Name));
+            part = new PropertyPart(structure);
         }
 
         [Test]
         public void ShouldHaveNoDefaultsIfUserSpecifiedColumn()
         {
-            var mapping = ((IPropertyMappingProvider)new PropertyPart(Prop(x => x.Name), typeof(PropertyTarget))
-                .Column("explicit"))
-                .GetPropertyMapping();
+            part.Column("explicit");
 
-            mapping.Columns.Defaults.Count().ShouldEqual(0);
-            mapping.Columns.UserDefined.Count().ShouldEqual(1);
-            mapping.Columns.Count().ShouldEqual(1);
-        }
+            var columns = structure.Children
+                .Where(x => x is IMappingStructure<ColumnMapping>)
+                .Select(x => (IMappingStructure<ColumnMapping>)x);
 
-        [Test]
-        public void DefaultColumnShouldInheritColumnAttributes()
-        {
-            var mapping = ((IPropertyMappingProvider)new PropertyPart(Prop(x => x.Name), typeof(PropertyTarget))
-                .Not.Nullable())
-                .GetPropertyMapping();
-
-            mapping.Columns.Defaults.First().NotNull.ShouldBeTrue();
-            mapping.Columns.First().NotNull.ShouldBeTrue();
+            columns.ShouldHaveCount(1);
+            columns.Single().ShouldHaveValue(Attr.Name, "explicit");
         }
 
         private Member Prop(Expression<Func<PropertyTarget, object>> propertyAccessor)

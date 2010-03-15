@@ -22,24 +22,24 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
             acceptance.Expect(x => x.Insert == true);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Insert = true }))
+                .Matches(new PropertyInspector(new PropertyMapping { Insert = true }))
                 .ShouldBeTrue();
         }
 
         [Test]
         public void ExpectEqualShouldValidateToFalseIfNotGivenMatchingModel()
         {
-            acceptance.Expect(x => x.Insert == true);
+            acceptance.Expect(x => x.Insert);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Insert = false }))
+                .Matches(new PropertyInspector(new PropertyMapping { Insert = false }))
                 .ShouldBeFalse();
         }
 
         [Test]
         public void ExpectEqualShouldValidateToFalseIfUnset()
         {
-            acceptance.Expect(x => x.Insert == true);
+            acceptance.Expect(x => x.Insert);
 
             acceptance
                 .Matches(new PropertyInspector(new PropertyMapping()))
@@ -52,7 +52,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
             acceptance.Expect(x => x.Insert != true);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Insert = false }))
+                .Matches(new PropertyInspector(new PropertyMapping { Insert = false }))
                 .ShouldBeTrue();
         }
 
@@ -62,7 +62,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
             acceptance.Expect(x => x.Insert != true);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Insert = true }))
+                .Matches(new PropertyInspector(new PropertyMapping { Insert = true }))
                 .ShouldBeFalse();
         }
 

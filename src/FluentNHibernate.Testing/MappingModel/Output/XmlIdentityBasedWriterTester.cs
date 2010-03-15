@@ -19,14 +19,14 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteIdForIdMapping()
         {
-            writer.VerifyXml(new IdMapping())
+            writer.VerifyXml(new IdMapping(null))
                 .RootElement.HasName("id");
         }
 
         [Test]
         public void ShouldWriteCompositeIdForCompositeIdMapping()
         {
-            writer.VerifyXml(new CompositeIdMapping())
+            writer.VerifyXml(new CompositeIdMapping(null))
                 .RootElement.HasName("composite-id");
         }
     }

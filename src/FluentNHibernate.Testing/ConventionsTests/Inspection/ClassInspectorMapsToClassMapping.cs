@@ -24,7 +24,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [SetUp]
         public void CreateDsl()
         {
-            mapping = new ClassMapping();
+            mapping = new ClassMapping(typeof(ExampleClass));
             inspector = new ClassInspector(mapping);
         }
 
@@ -141,14 +141,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void CollectionsCollectionHasSameCountAsMapping()
         {
-            mapping.AddCollection(new BagMapping());
+            mapping.AddCollection(new CollectionMapping());
             inspector.Collections.Count().ShouldEqual(1);
         }
 
         [Test]
         public void CollectionsCollectionOfInspectors()
         {
-            mapping.AddCollection(new BagMapping());
+            mapping.AddCollection(new CollectionMapping());
             inspector.Collections.First().ShouldImplementType<ICollectionInspector>();
         }
 
@@ -271,14 +271,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void IdMapped()
         {
-            mapping.Id = new IdMapping { Name = "test" };
+            mapping.Id = new IdMapping(null) { Name = "test" };
             inspector.Id.Name.ShouldEqual("test");
         }
 
         [Test]
         public void IdIsSet()
         {
-            mapping.Id = new IdMapping { Name = "test" };
+            mapping.Id = new IdMapping(null) { Name = "test" };
             inspector.IsSet(Prop(x => x.Id))
                 .ShouldBeTrue();
         }
@@ -379,14 +379,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void OneToOnesCollectionHasSameCountAsMapping()
         {
-            mapping.AddOneToOne(new OneToOneMapping());
+            mapping.AddOneToOne(new OneToOneMapping(null));
             inspector.OneToOnes.Count().ShouldEqual(1);
         }
 
         [Test]
         public void OneToOnesCollectionOfInspectors()
         {
-            mapping.AddOneToOne(new OneToOneMapping());
+            mapping.AddOneToOne(new OneToOneMapping(null));
             inspector.OneToOnes.First().ShouldImplementType<IOneToOneInspector>();
         }
 
@@ -615,14 +615,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void SubclassesCollectionHasSameCountAsMapping()
         {
-            mapping.AddSubclass(new SubclassMapping(SubclassType.Subclass));
+            mapping.AddSubclass(new SubclassMapping(SubclassType.JoinedSubclass));
             inspector.Subclasses.Count().ShouldEqual(1);
         }
 
         [Test]
         public void SubclassesCollectionOfInspectors()
         {
-            mapping.AddSubclass(new SubclassMapping(SubclassType.Subclass));
+            mapping.AddSubclass(new SubclassMapping(SubclassType.JoinedSubclass));
             inspector.Subclasses.First().ShouldImplementType<ISubclassInspector>();
         }
 
@@ -679,7 +679,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void VersionMapped()
         {
-            mapping.Version = new VersionMapping();
+            mapping.Version = new VersionMapping(null);
             mapping.Version.Name = "test";
             inspector.Version.Name.ShouldEqual("test");
         }
@@ -687,7 +687,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void VersionIsSet()
         {
-            mapping.Version = new VersionMapping();
+            mapping.Version = new VersionMapping(null);
             mapping.Version.Name = "test";
             inspector.IsSet(Prop(x => x.Version))
                 .ShouldBeTrue();

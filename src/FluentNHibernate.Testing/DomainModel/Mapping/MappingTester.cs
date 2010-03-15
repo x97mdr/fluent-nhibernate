@@ -87,6 +87,7 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public virtual MappingTester<T> HasAttribute(string name, string value)
         {
             Assert.IsNotNull(currentElement, "Couldn't find element matching '" + currentPath + "'");
+            Assert.IsTrue(currentElement.HasAttribute(name), "Attribute '" + name + "' is missing on '" + currentPath + "'.");
 
             var actual = currentElement.GetAttribute(name);
 
@@ -109,6 +110,7 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
 
         public virtual MappingTester<T> DoesntHaveAttribute(string name)
         {
+            Assert.IsNotNull(currentElement, "Couldn't find element matching '" + currentPath + "'");
             Assert.IsFalse(currentElement.HasAttribute(name), "Found attribute '" + name + "' on element.");
 
             return this;
@@ -165,8 +167,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
 
         public MappingTester<T> ValueEquals(string value)
         {
-            currentElement.InnerXml.ShouldEqual(value);
-
+            Assert.IsNotNull(currentElement, "Couldn't find element matching '" + currentPath + "'");
+            Assert.AreEqual(value, currentElement.InnerText);
             return this;
         }
 
@@ -176,6 +178,7 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         /// <param name="elementPosition">Zero based index of elements on the parent</param>
         public virtual MappingTester<T> ShouldBeInParentAtPosition(int elementPosition)
         {
+            Assert.IsNotNull(currentElement, "Couldn't find element matching '" + currentPath + "'");
             XmlElement parentElement = (XmlElement)currentElement.ParentNode;
             if (parentElement == null)
             {

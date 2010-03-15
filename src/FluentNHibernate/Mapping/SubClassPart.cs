@@ -1,67 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
-using FluentNHibernate.Utils;
+using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Mapping
 {
-    public class SubClassPart<TSubclass> : ClasslikeMapBase<TSubclass>, ISubclassMappingProvider
+    public class SubClassPart<TSubclass> : ClasslikeMapBase<TSubclass>
     {
-        private readonly DiscriminatorPart parent;
-        private readonly object discriminatorValue;
-        private readonly AttributeStore<SubclassMapping> attributes = new AttributeStore<SubclassMapping>();
-        private readonly List<SubclassMapping> subclassMappings = new List<SubclassMapping>();
-        private bool nextBool = true;
+        readonly DiscriminatorPart parent;
+        readonly IMappingStructure<SubclassMapping> structure;
+        bool nextBool = true;
 
-        public SubClassPart(DiscriminatorPart parent, object discriminatorValue)
+        public SubClassPart(DiscriminatorPart parent, IMappingStructure<SubclassMapping> structure)
+            : base(structure)
         {
             this.parent = parent;
-            this.discriminatorValue = discriminatorValue;
-        }
-
-        SubclassMapping ISubclassMappingProvider.GetSubclassMapping()
-        {
-            var mapping = new SubclassMapping(SubclassType.Subclass, attributes.CloneInner());
-
-            if (discriminatorValue != null)
-                mapping.DiscriminatorValue = discriminatorValue;
-
-            mapping.SetDefaultValue(x => x.Type, typeof(TSubclass));
-            mapping.SetDefaultValue(x => x.Name, typeof(TSubclass).AssemblyQualifiedName);
-            
-            foreach (var property in properties)
-                mapping.AddProperty(property.GetPropertyMapping());
-
-            foreach (var component in components)
-                mapping.AddComponent(component.GetComponentMapping());
-            
-            foreach (var oneToOne in oneToOnes)
-                mapping.AddOneToOne(oneToOne.GetOneToOneMapping());
-
-            foreach (var collection in collections)
-                mapping.AddCollection(collection.GetCollectionMapping());
-
-            foreach (var reference in references)
-                mapping.AddReference(reference.GetManyToOneMapping());
-
-            foreach (var any in anys)
-                mapping.AddAny(any.GetAnyMapping());
-
-            subclassMappings.Each(mapping.AddSubclass);
-
-            return mapping;
+            this.structure = structure;
         }
 
         public DiscriminatorPart SubClass<TChild>(object discriminatorValue, Action<SubClassPart<TChild>> action)
         {
-            var subclass = new SubClassPart<TChild>(parent, discriminatorValue);
+            var subclassStructure = new SubclassStructure(SubclassType.Subclass, typeof(TChild));
+            var subclass = new SubClassPart<TChild>(parent, subclassStructure);
+
+            if (discriminatorValue != null)
+                subclass.DiscriminatorValue(discriminatorValue);
 
             action(subclass);
 
-            subclassMappings.Add(((ISubclassMappingProvider)subclass).GetSubclassMapping());
+            structure.AddChild(subclassStructure);
 
             return parent;
         }
@@ -77,14 +45,14 @@ namespace FluentNHibernate.Mapping
         /// <returns></returns>
         public SubClassPart<TSubclass> LazyLoad()
         {
-            attributes.Set(x => x.Lazy, nextBool);
+            structure.SetValue(Attr.Lazy, nextBool);
             nextBool = true;
             return this;
         }
 
         public SubClassPart<TSubclass> Proxy(Type type)
         {
-            attributes.Set(x => x.Proxy, type.AssemblyQualifiedName);
+            structure.SetValue(Attr.Proxy, type.AssemblyQualifiedName);
             return this;
         }
 
@@ -95,28 +63,28 @@ namespace FluentNHibernate.Mapping
 
         public SubClassPart<TSubclass> DynamicUpdate()
         {
-            attributes.Set(x => x.DynamicUpdate, nextBool);
+            structure.SetValue(Attr.DynamicUpdate, nextBool);
             nextBool = true;
             return this;
         }
 
         public SubClassPart<TSubclass> DynamicInsert()
         {
-            attributes.Set(x => x.DynamicInsert, nextBool);
+            structure.SetValue(Attr.DynamicInsert, nextBool);
             nextBool = true;
             return this;
         }
 
         public SubClassPart<TSubclass> SelectBeforeUpdate()
         {
-            attributes.Set(x => x.SelectBeforeUpdate, nextBool);
+            structure.SetValue(Attr.SelectBeforeUpdate, nextBool);
             nextBool = true;
             return this;
         }
 
         public SubClassPart<TSubclass> Abstract()
         {
-            attributes.Set(x => x.Abstract, nextBool);
+            structure.SetValue(Attr.Abstract, nextBool);
             nextBool = true;
             return this;
         }
@@ -127,7 +95,7 @@ namespace FluentNHibernate.Mapping
         /// <remarks>See http://nhforge.org/blogs/nhibernate/archive/2008/10/21/entity-name-in-action-a-strongly-typed-entity.aspx</remarks>
         public void EntityName(string entityName)
         {
-            attributes.Set(x => x.EntityName, entityName);
+            structure.SetValue(Attr.EntityName, entityName);
         }
 
         /// <summary>
@@ -141,6 +109,12 @@ namespace FluentNHibernate.Mapping
                 nextBool = !nextBool;
                 return this;
             }
+        }
+
+        public SubClassPart<TSubclass> DiscriminatorValue(object value)
+        {
+            structure.SetValue(Attr.DiscriminatorValue, value);
+            return this;
         }
     }
 }

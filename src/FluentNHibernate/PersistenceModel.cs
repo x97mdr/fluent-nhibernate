@@ -13,6 +13,7 @@ using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Output;
+using FluentNHibernate.MappingModel.Structure;
 using FluentNHibernate.Utils;
 using FluentNHibernate.Visitors;
 using NHibernate.Cfg;
@@ -114,14 +115,14 @@ namespace FluentNHibernate
         {
             var mapping = type.InstantiateUsingParameterlessConstructor();
 
-            if (mapping is IMappingProvider)
-                Add((IMappingProvider)mapping);
-            else if (mapping is IIndeterminateSubclassMappingProvider)
+            if (mapping is IIndeterminateSubclassMappingProvider)
                 Add((IIndeterminateSubclassMappingProvider)mapping);
             else if (mapping is IFilterDefinition)
                 Add((IFilterDefinition)mapping);
             else if (mapping is IExternalComponentMappingProvider)
                 Add((IExternalComponentMappingProvider)mapping);
+            else if (mapping is IMappingProvider)
+                Add((IMappingProvider)mapping);
             else
                 throw new InvalidOperationException("Unsupported mapping type '" + type.FullName + "'");
         }
@@ -149,11 +150,19 @@ namespace FluentNHibernate
         {
             foreach (var classMap in classProviders)
             {
-                var hbm = classMap.GetHibernateMapping();
+                var userMappings = classMap.GetUserDefinedMappings();
 
-                hbm.AddClass(classMap.GetClassMapping());
+                if (userMappings.Structure is IMappingStructure<ClassMapping>)
+                {
+                    var hbm = classMap.GetHibernateMapping();
+                    var model = userMappings.CreateEmptyModel();
 
-                add(hbm);
+                    userMappings.ApplyCustomisations();
+
+                    hbm.AddClass((ClassMapping)model);
+
+                    add(hbm);
+                }
             }
             foreach (var filterDefinition in filterDefinitions)
             {
@@ -169,7 +178,10 @@ namespace FluentNHibernate
 
             foreach (var classMap in classProviders)
             {
-                hbm.AddClass(classMap.GetClassMapping());
+                var userMappings = classMap.GetUserDefinedMappings();
+
+                if (userMappings.Structure is ClassMapping)
+                    hbm.AddClass((ClassMapping)userMappings.Structure);
             }
             foreach (var filterDefinition in filterDefinitions)
             {
@@ -260,8 +272,15 @@ namespace FluentNHibernate
                 var serializer = new MappingXmlSerializer();
                 XmlDocument document = serializer.Serialize(mapping);
 
-                if (cfg.GetClassMapping(mapping.Classes.First().Type) == null)
-                    cfg.AddDocument(document);
+                try
+                {
+                    if (cfg.GetClassMapping(mapping.Classes.First().Type) == null)
+                        cfg.AddDocument(document);
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
             }
         }
 
@@ -283,14 +302,6 @@ namespace FluentNHibernate
         }
     }
 
-    public interface IMappingProvider
-    {
-        ClassMapping GetClassMapping();
-        // HACK: In place just to keep compatibility until verdict is made
-        HibernateMapping GetHibernateMapping();
-        IEnumerable<string> GetIgnoredProperties();
-    }
-
     public class PassThroughMappingProvider : IMappingProvider
     {
         private readonly ClassMapping mapping;
@@ -300,9 +311,9 @@ namespace FluentNHibernate
             this.mapping = mapping;
         }
 
-        public ClassMapping GetClassMapping()
+        public IUserDefinedMapping GetUserDefinedMappings()
         {
-            return mapping;
+            return new PassThroughUserDefinedMapping(mapping);
         }
 
         public HibernateMapping GetHibernateMapping()
@@ -310,9 +321,28 @@ namespace FluentNHibernate
             return new HibernateMapping();
         }
 
-        public IEnumerable<string> GetIgnoredProperties()
+        private class PassThroughUserDefinedMapping : IUserDefinedMapping
         {
-            return new string[0];
+            readonly ClassMapping classMapping;
+
+            public PassThroughUserDefinedMapping(ClassMapping classMapping)
+            {
+                this.classMapping = classMapping;
+                Type = classMapping.Type;
+            }
+
+            public IMappingStructure Structure { get; private set; }
+            public Type Type { get; private set; }
+            
+            public IMapping CreateEmptyModel()
+            {
+                return classMapping;
+            }
+
+            public void ApplyCustomisations()
+            {
+                
+            }
         }
     }
 }

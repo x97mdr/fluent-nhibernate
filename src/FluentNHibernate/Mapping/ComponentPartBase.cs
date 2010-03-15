@@ -1,55 +1,25 @@
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
-using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
+using FluentNHibernate.MappingModel.Structure;
 using FluentNHibernate.Utils;
 
 namespace FluentNHibernate.Mapping
 {
     public abstract class ComponentPartBase<T> : ClasslikeMapBase<T>
     {
-        private readonly string propertyName;
-        private readonly AccessStrategyBuilder<ComponentPartBase<T>> access;
+        readonly IMappingStructure<ComponentMapping> structure;
+        readonly AccessStrategyBuilder<ComponentPartBase<T>> access;
+        
         protected bool nextBool = true;
-        private readonly AttributeStore<ComponentMappingBase> attributes;
 
-        protected ComponentPartBase(AttributeStore underlyingStore, string propertyName)
+        protected ComponentPartBase(IMappingStructure<ComponentMapping> structure)
+            : base(structure)
         {
-            attributes = new AttributeStore<ComponentMappingBase>(underlyingStore);
-            access = new AccessStrategyBuilder<ComponentPartBase<T>>(this, value => attributes.Set(x => x.Access, value));
-            this.propertyName = propertyName;
-        }
-
-        protected abstract ComponentMapping CreateComponentMappingRoot(AttributeStore store);
-        protected ComponentMapping CreateComponentMapping()
-        {
-            var mapping = CreateComponentMappingRoot(attributes.CloneInner());
-
-            mapping.Name = propertyName;
-
-            foreach (var property in properties)
-                mapping.AddProperty(property.GetPropertyMapping());
-
-            foreach (var component in components)
-                mapping.AddComponent(component.GetComponentMapping());
-
-            foreach (var oneToOne in oneToOnes)
-                mapping.AddOneToOne(oneToOne.GetOneToOneMapping());
-
-            foreach (var collection in collections)
-                mapping.AddCollection(collection.GetCollectionMapping());
-
-            foreach (var reference in references)
-                mapping.AddReference(reference.GetManyToOneMapping());
-
-            foreach (var any in anys)
-                mapping.AddAny(any.GetAnyMapping());
-
-            return mapping;
+            this.structure = structure;
+            access = new AccessStrategyBuilder<ComponentPartBase<T>>(this, value => structure.SetValue(Attr.Access, value));
         }
 
         /// <summary>
@@ -67,11 +37,9 @@ namespace FluentNHibernate.Mapping
 
         private ComponentPartBase<T> ParentReference(Member property)
         {
-            attributes.Set(x => x.Parent, new ParentMapping
-            {
-                Name = property.Name,
-                ContainingEntityType = typeof(T)
-            });
+            var parentStructure = new MemberStructure<ParentMapping>(property);
+            
+            structure.AddChild(parentStructure);
 
             return this;
         }
@@ -88,8 +56,8 @@ namespace FluentNHibernate.Mapping
 
         public ComponentPartBase<T> ReadOnly()
         {
-            attributes.Set(x => x.Insert, !nextBool);
-            attributes.Set(x => x.Update, !nextBool);
+            structure.SetValue(Attr.Insert, !nextBool);
+            structure.SetValue(Attr.Update, !nextBool);
             nextBool = true;
 
             return this;
@@ -97,28 +65,28 @@ namespace FluentNHibernate.Mapping
 
         public ComponentPartBase<T> Insert()
         {
-            attributes.Set(x => x.Insert, nextBool);
+            structure.SetValue(Attr.Insert, nextBool);
             nextBool = true;
             return this;
         }
 
         public ComponentPartBase<T> Update()
         {
-            attributes.Set(x => x.Update, nextBool);
+            structure.SetValue(Attr.Update, nextBool);
             nextBool = true;
             return this;
         }
 
         public ComponentPartBase<T> Unique()
         {
-            attributes.Set(x => x.Unique, nextBool);
+            structure.SetValue(Attr.Unique, nextBool);
             nextBool = true;
             return this;
         }
 
         public ComponentPartBase<T> OptimisticLock()
         {
-            attributes.Set(x => x.OptimisticLock, nextBool);
+            structure.SetValue(Attr.OptimisticLock, nextBool);
             nextBool = true;
             return this;
         }

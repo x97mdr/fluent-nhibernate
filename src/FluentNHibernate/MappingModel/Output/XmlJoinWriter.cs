@@ -28,25 +28,25 @@ namespace FluentNHibernate.MappingModel.Output
 
             var element = document.AddElement("join");
 
-            if (mapping.HasValue(x => x.TableName))
+            if (mapping.HasValue(Attr.Table))
                 element.WithAtt("table", mapping.TableName);
 
-            if (mapping.HasValue(x => x.Schema))
+            if (mapping.HasValue(Attr.Schema))
                 element.WithAtt("schema", mapping.Schema);
 
-            if (mapping.HasValue(x => x.Fetch))
+            if (mapping.HasValue(Attr.Fetch))
                 element.WithAtt("fetch", mapping.Fetch);
 
-            if (mapping.HasValue(x => x.Catalog))
+            if (mapping.HasValue(Attr.Catalog))
                 element.WithAtt("catalog", mapping.Catalog);
 
-            if (mapping.HasValue(x => x.Subselect))
+            if (mapping.HasValue(Attr.Subselect))
                 element.WithAtt("subselect", mapping.Subselect);
 
-            if (mapping.HasValue(x => x.Inverse))
+            if (mapping.HasValue(Attr.Inverse))
                 element.WithAtt("inverse", mapping.Inverse);
 
-            if (mapping.HasValue(x => x.Optional))
+            if (mapping.HasValue(Attr.Optional))
                 element.WithAtt("optional", mapping.Optional);
         }
 

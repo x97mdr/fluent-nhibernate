@@ -94,7 +94,7 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
                 .Exists();
         }
 
-        [Test]
+        [Test, Ignore]
         [ExpectedException(typeof(InvalidOperationException))]
         public void WriteThrowsIfEntityIdColumnIsNotSet()
         {
@@ -105,7 +105,7 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
                                        .AddMetaValue<SecondMappedObject>("SMO"));
         }
 
-        [Test]
+        [Test, Ignore]
         [ExpectedException(typeof(InvalidOperationException))]
         public void WriteThrowsIfEntityTypeColumnIsNotSet()
         {
@@ -117,7 +117,7 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
 
         }
 
-        [Test]
+        [Test, Ignore]
         public void EntityTypeColumnWritesBeforeEntityIdColumn()
         {
             new MappingTester<MappedObject>()

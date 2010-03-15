@@ -24,7 +24,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
             acceptance.Expect(x => x.Insert, Is.Set);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() {Insert = true}))
+                .Matches(new PropertyInspector(new PropertyMapping {Insert = true}))
                 .ShouldBeTrue();
         }
 
@@ -46,7 +46,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
                 .Expect(x => x.Update, Is.Set);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Insert = true, Update = true }))
+                .Matches(new PropertyInspector(new PropertyMapping { Insert = true, Update = true }))
                 .ShouldBeTrue();
         }
 
@@ -58,7 +58,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
                 .Expect(x => x.Update, Is.Set);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Insert = true }))
+                .Matches(new PropertyInspector(new PropertyMapping { Insert = true }))
                 .ShouldBeFalse();
         }
 
@@ -90,7 +90,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
             acceptance.Expect(x => x.Insert, Is.Not.Set);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Insert = true }))
+                .Matches(new PropertyInspector(new PropertyMapping { Insert = true }))
                 .ShouldBeFalse();
         }
 
@@ -114,7 +114,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
                 .Expect(x => x.Update, Is.Not.Set);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Insert = true }))
+                .Matches(new PropertyInspector(new PropertyMapping { Insert = true }))
                 .ShouldBeFalse();
         }
 
@@ -126,7 +126,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
                 .Expect(x => x.Update, Is.Not.Set);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Insert = true, Update = true }))
+                .Matches(new PropertyInspector(new PropertyMapping { Insert = true, Update = true }))
                 .ShouldBeFalse();
         }
 
@@ -138,7 +138,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
                 .Expect(x => x.Update, Is.Set);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Update = true }))
+                .Matches(new PropertyInspector(new PropertyMapping { Update = true }))
                 .ShouldBeTrue();
         }
 
@@ -162,7 +162,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
                 .Expect(x => x.Update, Is.Set);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Insert = true }))
+                .Matches(new PropertyInspector(new PropertyMapping { Insert = true }))
                 .ShouldBeFalse();
         }
     }

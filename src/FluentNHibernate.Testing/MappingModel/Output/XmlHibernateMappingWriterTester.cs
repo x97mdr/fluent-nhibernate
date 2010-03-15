@@ -1,3 +1,4 @@
+using FluentNHibernate.Automapping.TestFixtures;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Output;
@@ -23,7 +24,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new HibernateMapping();
 
-            mapping.AddClass(new ClassMapping());
+            mapping.AddClass(new ClassMapping(typeof(ExampleClass)));
 
             writer.VerifyXml(mapping)
                 .Element("class[2]").DoesntExist();
@@ -117,7 +118,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new HibernateMapping();
 
-            mapping.AddClass(new ClassMapping());
+            mapping.AddClass(new ClassMapping(typeof(ExampleClass)));
 
             writer.VerifyXml(mapping)
                 .Element("class").Exists();

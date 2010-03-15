@@ -1,5 +1,6 @@
 using System;
 using FluentNHibernate.MappingModel.Identity;
+using FluentNHibernate.MappingModel.Structure;
 using NHibernate.Id;
 
 namespace FluentNHibernate.Mapping
@@ -7,26 +8,16 @@ namespace FluentNHibernate.Mapping
     public class IdentityGenerationStrategyBuilder<TParent>
 	{
         private readonly TParent parent;
-        private readonly Type entity;
-        private readonly GeneratorMapping mapping = new GeneratorMapping();
         private readonly GeneratorBuilder builder;
 
-        public IdentityGenerationStrategyBuilder(TParent parent, Type identityType, Type entity)
+        public IdentityGenerationStrategyBuilder(IMappingStructure<GeneratorMapping> structure, TParent parent, Type identityType)
         {
             this.parent = parent;
-            this.entity = entity;
 
-            builder = new GeneratorBuilder(mapping, identityType);
+            builder = new GeneratorBuilder(structure, identityType);
         }
 
         internal bool IsDirty { get; private set; }
-
-        public GeneratorMapping GetGeneratorMapping()
-        {
-            mapping.ContainingEntityType = entity;
-
-            return mapping;
-        }
 
 		/// <summary>
 		/// generates identifiers of any integral type that are unique only when no other 

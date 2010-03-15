@@ -29,56 +29,56 @@ namespace FluentNHibernate.MappingModel.Output
 
             var element = document.AddElement(mapping.SubclassType.GetElementName());
 
-            if (mapping.HasValue(x => x.Name))
+            if (mapping.HasValue(Attr.Name))
                 element.WithAtt("name", mapping.Name);
 
-            if (mapping.HasValue(x => x.Extends))
+            if (mapping.HasValue(Attr.Extends))
                 element.WithAtt("extends", mapping.Extends);
 
-            if (mapping.HasValue(x => x.Proxy))
+            if (mapping.HasValue(Attr.Proxy))
                 element.WithAtt("proxy", mapping.Proxy);
 
-            if (mapping.HasValue(x => x.Lazy))
+            if (mapping.HasValue(Attr.Lazy))
                 element.WithAtt("lazy", mapping.Lazy);
 
-            if (mapping.HasValue(x => x.DynamicUpdate))
+            if (mapping.HasValue(Attr.DynamicUpdate))
                 element.WithAtt("dynamic-update", mapping.DynamicUpdate);
 
-            if (mapping.HasValue(x => x.DynamicInsert))
+            if (mapping.HasValue(Attr.DynamicInsert))
                 element.WithAtt("dynamic-insert", mapping.DynamicInsert);
 
-            if (mapping.HasValue(x => x.SelectBeforeUpdate))
+            if (mapping.HasValue(Attr.SelectBeforeUpdate))
                 element.WithAtt("select-before-update", mapping.SelectBeforeUpdate);
 
-            if (mapping.HasValue(x => x.Abstract))
+            if (mapping.HasValue(Attr.Abstract))
                 element.WithAtt("abstract", mapping.Abstract);
 
-            if (mapping.HasValue(x => x.EntityName))
+            if (mapping.HasValue(Attr.EntityName))
                 element.WithAtt("entity-name", mapping.EntityName);
 
             if (mapping.SubclassType == SubclassType.Subclass)
             {
-                if (mapping.HasValue(x => x.DiscriminatorValue))
+                if (mapping.HasValue(Attr.DiscriminatorValue))
                     element.WithAtt("discriminator-value", mapping.DiscriminatorValue.ToString());
             }
             else
             {
-                if (mapping.HasValue(x => x.TableName))
+                if (mapping.HasValue(Attr.Table))
                     element.WithAtt("table", mapping.TableName);
 
-                if (mapping.HasValue(x => x.Schema))
+                if (mapping.HasValue(Attr.Schema))
                     element.WithAtt("schema", mapping.Schema);
 
-                if (mapping.HasValue(x => x.Check))
+                if (mapping.HasValue(Attr.Check))
                     element.WithAtt("check", mapping.Check);
 
-                if (mapping.HasValue(x => x.Subselect))
+                if (mapping.HasValue(Attr.Subselect))
                     element.WithAtt("subselect", mapping.Subselect);
 
-                if (mapping.HasValue(x => x.Persister))
+                if (mapping.HasValue(Attr.Persister))
                     element.WithAtt("persister", mapping.Persister);
 
-                if (mapping.HasValue(x => x.BatchSize))
+                if (mapping.HasValue(Attr.BatchSize))
                     element.WithAtt("batch-size", mapping.BatchSize);
             }
         }

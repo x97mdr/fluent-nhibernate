@@ -207,15 +207,7 @@
       <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="PrivateConstants" />
       <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="PrivateStaticReadonly" />
       <UserRule Inspect="True" Prefix="" Suffix="" Style="aa_bb" StaticnessKind="Static, Instance" AccessRight="Private, Protected, ProtectedInternal, Internal, Public" Description="MSpec naming">
-        <ElementKinds>
-          <Kind Name="Machine.Specifications_Behavior" />
-          <Kind Name="Machine.Specifications_Context" />
-          <Kind Name="Machine.Specifications_Specification" />
-          <Kind Name="Machine.Specifications_SupportingField" />
-          <Kind Name="Machine.Specifications_Fields" />
-          <Kind Name="Machine.Specifications_Constants" />
-          <Kind Name="Machine.Specifications_Locals" />
-        </ElementKinds>
+        <ElementKinds />
         <ExtraRule Prefix="" Suffix="" Style="Aa_bb" />
       </UserRule>
     </Naming2>

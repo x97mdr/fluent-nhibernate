@@ -1,37 +1,22 @@
 using System;
 using System.Diagnostics;
 using System.Linq.Expressions;
-using System.Reflection;
-using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
+using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Mapping
 {
-    public class DynamicComponentPart<T> : ComponentPartBase<T>, IComponentMappingProvider
+    public class DynamicComponentPart<T> : ComponentPartBase<T>
     {
-        private readonly Type entity;
+        readonly IMappingStructure<ComponentMapping> structure;
         private readonly AccessStrategyBuilder<DynamicComponentPart<T>> access;
-        private readonly AttributeStore<ComponentMapping> attributes;
 
-        public DynamicComponentPart(Type entity, Member property)
-            : this(entity, property.Name, new AttributeStore())
-        {}
-
-        private DynamicComponentPart(Type entity, string propertyName, AttributeStore underlyingStore)
-            : base(underlyingStore, propertyName)
+        public DynamicComponentPart(IMappingStructure<ComponentMapping> structure)
+            : base(structure)
         {
-            this.entity = entity;
-            attributes = new AttributeStore<ComponentMapping>(underlyingStore);
-            access = new AccessStrategyBuilder<DynamicComponentPart<T>>(this, value => attributes.Set(x => x.Access, value));
-        }
-
-        protected override ComponentMapping CreateComponentMappingRoot(AttributeStore store)
-        {
-            return new ComponentMapping(ComponentType.DynamicComponent, store)
-            {
-                ContainingEntityType = entity
-            };
+            this.structure = structure;
+            access = new AccessStrategyBuilder<DynamicComponentPart<T>>(this, value => structure.SetValue(Attr.Access, value));
         }
 
         /// <summary>
@@ -95,17 +80,12 @@ namespace FluentNHibernate.Mapping
 
         public PropertyPart Map<TProperty>(string key)
         {
-            var property = new DummyPropertyInfo(key, typeof(TProperty));
-            var propertyMap = new PropertyPart(property.ToMember(), typeof(T));
+            var propertyStructure = new MemberStructure<PropertyMapping>(new DummyPropertyInfo(key, typeof(TProperty)).ToMember());
+            var propertyMap = new PropertyPart(propertyStructure);
 
-            properties.Add(propertyMap);
+            structure.AddChild(propertyStructure);
 
             return propertyMap;
-        }
-
-        IComponentMapping IComponentMappingProvider.GetComponentMapping()
-        {
-            return CreateComponentMapping();
         }
     }
 }

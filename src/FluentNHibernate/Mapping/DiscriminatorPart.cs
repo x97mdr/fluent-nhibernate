@@ -1,50 +1,34 @@
 using System;
 using System.Diagnostics;
-using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
+using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Mapping
 {
-    public class DiscriminatorPart : IDiscriminatorMappingProvider
+    public class DiscriminatorPart
     {
-        private readonly string columnName;
-        private readonly Type entity;
-        private readonly Action<Type, ISubclassMappingProvider> setter;
-        private readonly TypeReference discriminatorValueType;
-        private readonly AttributeStore<DiscriminatorMapping> attributes = new AttributeStore<DiscriminatorMapping>();
-        private readonly AttributeStore<ColumnMapping> columnAttributes = new AttributeStore<ColumnMapping>();
-        private bool nextBool = true;
+        readonly IMappingStructure<DiscriminatorMapping> structure;
+        readonly IMappingStructure parentStructure;
+        bool nextBool = true;
 
-        public DiscriminatorPart(string columnName, Type entity, Action<Type, ISubclassMappingProvider> setter, TypeReference discriminatorValueType)
+        public DiscriminatorPart(IMappingStructure<DiscriminatorMapping> structure, IMappingStructure parentStructure)
         {
-            this.columnName = columnName;
-            this.entity = entity;
-            this.setter = setter;
-            this.discriminatorValueType = discriminatorValueType;
-        }
-
-        DiscriminatorMapping IDiscriminatorMappingProvider.GetDiscriminatorMapping()
-        {
-            var mapping = new DiscriminatorMapping(attributes.CloneInner())
-            {
-                ContainingEntityType = entity,
-            };
-
-            mapping.SetDefaultValue("Type", discriminatorValueType);
-
-            mapping.AddColumn(new ColumnMapping(columnAttributes.CloneInner()) { Name = columnName });
-
-            return mapping;
+            this.structure = structure;
+            this.parentStructure = parentStructure;
         }
 
         [Obsolete("Inline definitions of subclasses are depreciated. Please create a derived class from SubclassMap in the same way you do with ClassMap.")]
         public DiscriminatorPart SubClass<TSubClass>(object discriminatorValue, Action<SubClassPart<TSubClass>> action)
         {
-            var subclass = new SubClassPart<TSubClass>(this, discriminatorValue);
+            var subclassStructure = new SubclassStructure(SubclassType.Subclass, typeof(TSubClass));
+            var subclass = new SubClassPart<TSubClass>(this, subclassStructure);
+
+            if (discriminatorValue != null)
+                subclass.DiscriminatorValue(discriminatorValue);
 
             action(subclass);
-            setter(typeof(TSubClass), subclass);
+            parentStructure.AddChild(subclassStructure);
 
             return this;
         }
@@ -72,7 +56,7 @@ namespace FluentNHibernate.Mapping
         /// <remarks>Sets the "force" attribute.</remarks>
         public DiscriminatorPart AlwaysSelectWithValue()
         {
-            attributes.Set(x => x.Force, nextBool);
+            structure.SetValue(Attr.Force, nextBool);
             nextBool = true;
             return this;
         }
@@ -83,7 +67,7 @@ namespace FluentNHibernate.Mapping
         /// <returns>Sets the "insert" attribute.</returns>
         public DiscriminatorPart ReadOnly()
         {
-            attributes.Set(x => x.Insert, !nextBool);
+            structure.SetValue(Attr.Insert, !nextBool);
             nextBool = true;
             return this;
         }
@@ -94,81 +78,90 @@ namespace FluentNHibernate.Mapping
         /// <param name="sql">SQL expression</param>
         public DiscriminatorPart Formula(string sql)
         {
-            attributes.Set(x => x.Formula, sql);
+            structure.SetValue(Attr.Formula, sql);
             return this;
         }
 
         public DiscriminatorPart Precision(int precision)
         {
-            columnAttributes.Set(x => x.Precision, precision);
+            structure.SetValue(Attr.Precision, precision);
             return this;
         }
 
         public DiscriminatorPart Length(int length)
         {
-            columnAttributes.Set(x => x.Length, length);
+            structure.SetValue(Attr.Length, length);
             return this;
         }
 
         public DiscriminatorPart Scale(int scale)
         {
-            columnAttributes.Set(x => x.Scale, scale);
+            structure.SetValue(Attr.Scale, scale);
             return this;
         }
 
         public DiscriminatorPart Nullable()
         {
-            columnAttributes.Set(x => x.NotNull, !nextBool);
+            structure.SetValue(Attr.NotNull, !nextBool);
             nextBool = true;
             return this;
         }
 
         public DiscriminatorPart Unique()
         {
-            columnAttributes.Set(x => x.Unique, nextBool);
+            structure.SetValue(Attr.Unique, nextBool);
             nextBool = true;
             return this;
         }
 
         public DiscriminatorPart UniqueKey(string keyColumns)
         {
-            columnAttributes.Set(x => x.UniqueKey, keyColumns);
+            structure.SetValue(Attr.UniqueKey, keyColumns);
             return this;
         }
 
         public DiscriminatorPart Index(string index)
         {
-            columnAttributes.Set(x => x.Index, index);
+            structure.SetValue(Attr.Index, index);
             return this;
         }
 
         public DiscriminatorPart Check(string constraint)
         {
-            columnAttributes.Set(x => x.Check, constraint);
+            structure.SetValue(Attr.Check, constraint);
             return this;
         }
 
         public DiscriminatorPart Default(object value)
         {
-            columnAttributes.Set(x => x.Default, value.ToString());
+            structure.SetValue(Attr.Default, value.ToString());
             return this;
         }
 
         public DiscriminatorPart CustomType<T>()
         {
-            attributes.Set(x => x.Type, new TypeReference(typeof(T)));
+            structure.SetValue(Attr.Type, new TypeReference(typeof(T)));
             return this;
         }
 
         public DiscriminatorPart CustomType(Type type)
         {
-            attributes.Set(x => x.Type, new TypeReference(type));
+            structure.SetValue(Attr.Type, new TypeReference(type));
             return this;
         }
 
         public DiscriminatorPart CustomType(string type)
         {
-            attributes.Set(x => x.Type, new TypeReference(type));
+            structure.SetValue(Attr.Type, new TypeReference(type));
+            return this;
+        }
+
+        public DiscriminatorPart Column(string columnName)
+        {
+            var columnStructure = new ColumnStructure(structure);
+            var part = new ColumnPart(columnStructure);
+            part.Name(columnName);
+            structure.AddChild(columnStructure);
             return this;
         }
     }

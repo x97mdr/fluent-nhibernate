@@ -9,7 +9,7 @@ namespace FluentNHibernate.MappingModel
     internal class MappedMembers : IMappingBase, IHasMappedMembers
     {
         private readonly List<PropertyMapping> properties;
-        private readonly List<ICollectionMapping> collections;
+        private readonly List<CollectionMapping> collections;
         private readonly List<ManyToOneMapping> references;
         private readonly List<IComponentMapping> components;
         private readonly List<OneToOneMapping> oneToOnes;
@@ -21,7 +21,7 @@ namespace FluentNHibernate.MappingModel
         public MappedMembers()
         {
             properties = new List<PropertyMapping>();
-            collections = new List<ICollectionMapping>();
+            collections = new List<CollectionMapping>();
             references = new List<ManyToOneMapping>();
             components = new List<IComponentMapping>();
             oneToOnes = new List<OneToOneMapping>();
@@ -36,7 +36,7 @@ namespace FluentNHibernate.MappingModel
             get { return properties; }
         }
 
-        public IEnumerable<ICollectionMapping> Collections
+        public IEnumerable<CollectionMapping> Collections
         {
             get { return collections; }
         }
@@ -90,7 +90,7 @@ namespace FluentNHibernate.MappingModel
             properties.Add(mapping);
         }
 
-        public void AddCollection(ICollectionMapping collection)
+        public void AddCollection(CollectionMapping collection)
         {
             if (collections.Exists(x => x.Name == collection.Name))
                 throw new InvalidOperationException("Tried to add collection '" + collection.Name + "' when already added.");
@@ -98,7 +98,7 @@ namespace FluentNHibernate.MappingModel
             collections.Add(collection);
         }
 
-        public void AddOrReplaceCollection(ICollectionMapping mapping)
+        public void AddOrReplaceCollection(CollectionMapping mapping)
         {
             collections.RemoveAll(x => x.Name == mapping.Name);
             collections.Add(mapping);
@@ -254,6 +254,24 @@ namespace FluentNHibernate.MappingModel
                 result = (result * 397) ^ (storedProcedures != null ? storedProcedures.GetHashCode() : 0);
                 return result;
             }
+        }
+
+        public void AddChild(IMapping mapping)
+        {
+            if (mapping is PropertyMapping)
+                AddProperty((PropertyMapping)mapping);
+            if (mapping is CollectionMapping)
+                AddCollection((CollectionMapping)mapping);
+            if (mapping is ManyToOneMapping)
+                AddReference((ManyToOneMapping)mapping);
+            if (mapping is OneToOneMapping)
+                AddOneToOne((OneToOneMapping)mapping);
+            if (mapping is IComponentMapping)
+                AddComponent((IComponentMapping)mapping);
+            if (mapping is AnyMapping)
+                AddAny((AnyMapping)mapping);
+            if (mapping is JoinMapping)
+                AddJoin((JoinMapping)mapping);
         }
     }
 }

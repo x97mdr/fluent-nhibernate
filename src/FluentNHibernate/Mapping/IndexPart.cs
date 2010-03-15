@@ -3,48 +3,41 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Collections;
+using FluentNHibernate.MappingModel.Structure;
 using FluentNHibernate.Utils;
 
 namespace FluentNHibernate.Mapping
 {
     public class IndexPart
     {
-        private readonly Type entity;
-        private readonly List<string> columns = new List<string>();
-        private readonly AttributeStore<IndexMapping> attributes = new AttributeStore<IndexMapping>();
+        readonly IMappingStructure<IndexMapping> structure;
 
-        public IndexPart(Type entity)
+        public IndexPart(IMappingStructure<IndexMapping> structure)
         {
-            this.entity = entity;
+            this.structure = structure;
         }
 
         public IndexPart Column(string indexColumnName)
         {
-            columns.Add(indexColumnName);
+            var column = new ColumnStructure(structure);
+
+            new ColumnPart(column)
+                .Name(indexColumnName);
+
+            structure.AddChild(column);
+
             return this;
         }
 
         public IndexPart Type<TIndex>()
         {
-            attributes.Set(x => x.Type, new TypeReference(typeof(TIndex)));
-            return this;
+            return Type(typeof(TIndex));
         }
 
-	public IndexPart Type(Type type)
-	{
-            attributes.Set(x => x.Type, new TypeReference(type));
-            return this;
-	}
-
-        public IndexMapping GetIndexMapping()
+        public IndexPart Type(Type type)
         {
-            var mapping = new IndexMapping(attributes.CloneInner());
-
-            mapping.ContainingEntityType = entity;
-
-            columns.Each(x => mapping.AddColumn(new ColumnMapping { Name = x }));
-
-            return mapping;
+            structure.SetValue(Attr.Type, new TypeReference(type));
+            return this;
         }
     }
 }

@@ -36,7 +36,7 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void CreatingAManyToOneReferenceSetsTheColumnOverrides()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map => map.References(x => x.Parent).ForeignKey())
+                .ForMapping(map => map.References(x => x.Parent).ForeignKey("FK_MappedObjectToParent"))
                 .Element("class/many-to-one")
                     .HasAttribute("foreign-key", "FK_MappedObjectToParent");
         }

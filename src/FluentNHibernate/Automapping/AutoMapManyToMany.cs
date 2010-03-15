@@ -40,18 +40,18 @@ namespace FluentNHibernate.Automapping
                 .FirstOrDefault();
         }
 
-        private ICollectionMapping GetCollection(Member property)
+        private CollectionMapping GetCollection(Type type, Member property)
         {
-            if (property.PropertyType.FullName.Contains("ISet"))
-                return new SetMapping();
+            var collection = new CollectionMapping();
 
-            return new BagMapping();
+            collection.Initialise(type, property);
+
+            return collection;
         }
 
-        private void ConfigureModel(Member property, ICollectionMapping mapping, ClassMappingBase classMap, Type parentSide)
+        private void ConfigureModel(Member property, CollectionMapping mapping, ClassMappingBase classMap, Type parentSide)
         {
             // TODO: Make the child type safer
-            mapping.SetDefaultValue(x => x.Name, property.Name);
             mapping.Relationship = CreateManyToMany(property, property.PropertyType.GetGenericArguments()[0], classMap.Type);
             mapping.ContainingEntityType = classMap.Type;
             mapping.ChildType = property.PropertyType.GetGenericArguments()[0];
@@ -65,18 +65,17 @@ namespace FluentNHibernate.Automapping
 
         private ICollectionRelationshipMapping CreateManyToMany(Member property, Type child, Type parent)
         {
-            var mapping = new ManyToManyMapping
+            var mapping = new ManyToManyMapping(property.PropertyType.GetGenericArguments()[0])
             {
-                Class = new TypeReference(property.PropertyType.GetGenericArguments()[0]),
                 ContainingEntityType = parent
             };
 
-            mapping.AddDefaultColumn(new ColumnMapping { Name = child.Name + "_id" });
+            mapping.AddDefaultColumn(new ColumnMapping() { Name = child.Name + "_id" });
 
             return mapping;
         }
 
-        private void SetKey(Member property, ClassMappingBase classMap, ICollectionMapping mapping)
+        private void SetKey(Member property, ClassMappingBase classMap, CollectionMapping mapping)
         {
             var columnName = property.DeclaringType.Name + "_id";
 
@@ -86,16 +85,16 @@ namespace FluentNHibernate.Automapping
             var key = new KeyMapping();
 
             key.ContainingEntityType = classMap.Type;
-            key.AddDefaultColumn(new ColumnMapping { Name = columnName });
+            key.AddDefaultColumn(new ColumnMapping() { Name = columnName });
 
-            mapping.SetDefaultValue(x => x.Key, key);
+            mapping.Key = key;
         }
 
         public void Map(ClassMappingBase classMap, Member property)
         {
             var inverseProperty = GetInverseProperty(property);
             var parentSide = expressions.GetParentSideForManyToMany(property.DeclaringType, inverseProperty.DeclaringType);
-            var mapping = GetCollection(property);
+            var mapping = GetCollection(classMap.Type, property);
 
             ConfigureModel(property, mapping, classMap, parentSide);
 

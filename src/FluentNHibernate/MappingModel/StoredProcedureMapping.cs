@@ -1,45 +1,28 @@
 using System;
-using System.Linq.Expressions;
+using System.Collections.Generic;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
-    public class StoredProcedureMapping : MappingBase
+    public class StoredProcedureMapping : MappingBase, IMapping
     {
-        private readonly AttributeStore<StoredProcedureMapping> attributes;
+        readonly ValueStore values = new ValueStore();
 
-        public StoredProcedureMapping() : this("sql-insert", "")
+        public StoredProcedureMapping()
         {
-        }
-
-        public StoredProcedureMapping(AttributeStore attributes)
-        {
-            this.attributes = new AttributeStore<StoredProcedureMapping>(attributes);
-        }
-
-        public StoredProcedureMapping(string spType, string innerText): this(spType, innerText, new AttributeStore())
-        {
-        }
-
-        public StoredProcedureMapping(string spType, string innerText, AttributeStore underlyingStore)
-        {
-            attributes = new AttributeStore<StoredProcedureMapping>(underlyingStore);
-            SPType = spType;
-            Query = innerText;
-            Check = "none";
-
+            Check = "rowcount";
         }
 
         public string Name
         {
-            get { return attributes.Get(x => x.Name); }
-            set { attributes.Set(x => x.Name, value); }
+            get { return values.Get(Attr.Name); }
+            set { values.Set(Attr.Name, value); }
         }
 
         public Type Type
         {
-            get { return attributes.Get(x => x.Type); }
-            set { attributes.Set(x => x.Type, value); }
+            get { return values.Get<Type>(Attr.Type); }
+            set { values.Set(Attr.Type, value); }
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
@@ -47,44 +30,34 @@ namespace FluentNHibernate.MappingModel
             visitor.ProcessStoredProcedure(this);
         }
 
-        public void MergeAttributes(AttributeStore store)
-        {
-            attributes.Merge(new AttributeStore<StoredProcedureMapping>(store));
-        }
-
         public override bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);
+            return false;
         }
 
         public string Check
         {
-            get { return attributes.Get(x => x.Check); }
-            set { attributes.Set(x => x.Check, value); }
+            get { return values.Get(Attr.Check); }
+            set { values.Set(Attr.Check, value); }
         }
 
         public string SPType
         {
-            get { return attributes.Get(x => x.SPType); }
-            set { attributes.Set(x => x.SPType, value); }
+            get { return values.Get(Attr.SPType); }
+            set { values.Set(Attr.SPType, value); }
         }     
         
         public string Query
         {
-            get { return attributes.Get(x => x.Query); }
-            set { attributes.Set(x => x.Query, value); }
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<StoredProcedureMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
+            get { return values.Get(Attr.Query); }
+            set { values.Set(Attr.Query, value); }
         }
 
         public bool Equals(StoredProcedureMapping other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.attributes, attributes);
+            return Equals(other.values, values);
         }
 
         public override bool Equals(object obj)
@@ -99,9 +72,19 @@ namespace FluentNHibernate.MappingModel
             unchecked
             {
                 {
-                    return (base.GetHashCode() * 397) ^ (attributes != null ? attributes.GetHashCode() : 0);
+                    return (base.GetHashCode() * 397) ^ (values != null ? values.GetHashCode() : 0);
                 }
             }
+        }
+
+        public void AddChild(IMapping child)
+        {
+            
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        {
+            values.Merge(otherValues);
         }
     }
 }

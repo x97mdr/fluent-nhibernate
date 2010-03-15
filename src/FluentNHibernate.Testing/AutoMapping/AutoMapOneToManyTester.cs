@@ -50,43 +50,34 @@ namespace FluentNHibernate.Testing.Automapping
         [Test]
         public void ShouldMapListAsBag()
         {
-            var classMapping = new ClassMapping()
-            {
-                Type = typeof(PropertyTarget)
-            };
+            var classMapping = new ClassMapping(typeof(PropertyTarget));
 
             mapper.Map(classMapping, typeof(PropertyTarget).GetProperty("List").ToMember());
 
             classMapping.Collections
-                .First().ShouldBeOfType(typeof(BagMapping));
+                .First().Type.ShouldEqual(Collection.Bag);
         }
 
         [Test]
         public void ShouldMapSetAsSet()
         {
-            var classMapping = new ClassMapping()
-            {
-                Type = typeof(PropertyTarget)
-            };
+            var classMapping = new ClassMapping(typeof(PropertyTarget));
 
             mapper.Map(classMapping, typeof(PropertyTarget).GetProperty("Set").ToMember());
 
             classMapping.Collections
-                .First().ShouldBeOfType(typeof(SetMapping));
+                .First().ShouldBeOfType(typeof(CollectionMapping));
         }
 
         [Test]
         public void ShouldMapHashSetAsSet()
         {
-            var classMapping = new ClassMapping()
-            {
-                Type = typeof(PropertyTarget)
-            };
+            var classMapping = new ClassMapping(typeof(PropertyTarget));
 
             mapper.Map(classMapping, typeof(PropertyTarget).GetProperty("HashSet").ToMember());
 
             classMapping.Collections
-                .First().ShouldBeOfType(typeof(SetMapping));
+                .First().ShouldBeOfType(typeof(CollectionMapping));
         }
 
         protected void ShouldMap(Expression<System.Func<PropertyTarget, object>> property)

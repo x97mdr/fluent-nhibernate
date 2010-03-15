@@ -1,21 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq.Expressions;
-using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
+using FluentNHibernate.MappingModel.Structure;
 using FluentNHibernate.Utils;
 
 namespace FluentNHibernate.Mapping
 {
-    public class NaturalIdPart<T> : INaturalIdMappingProvider
+    public class NaturalIdPart<T>
     {
-        private readonly AttributeStore<NaturalIdMapping> attributes = new AttributeStore<NaturalIdMapping>();
-        private readonly IList<PropertyMapping> properties = new List<PropertyMapping>();
-        private readonly IList<ManyToOneMapping> manyToOnes = new List<ManyToOneMapping>();
-        private bool nextBool = true;
+        readonly FreeStructure<NaturalIdMapping> structure;
+        bool nextBool = true;
 
-        public NaturalIdPart() { }
+        public NaturalIdPart(FreeStructure<NaturalIdMapping> structure)
+        {
+            this.structure = structure;
+        }
 
         /// <summary>
         /// Defines a property to be used for this natural-id.
@@ -40,16 +40,13 @@ namespace FluentNHibernate.Mapping
             return Property(member, columnName);
         }
 
-        protected virtual NaturalIdPart<T> Property(Member member, string columnName)
+        NaturalIdPart<T> Property(Member member, string columnName)
         {
-            var key = new PropertyMapping
-            {
-                Name = member.Name,
-                Type = new TypeReference(member.PropertyType)
-            };
-            key.AddColumn(new ColumnMapping { Name = columnName });
+            var propertyStructure = new MemberStructure<PropertyMapping>(member);
+            var part = new PropertyPart(propertyStructure);
+            part.Column(columnName);
 
-            properties.Add(key);
+            structure.AddChild(propertyStructure);
 
             return this;
         }
@@ -79,22 +76,18 @@ namespace FluentNHibernate.Mapping
 
         protected virtual NaturalIdPart<T> Reference(Member member, string columnName)
         {
-            var key = new ManyToOneMapping
-            {
-                Name = member.Name,
-                Class = new TypeReference(member.PropertyType),
-                ContainingEntityType = typeof(T)
-            };
-            key.AddColumn(new ColumnMapping { Name = columnName });
+            var referenceStructure = new MemberStructure<ManyToOneMapping>(member);
+            var part = new ManyToOnePart<T>(referenceStructure);
+            part.Column(columnName);
 
-            manyToOnes.Add(key);
+            structure.AddChild(referenceStructure);
 
             return this;
         }
 
         public NaturalIdPart<T> ReadOnly()
         {
-            attributes.Set(x => x.Mutable, !nextBool);
+            structure.SetValue(Attr.Mutable, !nextBool);
             nextBool = true;
             return this;
         }
@@ -107,16 +100,6 @@ namespace FluentNHibernate.Mapping
                 nextBool = false;
                 return this;
             }
-        }
-
-        NaturalIdMapping INaturalIdMappingProvider.GetNaturalIdMapping()
-        {
-            var mapping = new NaturalIdMapping(attributes.CloneInner());
-
-            properties.Each(mapping.AddProperty);
-            manyToOnes.Each(mapping.AddReference);
-
-            return mapping;
         }
     }
 }

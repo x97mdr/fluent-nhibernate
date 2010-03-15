@@ -101,12 +101,12 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
                 {
                     var first = x.Generator.Params.First();
 
-                    first.Key.ShouldEqual("name");
+                    first.Name.ShouldEqual("name");
                     first.Value.ShouldEqual("value");
 
                     var second = x.Generator.Params.ElementAt(1);
 
-                    second.Key.ShouldEqual("another");
+                    second.Name.ShouldEqual("another");
                     second.Value.ShouldEqual("another-value");
                 });
         }

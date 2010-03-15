@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using FluentNHibernate.MappingModel;
+using FluentNHibernate.MappingModel.Structure;
 using NUnit.Framework;
 using FluentNHibernate.Mapping;
-using FluentNHibernate.Testing.DomainModel.Mapping;
 using FluentNHibernate.MappingModel.Collections;
 
 namespace FluentNHibernate.Testing.FluentInterfaceTests
@@ -12,24 +9,29 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
     [TestFixture]
     public class ElementPartTests
     {
+        IMappingStructure<ElementMapping> structure;
+        ElementPart part;
+
+        [SetUp]
+        public void CreatePart()
+        {
+            structure = new FreeStructure<ElementMapping>();
+            part = new ElementPart(structure);
+        }
+
         [Test]
         public void CanSetLength()
         {
-            var part = new ElementPart(typeof(MappedObject));
             part.Length(50);
-
-            ElementMapping elementMapping = part.GetElementMapping();
-            elementMapping.Length.ShouldEqual(50);
+            structure.ShouldHaveValue(Attr.Length, 50);
         }
 
         [Test]
         public void CanSetFormula()
         {
-            var part = new ElementPart(typeof(MappedObject));
             part.Formula("formula");
-
-            ElementMapping elementMapping = part.GetElementMapping();
-            elementMapping.Formula.ShouldEqual("formula");
+            
+            structure.ShouldHaveValue(Attr.Formula, "formula");
         }
     }
 }

@@ -7,9 +7,9 @@ namespace FluentNHibernate.Conventions.Instances
     public class OneToManyCollectionInstance : CollectionInstance, IOneToManyCollectionInstance
     {
         private new bool nextBool;
-        private readonly ICollectionMapping mapping;
+        private readonly CollectionMapping mapping;
 
-        public OneToManyCollectionInstance(ICollectionMapping mapping)
+        public OneToManyCollectionInstance(CollectionMapping mapping)
             : base(mapping)
         {
             nextBool = true;

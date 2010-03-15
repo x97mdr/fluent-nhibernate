@@ -28,7 +28,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
         [Test]
         public void AccessShouldntBeOverwritten()
         {
-            Mapping<ExampleClass>(x => x.Id, x => x.Access.Field());
+            Mapping(x => x.Id, x => x.Access.Field());
 
             Convention(x => x.Access.Property());
 
@@ -38,7 +38,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
         [Test]
         public void ColumnShouldntBeOverwritten()
         {
-            Mapping<ExampleClass>(x => x.Id, x => x.Column("name"));
+            Mapping(x => x.Id, x => x.Column("name"));
 
             Convention(x => x.Column("xxx"));
 
@@ -48,7 +48,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
         [Test]
         public void GeneratedByShouldntBeOverwritten()
         {
-            Mapping<ExampleClass>(x => x.Id, x => x.GeneratedBy.Assigned());
+            Mapping(x => x.Id, x => x.GeneratedBy.Assigned());
 
             Convention(x => x.GeneratedBy.Identity());
 
@@ -58,7 +58,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
         [Test]
         public void UnsavedValueShouldntBeOverwritten()
         {
-            Mapping<ExampleClass>(x => x.Id, x => x.UnsavedValue("one"));
+            Mapping(x => x.Id, x => x.UnsavedValue("one"));
 
             Convention(x => x.UnsavedValue("two"));
 
@@ -68,7 +68,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
         [Test]
         public void LengthValueShouldntBeOverwritten()
         {
-            Mapping<ExampleClass>(x => x.Id, x => x.Length(100));
+            Mapping(x => x.Id, x => x.Length(100));
 
             Convention(x => x.Length(200));
 
@@ -78,7 +78,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
         [Test]
         public void PrecisionValueShouldntBeOverwritten()
         {
-            Mapping<ExampleClass>(x => x.Id, x => x.Precision(100));
+            Mapping(x => x.Id, x => x.Precision(100));
 
             Convention(x => x.Precision(200));
 
@@ -88,7 +88,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
         [Test]
         public void ScaleValueShouldntBeOverwritten()
         {
-            Mapping<ExampleClass>(x => x.Id, x => x.Scale(100));
+            Mapping(x => x.Id, x => x.Scale(100));
 
             Convention(x => x.Scale(200));
 
@@ -98,7 +98,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
         [Test]
         public void NullableValueShouldntBeOverwritten()
         {
-            Mapping<ExampleClass>(x => x.Id, x => x.Not.Nullable());
+            Mapping(x => x.Id, x => x.Not.Nullable());
 
             Convention(x => x.Nullable());
 
@@ -108,7 +108,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
         [Test]
         public void UniqueValueShouldntBeOverwritten()
         {
-            Mapping<ExampleClass>(x => x.Id, x => x.Unique());
+            Mapping(x => x.Id, x => x.Unique());
 
             Convention(x => x.Not.Unique());
 
@@ -118,7 +118,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
         [Test]
         public void UniqueKeyValueShouldntBeOverwritten()
         {
-            Mapping<ExampleClass>(x => x.Id, x => x.UniqueKey("key"));
+            Mapping(x => x.Id, x => x.UniqueKey("key"));
 
             Convention(x => x.UniqueKey("xxx"));
 
@@ -128,7 +128,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
         [Test]
         public void SqlTypeValueShouldntBeOverwritten()
         {
-            Mapping<ExampleClass>(x => x.Id, x => x.CustomSqlType("sql"));
+            Mapping(x => x.Id, x => x.CustomSqlType("sql"));
 
             Convention(x => x.CustomSqlType("xxx"));
 
@@ -138,7 +138,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
         [Test]
         public void IndexValueShouldntBeOverwritten()
         {
-            Mapping<ExampleClass>(x => x.Id, x => x.Index("idx"));
+            Mapping(x => x.Id, x => x.Index("idx"));
 
             Convention(x => x.Index("xxx"));
 
@@ -148,7 +148,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
         [Test]
         public void CheckValueShouldntBeOverwritten()
         {
-            Mapping<ExampleClass>(x => x.Id, x => x.Check("constraint"));
+            Mapping(x => x.Id, x => x.Check("constraint"));
 
             Convention(x => x.Check("xxx"));
 
@@ -158,7 +158,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
         [Test]
         public void DefaultValueShouldntBeOverwritten()
         {
-            Mapping<ExampleClass>(x => x.Id, x => x.Default(200));
+            Mapping(x => x.Id, x => x.Default(200));
 
             Convention(x => x.Default(100));
 
@@ -168,7 +168,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
         [Test]
         public void TypeValueShouldntBeOverwritten()
         {
-            Mapping<ExampleClass>(x => x.Id, x => x.CustomType<int>());
+            Mapping(x => x.Id, x => x.CustomType<int>());
 
             Convention(x => x.CustomType<string>());
 
@@ -182,15 +182,15 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
             model.Conventions.Add(new IdConventionBuilder().Always(convention));
         }
 
-        private void Mapping<T>(Expression<Func<T, object>> property, Action<IdentityPart> mappingDefinition)
+        private void Mapping<TReturn>(Expression<Func<ExampleClass, TReturn>> property, Action<IdentityPart<TReturn>> mappingDefinition)
         {
-            var classMap = new ClassMap<T>();
+            var classMap = new ClassMap<ExampleClass>();
             var map = classMap.Id(property);
 
             mappingDefinition(map);
 
             mapping = classMap;
-            mappingType = typeof(T);
+            mappingType = typeof(ExampleClass);
         }
 
         private void VerifyModel(Action<IdMapping> modelVerification)

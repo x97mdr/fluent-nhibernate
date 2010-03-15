@@ -5,101 +5,48 @@ using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Identity;
 using System.Diagnostics;
+using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Mapping
 {
-    public class IdentityPart : IIdentityMappingProvider
+    public class IdentityPart<T>
     {
-        private readonly AttributeStore<ColumnMapping> columnAttributes = new AttributeStore<ColumnMapping>();
-        private readonly IList<string> columns = new List<string>();
-        private readonly Member property;
-        private readonly Type entityType;
-        private readonly AccessStrategyBuilder<IdentityPart> access;
-        private readonly AttributeStore<IdMapping> attributes = new AttributeStore<IdMapping>();
-        private readonly Type identityType;
-        private bool nextBool = true;
-        private readonly string columnName;
+        readonly IMappingStructure<IdMapping> structure;
+        readonly AccessStrategyBuilder<IdentityPart<T>> access;
+        bool nextBool = true;
+        IMappingStructure<GeneratorMapping> generatorStructure;
 
-        public IdentityPart(Type entity, Member property)
+        public IdentityPart(IMappingStructure<IdMapping> structure)
         {
-            this.property = property;
-            entityType = entity;
-            this.identityType = property.PropertyType;
-            this.columnName = property.Name;
+            this.structure = structure;
 
-            access = new AccessStrategyBuilder<IdentityPart>(this, value => attributes.Set(x => x.Access, value));
-            GeneratedBy = new IdentityGenerationStrategyBuilder<IdentityPart>(this, property.PropertyType, entity);
-
-            SetDefaultGenerator();
+            access = new AccessStrategyBuilder<IdentityPart<T>>(this, value => structure.SetValue(Attr.Access, value));
         }
 
-        public IdentityPart(Type entity, Type identityType, string columnName)
+        public IdentityGenerationStrategyBuilder<IdentityPart<T>> GeneratedBy
         {
-            this.property = null;
-            this.entityType = entity;
-            this.identityType = identityType;
-            this.columnName = columnName;
-
-            access = new AccessStrategyBuilder<IdentityPart>(this, value => attributes.Set(x => x.Access, value));
-            GeneratedBy = new IdentityGenerationStrategyBuilder<IdentityPart>(this, this.identityType, entity);
-
-            SetDefaultGenerator();
-        }
-
-        private void SetDefaultGenerator()
-        {
-            var generatorMapping = new GeneratorMapping();
-            var defaultGenerator = new GeneratorBuilder(generatorMapping, identityType);
-
-            if (identityType == typeof(Guid))
-                defaultGenerator.GuidComb();
-            else if (identityType == typeof(int) || identityType == typeof(long))
-                defaultGenerator.Identity();
-            else
-                defaultGenerator.Assigned();
-
-            attributes.SetDefault(x => x.Generator, generatorMapping);
-        }
-
-        IdMapping IIdentityMappingProvider.GetIdentityMapping()
-        {
-            var mapping = new IdMapping(attributes.CloneInner())
+            get
             {
-                ContainingEntityType = entityType
-            };
+                if (generatorStructure == null)
+                {
+                    generatorStructure = new FreeStructure<GeneratorMapping>();
+                    structure.AddChild(generatorStructure);
+                }
 
-            if (columns.Count > 0)
-            {
-                foreach (var column in columns)
-                    mapping.AddColumn(new ColumnMapping(columnAttributes.CloneInner()) { Name = column });
+                return new IdentityGenerationStrategyBuilder<IdentityPart<T>>(generatorStructure, this, typeof(T));
             }
-            else
-                mapping.AddDefaultColumn(new ColumnMapping(columnAttributes.CloneInner()) { Name = columnName });
-
-            if (property != null)
-            {
-                mapping.Name = columnName;
-            }
-            mapping.SetDefaultValue("Type", new TypeReference(identityType));
-
-            if (GeneratedBy.IsDirty)
-                mapping.Generator = GeneratedBy.GetGeneratorMapping();
-
-            return mapping;
         }
-
-        public IdentityGenerationStrategyBuilder<IdentityPart> GeneratedBy { get; private set; }
 
         /// <summary>
         /// Set the access and naming strategy for this identity.
         /// </summary>
-        public AccessStrategyBuilder<IdentityPart> Access
+        public AccessStrategyBuilder<IdentityPart<T>> Access
         {
             get { return access; }
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        public IdentityPart Not
+        public IdentityPart<T> Not
         {
             get
             {
@@ -112,9 +59,9 @@ namespace FluentNHibernate.Mapping
         /// Sets the unsaved-value of the identity.
         /// </summary>
         /// <param name="unsavedValue">Value that represents an unsaved value.</param>
-        public IdentityPart UnsavedValue(object unsavedValue)
+        public IdentityPart<T> UnsavedValue(object unsavedValue)
         {
-            attributes.Set(x => x.UnsavedValue, (unsavedValue ?? "null").ToString());
+            structure.SetValue(Attr.UnsavedValue, (unsavedValue ?? "null").ToString());
             return this;
         }
 
@@ -122,90 +69,97 @@ namespace FluentNHibernate.Mapping
         /// Sets the column name for the identity field.
         /// </summary>
         /// <param name="columnName">Column name</param>
-        public IdentityPart Column(string columnName)
+        public IdentityPart<T> Column(string columnName)
         {
-            columns.Clear(); // only currently support one column for ids
-            columns.Add(columnName);
+            structure.RemoveChildrenMatching(x => x is IMappingStructure<ColumnMapping>);
+
+            var column = new ColumnStructure(structure);
+
+            new ColumnPart(column)
+                .Name(columnName);
+
+            structure.AddChild(column);
+
             return this;
         }
 
-        public IdentityPart Length(int length)
+        public IdentityPart<T> Length(int length)
         {
-            columnAttributes.Set(x => x.Length, length);
+            structure.SetValue(Attr.Length, length);
             return this;
         }
 
-        public IdentityPart Precision(int precision)
+        public IdentityPart<T> Precision(int precision)
         {
-            columnAttributes.Set(x => x.Precision, precision);
+            structure.SetValue(Attr.Precision, precision);
             return this;
         }
 
-        public IdentityPart Scale(int scale)
+        public IdentityPart<T> Scale(int scale)
         {
-            columnAttributes.Set(x => x.Scale, scale);
+            structure.SetValue(Attr.Scale, scale);
             return this;
         }
 
-        public IdentityPart Nullable()
+        public IdentityPart<T> Nullable()
         {
-            columnAttributes.Set(x => x.NotNull, !nextBool);
+            structure.SetValue(Attr.NotNull, !nextBool);
             nextBool = true;
             return this;
         }
 
-        public IdentityPart Unique()
+        public IdentityPart<T> Unique()
         {
-            columnAttributes.Set(x => x.Unique, nextBool);
+            structure.SetValue(Attr.Unique, nextBool);
             nextBool = true;
             return this;
         }
 
-        public IdentityPart UniqueKey(string keyColumns)
+        public IdentityPart<T> UniqueKey(string keyColumns)
         {
-            columnAttributes.Set(x => x.UniqueKey, keyColumns);
+            structure.SetValue(Attr.UniqueKey, keyColumns);
             return this;
         }
 
-        public IdentityPart CustomSqlType(string sqlType)
+        public IdentityPart<T> CustomSqlType(string sqlType)
         {
-            columnAttributes.Set(x => x.SqlType, sqlType);
+            structure.SetValue(Attr.SqlType, sqlType);
             return this;
         }
 
-        public IdentityPart Index(string key)
+        public IdentityPart<T> Index(string key)
         {
-            columnAttributes.Set(x => x.Index, key);
+            structure.SetValue(Attr.Index, key);
             return this;
         }
 
-        public IdentityPart Check(string constraint)
+        public IdentityPart<T> Check(string constraint)
         {
-            columnAttributes.Set(x => x.Check, constraint);
+            structure.SetValue(Attr.Check, constraint);
             return this;
         }
 
-        public IdentityPart Default(object value)
+        public IdentityPart<T> Default(object value)
         {
-            columnAttributes.Set(x => x.Default, value.ToString());
+            structure.SetValue(Attr.Default, value.ToString());
             return this;
         }
 
-        public IdentityPart CustomType<T>()
+        public IdentityPart<T> CustomType<TCustomType>()
         {
-            attributes.Set(x => x.Type, new TypeReference(typeof(T)));
+            structure.SetValue(Attr.Type, new TypeReference(typeof(TCustomType)));
             return this;
         }
 
-        public IdentityPart CustomType(Type type)
+        public IdentityPart<T> CustomType(Type type)
         {
-            attributes.Set(x => x.Type, new TypeReference(type));
+            structure.SetValue(Attr.Type, new TypeReference(type));
             return this;
         }
 
-        public IdentityPart CustomType(string type)
+        public IdentityPart<T> CustomType(string type)
         {
-            attributes.Set(x => x.Type, new TypeReference(type));
+            structure.SetValue(Attr.Type, new TypeReference(type));
             return this;
         }
     }

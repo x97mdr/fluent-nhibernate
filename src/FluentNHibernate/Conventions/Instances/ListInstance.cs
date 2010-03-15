@@ -6,8 +6,8 @@ namespace FluentNHibernate.Conventions.Instances
 {
     public class ListInstance : ListInspector, IListInstance
     {
-        private readonly ListMapping mapping;
-        public ListInstance(ListMapping mapping)
+        private readonly CollectionMapping mapping;
+        public ListInstance(CollectionMapping mapping)
             : base(mapping)
         {
             this.mapping = mapping;

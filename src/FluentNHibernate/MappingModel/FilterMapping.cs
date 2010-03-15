@@ -1,31 +1,22 @@
-using System;
+using System.Collections.Generic;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
-    public class FilterMapping : IMappingBase
+    public class FilterMapping : IMappingBase, IMapping
     {
-        private readonly AttributeStore<FilterMapping> attributes;
-
-        public FilterMapping()
-            : this(new AttributeStore())
-        { }
-
-        public FilterMapping(AttributeStore underlyingStore)
-        {
-            attributes = new AttributeStore<FilterMapping>(underlyingStore);
-        }
+        readonly ValueStore values = new ValueStore();
 
         public string Name
         {
-            get { return attributes.Get(x => x.Name); }
-            set { attributes.Set(x => x.Name, value); }
+            get { return values.Get(Attr.Name); }
+            set { values.Set(Attr.Name, value); }
         }
 
         public string Condition
         {
-            get { return attributes.Get(x => x.Condition); }
-            set { attributes.Set(x => x.Condition, value); }
+            get { return values.Get(Attr.Condition); }
+            set { values.Set(Attr.Condition, value); }
         }
 
         public void AcceptVisitor(IMappingModelVisitor visitor)
@@ -35,14 +26,14 @@ namespace FluentNHibernate.MappingModel
 
         public bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);
+            return false;
         }
 
         public bool Equals(FilterMapping other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.attributes, attributes);
+            return Equals(other.values, values);
         }
 
         public override bool Equals(object obj)
@@ -55,7 +46,17 @@ namespace FluentNHibernate.MappingModel
 
         public override int GetHashCode()
         {
-            return (attributes != null ? attributes.GetHashCode() : 0);
+            return (values != null ? values.GetHashCode() : 0);
+        }
+
+        public void AddChild(IMapping child)
+        {
+            
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        {
+            values.Merge(otherValues);
         }
     }
 }

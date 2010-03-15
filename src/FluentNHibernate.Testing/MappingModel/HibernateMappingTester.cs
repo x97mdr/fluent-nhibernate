@@ -1,4 +1,5 @@
-﻿using FluentNHibernate.MappingModel;
+﻿using FluentNHibernate.Automapping.TestFixtures;
+using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.Visitors;
 using NUnit.Framework;
@@ -13,8 +14,8 @@ namespace FluentNHibernate.Testing.MappingModel
         public void CanAddClassMappings()
         {
             var hibMap = new HibernateMapping();
-            var classMap1 = new ClassMapping { Name = "class1" };
-            var classMap2 = new ClassMapping { Name = "class1" };
+            var classMap1 = new ClassMapping(typeof(ExampleClass)) { Name = "class1" };
+            var classMap2 = new ClassMapping(typeof(ExampleClass)) { Name = "class1" };
 
             hibMap.AddClass(classMap1);
             hibMap.AddClass(classMap2);
@@ -27,7 +28,7 @@ namespace FluentNHibernate.Testing.MappingModel
         public void ShouldPassClassmappingsToTheVisitor()
         {
             var hibMap = new HibernateMapping();
-            var classMap = new ClassMapping { Name = "class1" };
+            var classMap = new ClassMapping(typeof(ExampleClass)) { Name = "class1" };
             hibMap.AddClass(classMap);
 
             var visitor = MockRepository.GenerateMock<IMappingModelVisitor>();

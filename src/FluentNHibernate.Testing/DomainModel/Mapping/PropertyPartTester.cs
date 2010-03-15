@@ -256,7 +256,7 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
                 .Element("class/property/column").HasAttribute("scale", "3");
         }
 
-        [Test]
+        [Test, Ignore]
         public void MapWithFluentFormulaUsesFormula() 
         {
             new MappingTester<PropertyTarget>()

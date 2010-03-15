@@ -5,7 +5,7 @@ using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
-    public class NaturalIdMapping : MappingBase
+    public class NaturalIdMapping : MappingBase, IMapping
     {
         private readonly AttributeStore<NaturalIdMapping> attributes;
         private readonly IList<PropertyMapping> properties = new List<PropertyMapping>();
@@ -70,6 +70,14 @@ namespace FluentNHibernate.MappingModel
         public void SetDefaultValue<TResult>(Expression<Func<NaturalIdMapping, TResult>> property, TResult value)
         {
             attributes.SetDefault(property, value);
+        }
+
+        public void AddChild(IMapping child)
+        {
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> values)
+        {
         }
     }
 }

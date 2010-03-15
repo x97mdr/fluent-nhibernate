@@ -1,42 +1,34 @@
+using System;
 using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
+using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Mapping
 {
-    public class StoredProcedurePart : IStoredProcedureMappingProvider
+    public class StoredProcedurePart
     {
-        private readonly CheckTypeExpression<StoredProcedurePart> check;
-        private readonly string _element;
-        private readonly string _innerText;
-        private readonly AttributeStore<StoredProcedureMapping> attributes = new AttributeStore<StoredProcedureMapping>();
+        readonly IMappingStructure<StoredProcedureMapping> structure;
 
-
-        public StoredProcedurePart(string element, string innerText)
+        public StoredProcedurePart(IMappingStructure<StoredProcedureMapping> structure)
         {
-            _element = element;
-            _innerText = innerText;
-
-            check = new CheckTypeExpression<StoredProcedurePart>(this, value => attributes.Set(x => x.Check, value));
+            this.structure = structure;
         }
-
 
         public CheckTypeExpression<StoredProcedurePart> Check
         {
-            get { return check; }
+            get { return new CheckTypeExpression<StoredProcedurePart>(this, value => structure.SetValue(Attr.Check, value)); }
         }
 
-
-        public StoredProcedureMapping GetStoredProcedureMapping()
+        public StoredProcedurePart StoredProcedureType(string type)
         {
-            var mapping = new StoredProcedureMapping(attributes.CloneInner());
+            structure.SetValue(Attr.SPType, type);
+            return this;
+        }
 
-            mapping.SPType = _element;
-            mapping.Query = _innerText;
-
-            if (!mapping.IsSpecified("Check"))
-                mapping.SetDefaultValue(x => x.Check, "rowcount");
-
-            return mapping;
+        public StoredProcedurePart Query(string query)
+        {
+            structure.SetValue(Attr.Query, query);
+            return this;
         }
     }
 }

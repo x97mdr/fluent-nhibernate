@@ -21,21 +21,19 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [SetUp]
         public void CreateDsl()
         {
-            mapping = new CompositeElementMapping();
+            mapping = new CompositeElementMapping(typeof(ExampleClass));
             inspector = new CompositeElementInspector(mapping);
         }
 
         [Test]
         public void ClassMapped()
         {
-            mapping.Class = new TypeReference(typeof(ExampleClass));
             inspector.Class.ShouldEqual(new TypeReference(typeof(ExampleClass)));
         }
 
         [Test]
         public void ClassIsSet()
         {
-            mapping.Class = new TypeReference(typeof(ExampleClass));
             inspector.IsSet(Prop(x => x.Class))
                 .ShouldBeTrue();
         }
@@ -50,7 +48,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void ParentMapped()
         {
-            mapping.Parent = new ParentMapping();
+            mapping.Parent = new ParentMapping(null);
             mapping.Parent.Name = "test";
             inspector.Parent.Name.ShouldEqual("test");
         }
@@ -58,7 +56,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void ParentIsSet()
         {
-            mapping.Parent = new ParentMapping();
+            mapping.Parent = new ParentMapping(null);
             mapping.Parent.Name = "test";
             inspector.IsSet(Prop(x => x.Parent))
                 .ShouldBeTrue();

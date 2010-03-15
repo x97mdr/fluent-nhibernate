@@ -9,14 +9,14 @@ namespace FluentNHibernate.Testing.MappingModel.Defaults
         [Test]
         public void MappedShouldDefaultToFalse()
         {
-            var mapping = new CompositeIdMapping();
+            var mapping = new CompositeIdMapping(null);
             mapping.Mapped.ShouldBeFalse();
         }
 
         [Test]
         public void UnsavedValueShouldDefaultToUndefined()
         {
-            var mapping = new CompositeIdMapping();
+            var mapping = new CompositeIdMapping(null);
             mapping.UnsavedValue.ShouldEqual("undefined");
         }
     }

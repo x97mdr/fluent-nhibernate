@@ -23,7 +23,7 @@ namespace FluentNHibernate.Conventions.Instances
                 return;
 
             var originalColumn = mapping.Columns.FirstOrDefault();
-            var column = originalColumn == null ? new ColumnMapping() : originalColumn.Clone();
+            var column = originalColumn == null ? new ColumnMapping() : originalColumn; // TODO: Fix
 
             column.Name = columnName;
 

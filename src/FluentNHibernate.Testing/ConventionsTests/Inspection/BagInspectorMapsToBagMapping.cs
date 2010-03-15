@@ -13,13 +13,13 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
     [TestFixture, Category("Inspection DSL")]
     public class BagInspectorMapsToBagMapping
     {
-        private BagMapping mapping;
+        private CollectionMapping mapping;
         private IBagInspector inspector;
 
         [SetUp]
         public void CreateDsl()
         {
-            mapping = new BagMapping();
+            mapping = new CollectionMapping();
             inspector = new BagInspector(mapping);
         }
 

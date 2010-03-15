@@ -185,7 +185,7 @@ namespace FluentNHibernate.Automapping
         private void MergeMap(Type type, IMappingProvider mapping)
         {
             Type typeToMap = GetTypeToMap(type);
-            autoMapper.MergeMap(typeToMap, mapping.GetClassMapping(), new List<string>(mapping.GetIgnoredProperties()));
+            //autoMapper.MergeMap(typeToMap, mapping.GetUserDefinedMappings(), new List<string>(mapping.GetIgnoredProperties()));
         }
 
         public IMappingProvider FindMapping<T>()
@@ -210,7 +210,7 @@ namespace FluentNHibernate.Automapping
                     return mappingType.BaseType.GetGenericArguments()[0] == expectedType;
                 }
                 if (provider is PassThroughMappingProvider)
-                    return provider.GetClassMapping().Type == expectedType;
+                    return provider.GetUserDefinedMappings().Type == expectedType;
 
                 return false;
             };

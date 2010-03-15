@@ -41,7 +41,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
             acceptance.Expect(x => x.Insert, Is.Set);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Insert = true }))
+                .Matches(new PropertyInspector(new PropertyMapping { Insert = true }))
                 .ShouldBeTrue();
         }
 
@@ -62,7 +62,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
             acceptance.Expect(x => x.Update, Is.Set);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Insert = true, Update = true }))
+                .Matches(new PropertyInspector(new PropertyMapping { Insert = true, Update = true }))
                 .ShouldBeTrue();
         }
 
@@ -73,7 +73,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.AcceptanceCriteria
             acceptance.Expect(x => x.Update, Is.Set);
 
             acceptance
-                .Matches(new PropertyInspector(new PropertyMapping() { Insert = true }))
+                .Matches(new PropertyInspector(new PropertyMapping { Insert = true }))
                 .ShouldBeFalse();
         }
 

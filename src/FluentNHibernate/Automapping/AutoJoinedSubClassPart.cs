@@ -6,6 +6,7 @@ using FluentNHibernate.Mapping;
 using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
+using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Automapping
 {
@@ -13,8 +14,8 @@ namespace FluentNHibernate.Automapping
     {
         private readonly IList<Member> propertiesMapped = new List<Member>();
 
-        public AutoJoinedSubClassPart(string keyColumn)
-            : base(keyColumn)
+        public AutoJoinedSubClassPart(IMappingStructure<SubclassMapping> structure)
+            : base(structure)
         {}
 
         public IEnumerable<Member> PropertiesMapped
@@ -35,10 +36,10 @@ namespace FluentNHibernate.Automapping
         void IAutoClasslike.AlterModel(ClassMappingBase mapping)
         {}
 
-        protected override OneToManyPart<TChild> HasMany<TChild>(Member property)
+        protected override OneToManyPart<TChild> HasMany<TChild>(Type type, Member property)
         {
             propertiesMapped.Add(property);
-            return base.HasMany<TChild>(property);
+            return base.HasMany<TChild>(type, property);
         }
 
         protected override PropertyPart Map(Member property, string columnName)
@@ -53,10 +54,10 @@ namespace FluentNHibernate.Automapping
             return base.References<TOther>(property, columnName);
         }
 
-        protected override ManyToManyPart<TChild> HasManyToMany<TChild>(Member property)
+        protected override ManyToManyPart<TChild> HasManyToMany<TChild>(Type childType, Member property)
         {
             propertiesMapped.Add(property);
-            return base.HasManyToMany<TChild>(property);
+            return base.HasManyToMany<TChild>(childType, property);
         }
 
         protected override ComponentPart<TComponent> Component<TComponent>(Member property, Action<ComponentPart<TComponent>> action)
@@ -82,7 +83,7 @@ namespace FluentNHibernate.Automapping
 
             action(joinedclass);
 
-            subclasses[typeof(TSubclass)] = joinedclass;
+            //subclasses[typeof(TSubclass)] = joinedclass;
         }
 
         public IAutoClasslike JoinedSubClass(Type type, string keyColumn)
@@ -90,7 +91,7 @@ namespace FluentNHibernate.Automapping
             var genericType = typeof(AutoJoinedSubClassPart<>).MakeGenericType(type);
             var joinedclass = (ISubclassMappingProvider)Activator.CreateInstance(genericType, keyColumn);
 
-            subclasses[type] = joinedclass;
+            //subclasses[type] = joinedclass;
 
             return (IAutoClasslike)joinedclass;
         }
@@ -102,7 +103,7 @@ namespace FluentNHibernate.Automapping
 
             action(subclass);
 
-            subclasses[typeof(TSubclass)] = subclass;
+            //subclasses[typeof(TSubclass)] = subclass;
         }
 
         public IAutoClasslike SubClass(Type type, string discriminatorValue)
@@ -110,12 +111,12 @@ namespace FluentNHibernate.Automapping
             var genericType = typeof(AutoSubClassPart<>).MakeGenericType(type);
             var subclass = (ISubclassMappingProvider)Activator.CreateInstance(genericType, discriminatorValue);
 
-            subclasses[type] = subclass;
+            //subclasses[type] = subclass;
 
             return (IAutoClasslike)subclass;
         }
 
-        public ClassMapping GetClassMapping()
+        public IUserDefinedMapping GetUserDefinedMappings()
         {
             throw new NotImplementedException();
         }

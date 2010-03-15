@@ -21,7 +21,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [SetUp]
         public void CreateDsl()
         {
-            mapping = new CompositeIdMapping();
+            mapping = new CompositeIdMapping(null);
             inspector = new CompositeIdentityInspector(mapping);
         }
 
@@ -72,14 +72,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void KeyManyToOnesCollectionHasSameCountAsMapping()
         {
-            mapping.AddKeyManyToOne(new KeyManyToOneMapping());
+            mapping.AddKeyManyToOne(new KeyManyToOneMapping(null));
             inspector.KeyManyToOnes.Count().ShouldEqual(1);
         }
 
         [Test]
         public void KeyManyToOnesCollectionOfInspectors()
         {
-            mapping.AddKeyManyToOne(new KeyManyToOneMapping());
+            mapping.AddKeyManyToOne(new KeyManyToOneMapping(null));
             inspector.KeyManyToOnes.First().ShouldBeOfType<IKeyManyToOneInspector>();
         }
 
@@ -92,14 +92,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void KeyPropertiesCollectionHasSameCountAsMapping()
         {
-            mapping.AddKeyProperty(new KeyPropertyMapping());
+            mapping.AddKeyProperty(new KeyPropertyMapping(null));
             inspector.KeyProperties.Count().ShouldEqual(1);
         }
 
         [Test]
         public void KeyPropertiesCollectionOfInspectors()
         {
-            mapping.AddKeyProperty(new KeyPropertyMapping());
+            mapping.AddKeyProperty(new KeyPropertyMapping(null));
             inspector.KeyProperties.First().ShouldBeOfType<IKeyPropertyInspector>();
         }
 

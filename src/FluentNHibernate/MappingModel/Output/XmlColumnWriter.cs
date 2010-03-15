@@ -21,37 +21,37 @@ namespace FluentNHibernate.MappingModel.Output
 
             var element = document.CreateElement("column");
 
-            if (columnMapping.HasValue(x => x.Name))
+            if (columnMapping.HasValue(Attr.Name))
                 element.WithAtt("name", columnMapping.Name);
 
-            if (columnMapping.HasValue(x => x.Check))
+            if (columnMapping.HasValue(Attr.Check))
                 element.WithAtt("check", columnMapping.Check);
 
-            if (columnMapping.HasValue(x => x.Length))
+            if (columnMapping.HasValue(Attr.Length))
                 element.WithAtt("length", columnMapping.Length);
 
-            if (columnMapping.HasValue(x => x.Index))
+            if (columnMapping.HasValue(Attr.Index))
                 element.WithAtt("index", columnMapping.Index);
 
-            if (columnMapping.HasValue(x => x.NotNull))
+            if (columnMapping.HasValue(Attr.NotNull))
                 element.WithAtt("not-null", columnMapping.NotNull);
 
-            if (columnMapping.HasValue(x => x.SqlType))
+            if (columnMapping.HasValue(Attr.SqlType))
                 element.WithAtt("sql-type", columnMapping.SqlType);
 
-            if (columnMapping.HasValue(x => x.Unique))
+            if (columnMapping.HasValue(Attr.Unique))
                 element.WithAtt("unique", columnMapping.Unique);
 
-            if (columnMapping.HasValue(x => x.UniqueKey))
+            if (columnMapping.HasValue(Attr.UniqueKey))
                 element.WithAtt("unique-key", columnMapping.UniqueKey);
 
-            if (columnMapping.HasValue(x => x.Precision))
+            if (columnMapping.HasValue(Attr.Precision))
                 element.WithAtt("precision", columnMapping.Precision);
 
-            if (columnMapping.HasValue(x => x.Scale))
+            if (columnMapping.HasValue(Attr.Scale))
                 element.WithAtt("scale", columnMapping.Scale);
 
-            if (columnMapping.HasValue(x => x.Default))
+            if (columnMapping.HasValue(Attr.Default))
                 element.WithAtt("default", columnMapping.Default);
 
             document.AppendChild(element);

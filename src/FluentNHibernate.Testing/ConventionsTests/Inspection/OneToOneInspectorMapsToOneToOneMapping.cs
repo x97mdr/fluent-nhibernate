@@ -24,7 +24,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [SetUp]
         public void CreateDsl()
         {
-            mapping = new OneToOneMapping();
+            mapping = new OneToOneMapping(null);
             inspector = new OneToOneInspector(mapping);
         }
 

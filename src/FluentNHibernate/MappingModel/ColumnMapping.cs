@@ -1,20 +1,17 @@
-using System;
-using System.Linq.Expressions;
+using System.Collections.Generic;
+using System.Linq;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
-    public class ColumnMapping : MappingBase
+    public class ColumnMapping : MappingBase, IMapping
     {
-        private readonly AttributeStore<ColumnMapping> attributes;
+        IEnumerable<KeyValuePair<Attr, object>> parentValues = new ValueStore();
+        readonly ValueStore values = new ValueStore();
 
-        public ColumnMapping()
-            : this(new AttributeStore())
-        {}
-
-        public ColumnMapping(AttributeStore underlyingStore)
+        public void SpecifyParentValues(IEnumerable<KeyValuePair<Attr, object>> newParentValues)
         {
-            attributes = new AttributeStore<ColumnMapping>(underlyingStore);
+            parentValues = newParentValues;
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
@@ -24,102 +21,106 @@ namespace FluentNHibernate.MappingModel
 
         public Member Member { get; set; }
 
+        string GetEither(Attr attr)
+        {
+            return GetEither<string>(attr);
+        }
+
+        T GetEither<T>(Attr attr)
+        {
+            if (values.HasValue(attr))
+                return values.Get<T>(attr);
+            if (parentValues.Any(x => x.Key == attr))
+                return parentValues
+                    .Where(x => x.Key == attr)
+                    .Select(x => x.Value)
+                    .Cast<T>()
+                    .Single();
+
+            return default(T);
+        }
+
         public string Name
         {
-            get { return attributes.Get(x => x.Name); }
-            set { attributes.Set(x => x.Name, value); }
+            get { return GetEither(Attr.Name); }
+            set { values.Set(Attr.Name, value); }
         }
 
         public int Length
         {
-            get { return attributes.Get(x => x.Length); }
-            set { attributes.Set(x => x.Length, value); }
+            get { return GetEither<int>(Attr.Length); }
+            set { values.Set(Attr.Length, value); }
         }
 
         public bool NotNull
         {
-            get { return attributes.Get(x => x.NotNull); }
-            set { attributes.Set(x => x.NotNull, value); }
+            get { return GetEither<bool>(Attr.NotNull); }
+            set { values.Set(Attr.NotNull, value); }
         }
 
         public bool Unique
         {
-            get { return attributes.Get(x => x.Unique); }
-            set { attributes.Set(x => x.Unique, value); }
+            get { return GetEither<bool>(Attr.Unique); }
+            set { values.Set(Attr.Unique, value); }
         }
 
         public string UniqueKey
         {
-            get { return attributes.Get(x => x.UniqueKey); }
-            set { attributes.Set(x => x.UniqueKey, value); }
+            get { return GetEither(Attr.UniqueKey); }
+            set { values.Set(Attr.UniqueKey, value); }
         }
 
         public string SqlType
         {
-            get { return attributes.Get(x => x.SqlType); }
-            set { attributes.Set(x => x.SqlType, value); }
+            get { return GetEither(Attr.SqlType); }
+            set { values.Set(Attr.SqlType, value); }
         }
 
         public string Index
         {
-            get { return attributes.Get(x => x.Index); }
-            set { attributes.Set(x => x.Index, value); }
+            get { return GetEither(Attr.Index); }
+            set { values.Set(Attr.Index, value); }
         }
 
         public string Check
         {
-            get { return attributes.Get(x => x.Check); }
-            set { attributes.Set(x => x.Check, value); }
+            get { return GetEither(Attr.Check); }
+            set { values.Set(Attr.Check, value); }
         }
 
         public int Precision
         {
-            get { return attributes.Get(x => x.Precision); }
-            set { attributes.Set(x => x.Precision, value); }
+            get { return GetEither<int>(Attr.Precision); }
+            set { values.Set(Attr.Precision, value); }
         }
 
         public int Scale
         {
-            get { return attributes.Get(x => x.Scale); }
-            set { attributes.Set(x => x.Scale, value); }
+            get { return GetEither<int>(Attr.Scale); }
+            set { values.Set(Attr.Scale, value); }
         }
 
         public string Default
         {
-            get { return attributes.Get(x => x.Default); }
-            set { attributes.Set(x => x.Default, value); }
+            get { return GetEither(Attr.Default); }
+            set { values.Set(Attr.Default, value); }
         }
 
         public override bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);
+            return false;
         }
 
-        public bool HasValue<TResult>(Expression<Func<ColumnMapping, TResult>> property)
+        public bool HasValue(Attr attr)
         {
-            return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<ColumnMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
-        }
-
-        internal void MergeAttributes(AttributeStore<ColumnMapping> store)
-        {
-            attributes.Merge(store);
-        }
-
-        public ColumnMapping Clone()
-        {
-            return new ColumnMapping(attributes.CloneInner());
+            return values.HasValue(attr) || parentValues.Any(x => x.Key == attr);
         }
 
         public bool Equals(ColumnMapping other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.attributes, attributes) && Equals(other.Member, Member);
+            return Equals(other.values, values) && Equals(other.Member, Member);
         }
 
         public override bool Equals(object obj)
@@ -134,8 +135,17 @@ namespace FluentNHibernate.MappingModel
         {
             unchecked
             {
-                return ((attributes != null ? attributes.GetHashCode() : 0) * 397) ^ (Member != null ? Member.GetHashCode() : 0);
+                return ((values != null ? values.GetHashCode() : 0) * 397) ^ (Member != null ? Member.GetHashCode() : 0);
             }
+        }
+
+        public void AddChild(IMapping child)
+        {
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        {
+            values.Merge(otherValues);
         }
     }
 }

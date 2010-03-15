@@ -1,27 +1,34 @@
 using System;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Identity;
+using FluentNHibernate.MappingModel.Structure;
+
 namespace FluentNHibernate.Mapping
 {
     public class KeyPropertyPart
     {
-        private readonly KeyPropertyMapping mapping;
+        readonly IMappingStructure<KeyPropertyMapping> structure;
 
-        public KeyPropertyPart(KeyPropertyMapping mapping)
+        public KeyPropertyPart(IMappingStructure<KeyPropertyMapping> structure)
         {
-            this.mapping = mapping;
-            Access = new AccessStrategyBuilder<KeyPropertyPart>(this, value => mapping.Access = value);
+            this.structure = structure;
+            Access = new AccessStrategyBuilder<KeyPropertyPart>(this, value => structure.SetValue(Attr.Access, value));
         }
 
         public KeyPropertyPart ColumnName(string columnName)
         {
-            mapping.AddColumn(new ColumnMapping { Name = columnName });
+            var column = new ColumnStructure(structure);
+            
+            new ColumnPart(column)
+                .Name(columnName);
+            
+            structure.AddChild(column);
             return this;
         }
 
         public KeyPropertyPart Type(Type type)
         {
-            mapping.Type = new TypeReference(type);
+            structure.SetValue(Attr.Type, new TypeReference(type));
             return this;
         }
 

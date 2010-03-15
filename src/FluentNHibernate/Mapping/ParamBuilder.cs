@@ -1,20 +1,28 @@
 using System;
 using System.Collections.Generic;
+using FluentNHibernate.MappingModel;
+using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Mapping
 {
     public class ParamBuilder
     {
-        private readonly IDictionary<string, string> parameters;
+        readonly IMappingStructure structure;
 
-        public ParamBuilder(IDictionary<string, string> parameters)
+        public ParamBuilder(IMappingStructure structure)
         {
-            this.parameters = parameters;
+            this.structure = structure;
         }
 
         public ParamBuilder AddParam(string name, string value)
         {
-            parameters.Add(name, value);
+            var paramStructure = new FreeStructure<ParamMapping>();
+
+            paramStructure.SetValue(Attr.Name, name);
+            paramStructure.SetValue(Attr.Value, value);
+
+            structure.AddChild(paramStructure);
+
             return this;
         }
     }

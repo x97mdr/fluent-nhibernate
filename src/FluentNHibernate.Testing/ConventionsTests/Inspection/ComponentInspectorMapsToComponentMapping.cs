@@ -93,14 +93,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void CollectionsCollectionHasSameCountAsMapping()
         {
-            mapping.AddCollection(new BagMapping());
+            mapping.AddCollection(new CollectionMapping());
             inspector.Collections.Count().ShouldEqual(1);
         }
 
         [Test]
         public void CollectionsCollectionOfInspectors()
         {
-            mapping.AddCollection(new BagMapping());
+            mapping.AddCollection(new CollectionMapping());
             inspector.Collections.First().ShouldBeOfType<ICollectionInspector>();
         }
 
@@ -221,14 +221,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void OneToOnesCollectionHasSameCountAsMapping()
         {
-            mapping.AddOneToOne(new OneToOneMapping());
+            mapping.AddOneToOne(new OneToOneMapping(null));
             inspector.OneToOnes.Count().ShouldEqual(1);
         }
 
         [Test]
         public void OneToOnesCollectionOfInspectors()
         {
-            mapping.AddOneToOne(new OneToOneMapping());
+            mapping.AddOneToOne(new OneToOneMapping(null));
             inspector.OneToOnes.First().ShouldBeOfType<IOneToOneInspector>();
         }
 
@@ -241,7 +241,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void ParentMapped()
         {
-            mapping.Parent = new ParentMapping();
+            mapping.Parent = new ParentMapping(null);
             mapping.Parent.Name = "name";
             inspector.Parent.Name.ShouldEqual("name");
         }
@@ -249,7 +249,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void ParentIsSet()
         {
-            mapping.Parent = new ParentMapping();
+            mapping.Parent = new ParentMapping(null);
             mapping.Parent.Name = "name";
             inspector.IsSet(Prop(x => x.Parent))
                 .ShouldBeTrue();

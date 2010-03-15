@@ -9,10 +9,10 @@ namespace FluentNHibernate.Conventions.Instances
 {
     public class ArrayInstance : ArrayInspector, IArrayInstance
     {
-        private readonly ArrayMapping mapping;
+        private readonly CollectionMapping mapping;
         private bool nextBool = true;
 
-        public ArrayInstance(ArrayMapping mapping)
+        public ArrayInstance(CollectionMapping mapping)
             : base(mapping)
         {
             this.mapping = mapping;

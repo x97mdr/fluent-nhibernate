@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using FluentNHibernate.MappingModel.Identity;
+using FluentNHibernate.Utils;
 
 namespace FluentNHibernate.Conventions.Inspections
 {
@@ -43,7 +45,15 @@ namespace FluentNHibernate.Conventions.Inspections
 
         public IDictionary<string, string> Params
         {
-            get { return new Dictionary<string, string>(mapping.Params); }
+            get
+            {
+                var parameters = new Dictionary<string, string>();
+
+                mapping.Params
+                    .Each(x => parameters.Add(x.Name, x.Value));
+
+                return parameters;
+            }
         }
     }
 }

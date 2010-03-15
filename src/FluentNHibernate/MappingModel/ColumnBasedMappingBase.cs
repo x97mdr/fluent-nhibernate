@@ -7,11 +7,11 @@ namespace FluentNHibernate.MappingModel
     {
         private readonly string[] columnAttributes = new[] { "Length", "Precision", "Scale", "NotNull", "Unique", "UniqueKey", "SqlType", "Index", "Check", "Default" };
         protected readonly IDefaultableList<ColumnMapping> columns = new DefaultableList<ColumnMapping>();
-        protected readonly AttributeStore attributes;
 
-        protected ColumnBasedMappingBase(AttributeStore underlyingStore)
+        public virtual void AddChild(IMapping child)
         {
-            attributes = underlyingStore.Clone();
+            if (child is ColumnMapping)
+                columns.Add((ColumnMapping)child);
         }
 
         public override bool IsSpecified(string property)
@@ -19,17 +19,7 @@ namespace FluentNHibernate.MappingModel
             if (columnAttributes.Contains(property))
                 return columns.Any(x => x.IsSpecified(property));
 
-            return attributes.IsSpecified(property);
-        }
-
-        public bool HasValue(string property)
-        {
-            return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(string property, TResult value)
-        {
-            attributes.SetDefault(property, value);
+            return false;
         }
 
         public IDefaultableEnumerable<ColumnMapping> Columns
@@ -56,8 +46,7 @@ namespace FluentNHibernate.MappingModel
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return other.columns.ContentEquals(columns) &&
-                Equals(other.attributes, attributes);
+            return other.columns.ContentEquals(columns);
         }
 
         public override bool Equals(object obj)
@@ -72,7 +61,7 @@ namespace FluentNHibernate.MappingModel
         {
             unchecked
             {
-                return ((columns != null ? columns.GetHashCode() : 0) * 397) ^ (attributes != null ? attributes.GetHashCode() : 0);
+                return ((columns != null ? columns.GetHashCode() : 0) * 397);
             }
         }
     }

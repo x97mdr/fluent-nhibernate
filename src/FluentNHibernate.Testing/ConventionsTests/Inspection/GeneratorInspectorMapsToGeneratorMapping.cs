@@ -49,7 +49,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void ParamsHasSameCountAsMapping()
         {
-            mapping.Params.Add("one", "value");
+            mapping.AddParam(new ParamMapping { Name = "one", Value = "value" });
             inspector.Params.Count.ShouldEqual(1);
         }
 

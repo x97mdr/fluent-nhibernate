@@ -21,7 +21,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [SetUp]
         public void CreateDsl()
         {
-            mapping = new ManyToManyMapping();
+            mapping = new ManyToManyMapping(null);
             inspector = new ManyToManyInspector(mapping);
         }
 

@@ -6,21 +6,27 @@ using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel.Identity
 {
-    public class CompositeIdMapping : MappingBase, IIdentityMapping
+    public class CompositeIdMapping : MappingBase, IIdentityMapping, IMapping, IMemberMapping
     {
-        private readonly AttributeStore<CompositeIdMapping> attributes;
+        private readonly AttributeStore<CompositeIdMapping> attributes = new AttributeStore<CompositeIdMapping>();
         private readonly IList<KeyPropertyMapping> keyProperties = new List<KeyPropertyMapping>();
         private readonly IList<KeyManyToOneMapping> keyManyToOnes = new List<KeyManyToOneMapping>();
 
         public CompositeIdMapping()
-            : this(new AttributeStore())
-        {}
-
-        public CompositeIdMapping(AttributeStore underlyingStore)
         {
-            attributes = new AttributeStore<CompositeIdMapping>(underlyingStore);
-            attributes.SetDefault(x => x.Mapped, false);
-            attributes.SetDefault(x => x.UnsavedValue, "undefined");
+            Mapped = false;
+            UnsavedValue = "undefined";
+        }
+
+        public CompositeIdMapping(Member member)
+            : this()
+        {
+            Initialise(member);
+        }
+
+        public void Initialise(Member member)
+        {
+            Name = member.Name;
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
@@ -129,6 +135,18 @@ namespace FluentNHibernate.MappingModel.Identity
                 result = (result * 397) ^ (ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0);
                 return result;
             }
+        }
+
+        public void AddChild(IMapping child)
+        {
+            if (child is KeyPropertyMapping)
+                AddKeyProperty((KeyPropertyMapping)child);
+            if (child is KeyManyToOneMapping)
+                AddKeyManyToOne((KeyManyToOneMapping)child);
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> values)
+        {
         }
     }
 }

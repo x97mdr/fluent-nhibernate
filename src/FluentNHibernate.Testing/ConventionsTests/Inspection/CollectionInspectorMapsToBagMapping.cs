@@ -14,13 +14,13 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
     [TestFixture, Category("Inspection DSL")]
     public class CollectionInspectorMapsToBagMapping
     {
-        private BagMapping mapping;
+        private CollectionMapping mapping;
         private ICollectionInspector inspector;
 
         [SetUp]
         public void CreateDsl()
         {
-            mapping = new BagMapping();
+            mapping = new CollectionMapping();
             inspector = new CollectionInspector(mapping);
         }
 
@@ -183,16 +183,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void CompositeElementMapped()
         {
-            mapping.CompositeElement = new CompositeElementMapping();
-            mapping.CompositeElement.Class = new TypeReference(typeof(ExampleClass));
+            mapping.CompositeElement = new CompositeElementMapping(typeof(ExampleClass));
             inspector.CompositeElement.Class.ShouldEqual(new TypeReference(typeof(ExampleClass)));
         }
 
         [Test]
         public void CompositeElementIsSet()
         {
-            mapping.CompositeElement = new CompositeElementMapping();
-            mapping.CompositeElement.Class = new TypeReference(typeof(ExampleClass));
+            mapping.CompositeElement = new CompositeElementMapping(typeof(ExampleClass));
             inspector.IsSet(Prop(x => x.CompositeElement))
                 .ShouldBeTrue();
         }
@@ -409,7 +407,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void RelationshipMapped()
         {
-            mapping.Relationship = new ManyToManyMapping();
+            mapping.Relationship = new ManyToManyMapping(null);
             mapping.Relationship.Class = new TypeReference(typeof(ExampleClass));
             inspector.Relationship.Class.ShouldEqual(new TypeReference(typeof(ExampleClass)));
         }
@@ -417,7 +415,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void RelationshipIsSet()
         {
-            mapping.Relationship = new ManyToManyMapping();
+            mapping.Relationship = new ManyToManyMapping(null);
             mapping.Relationship.Class = new TypeReference(typeof(ExampleClass));
             inspector.IsSet(Prop(x => x.Relationship))
                 .ShouldBeTrue();

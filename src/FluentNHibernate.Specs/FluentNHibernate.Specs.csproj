@@ -86,6 +86,7 @@
     <Compile Include="FluentInterface\SubclassMapSpecs\SubclassMapSpecs.HasMany.cs" />
     <Compile Include="FluentInterface\SubclassMapSpecs\SubclassMapSpecs.HasOne.cs" />
     <Compile Include="FluentInterface\SubclassMapSpecs\SubclassMapSpecs.Property.cs" />
+    <Compile Include="Model\ImplementationVerificationSpecs.cs" />
     <Compile Include="PersistenceModel\PersistenceModelSpecs.AddingProviders.cs" />
     <Compile Include="PersistenceModel\PersistenceModelSpecs.Validation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

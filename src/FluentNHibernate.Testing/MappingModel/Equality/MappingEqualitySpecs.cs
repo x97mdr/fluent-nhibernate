@@ -1,4 +1,4 @@
-﻿using System;
+﻿using FluentNHibernate.Automapping.TestFixtures;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Collections;
@@ -9,9 +9,9 @@ using NUnit.Framework;
 namespace FluentNHibernate.Testing.MappingModel.Equality
 {
     [TestFixture]
-    public class when_comparing_two_identical_AnyMappings : MappingEqualitySpec<AnyMapping>
+    public class WhenComparingTwoIdenticalAnyMappings : MappingEqualitySpec<AnyMapping>
     {
-        public override AnyMapping create_mapping()
+        protected override AnyMapping CreateMapping()
         {
             var mapping = new AnyMapping
             {
@@ -29,7 +29,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
 
             mapping.AddIdentifierDefaultColumn(new ColumnMapping { Name = "default-id-col" });
             mapping.AddIdentifierColumn(new ColumnMapping { Name = "id-col" });
-            mapping.AddMetaValue(new MetaValueMapping { Value = "value" });
+            mapping.AddMetaValue(new MetaValueMapping(null) { Value = "value" });
             mapping.AddTypeDefaultColumn(new ColumnMapping { Name = "default-type-col" });
             mapping.AddTypeColumn(new ColumnMapping { Name = "type-col" });
 
@@ -37,27 +37,27 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_ArrayMappings : MappingEqualitySpec<ArrayMapping>
+    public class WhenComparingTwoIdenticalArrayMappings : MappingEqualitySpec<CollectionMapping>
     {
-        public override ArrayMapping create_mapping()
+        protected override CollectionMapping CreateMapping()
         {
-            var mapping = new ArrayMapping
+            var mapping = new CollectionMapping
             {
                 Access = "access", Cascade = "cascade", ContainingEntityType = typeof(Target),
                 Lazy = true, Name = "name", OptimisticLock = "lock",
                 BatchSize = 1, Cache = new CacheMapping(), Check = "check",
-                ChildType = typeof(Target), CollectionType = new TypeReference(typeof(Target)), CompositeElement = new CompositeElementMapping(),
+                ChildType = typeof(Target), CollectionType = new TypeReference(typeof(Target)), CompositeElement = new CompositeElementMapping(typeof(ExampleClass)),
                 Element = new ElementMapping(), Fetch = "fetch", Generic = true,
                 Index = new IndexMapping(), Inverse = true, Key = new KeyMapping(),
-                Member = new DummyPropertyInfo("name", typeof(Target)).ToMember(), Mutable = true, OrderBy = "order-by",
-                OtherSide = new ArrayMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(),
+                Mutable = true, OrderBy = "order-by",
+                OtherSide = new CollectionMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(null),
                 Schema = "schema", Subselect = "subselect", TableName = "table", Where = "where"
             };
 
@@ -67,27 +67,29 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_BagMappings : MappingEqualitySpec<BagMapping>
+    public class WhenComparingTwoIdenticalBagMappings : MappingEqualitySpec<CollectionMapping>
     {
-        public override BagMapping create_mapping()
+        protected override CollectionMapping CreateMapping()
         {
-            var mapping = new BagMapping
+            var mapping = new CollectionMapping
             {
                 Access = "access", Cascade = "cascade", ContainingEntityType = typeof(Target),
                 Lazy = true, Name = "name", OptimisticLock = "lock",
                 BatchSize = 1, Cache = new CacheMapping(), Check = "check",
-                ChildType = typeof(Target), CollectionType = new TypeReference(typeof(Target)), CompositeElement = new CompositeElementMapping(),
+                ChildType = typeof(Target),
+                CollectionType = new TypeReference(typeof(Target)),
+                CompositeElement = new CompositeElementMapping(typeof(ExampleClass)),
                 Element = new ElementMapping(), Fetch = "fetch", Generic = true,
                 Inverse = true, Key = new KeyMapping(),
-                Member = new DummyPropertyInfo("name", typeof(Target)).ToMember(), Mutable = true, OrderBy = "order-by",
-                OtherSide = new ArrayMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(),
+                Mutable = true, OrderBy = "order-by",
+                OtherSide = new CollectionMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(null),
                 Schema = "schema", Subselect = "subselect", TableName = "table", Where = "where"
             };
 
@@ -97,16 +99,16 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_CacheMappings : MappingEqualitySpec<CacheMapping>
+    public class WhenComparingTwoIdenticalCacheMappings : MappingEqualitySpec<CacheMapping>
     {
-        public override CacheMapping create_mapping()
+        protected override CacheMapping CreateMapping()
         {
             return new CacheMapping
             {
@@ -118,82 +120,82 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_ClassMappings : MappingEqualitySpec<ClassMapping>
+    public class WhenComparingTwoIdenticalClassMappings : MappingEqualitySpec<ClassMapping>
     {
-        public override ClassMapping create_mapping()
+        protected override ClassMapping CreateMapping()
         {
-            var mapping = new ClassMapping
+            var mapping = new ClassMapping(typeof(Target))
             {
                 Abstract = true, BatchSize = 10, Cache = new CacheMapping(),
                 Check = "check", Discriminator = new DiscriminatorMapping(), DiscriminatorValue = "value",
                 DynamicInsert = true, DynamicUpdate = true, EntityName = "entity-name",
-                Id = new IdMapping(), Lazy = true, Mutable = true,
+                Id = new IdMapping(null), Lazy = true, Mutable = true,
                 Name = "name", OptimisticLock = "lock", Persister = "persister",
                 Polymorphism = "poly", Proxy = "proxy", Schema = "schema",
                 SchemaAction = "action", SelectBeforeUpdate = true, Subselect = "subselect",
                 TableName = "table", Tuplizer = new TuplizerMapping(), Type = typeof(Target),
-                Version = new VersionMapping(), Where = "where"
+                Version = new VersionMapping(null), Where = "where"
             };
 
             mapping.AddAny(new AnyMapping());
-            mapping.AddCollection(new BagMapping());
-            mapping.AddComponent(new ComponentMapping(ComponentType.Component));
+            mapping.AddCollection(new CollectionMapping());
+            mapping.AddComponent(CreateComponent());
             mapping.AddFilter(new FilterMapping());
             mapping.AddJoin(new JoinMapping());
-            mapping.AddOneToOne(new OneToOneMapping());
-            mapping.AddProperty(new PropertyMapping());
+            mapping.AddOneToOne(new OneToOneMapping(null));
+            mapping.AddProperty(CreateProperty());
             mapping.AddReference(new ManyToOneMapping());
             mapping.AddStoredProcedure(new StoredProcedureMapping());
-            mapping.AddSubclass(new SubclassMapping(SubclassType.Subclass));
+            mapping.AddSubclass(new SubclassMapping(SubclassType.JoinedSubclass));
 
             return mapping;
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_CompositeElementMappings : MappingEqualitySpec<CompositeElementMapping>
+    public class WhenComparingTwoIdenticalCompositeElementMappings : MappingEqualitySpec<CompositeElementMapping>
     {
-        public override CompositeElementMapping create_mapping()
+        protected override CompositeElementMapping CreateMapping()
         {
-            var mapping = new CompositeElementMapping
+            var mapping = new CompositeElementMapping(typeof(ExampleClass))
             {
                 Class = new TypeReference(typeof(Target)),
                 ContainingEntityType = typeof(Target),
-                Parent = new ParentMapping(),
+                Parent = new ParentMapping(null),
             };
 
-            mapping.AddProperty(new PropertyMapping());
+            mapping.AddProperty(CreateProperty());
             mapping.AddReference(new ManyToOneMapping());
 
             return mapping;
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_CompositeIdMappings : MappingEqualitySpec<CompositeIdMapping>
+    public class WhenComparingTwoIdenticalCompositeIdMappings : MappingEqualitySpec<CompositeIdMapping>
     {
-        public override CompositeIdMapping create_mapping()
+        protected override CompositeIdMapping CreateMapping()
         {
-            var mapping = new CompositeIdMapping
+            var mapping = new CompositeIdMapping(null)
             {
                 Class = new TypeReference(typeof(Target)),
                 ContainingEntityType = typeof(Target),
@@ -203,23 +205,23 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
                 UnsavedValue = "unsaved"
             };
 
-            mapping.AddKeyManyToOne(new KeyManyToOneMapping());
-            mapping.AddKeyProperty(new KeyPropertyMapping());
+            mapping.AddKeyManyToOne(new KeyManyToOneMapping(null));
+            mapping.AddKeyProperty(new KeyPropertyMapping(null));
 
             return mapping;
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_ComponentMappings : MappingEqualitySpec<ComponentMapping>
+    public class WhenComparingTwoIdenticalComponentMappings : MappingEqualitySpec<ComponentMapping>
     {
-        public override ComponentMapping create_mapping()
+        protected override ComponentMapping CreateMapping()
         {
             var mapping = new ComponentMapping(ComponentType.Component)
             {
@@ -231,37 +233,37 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
                 Member = new DummyPropertyInfo("name", typeof(Target)).ToMember(),
                 Name = "name",
                 OptimisticLock = true,
-                Parent = new ParentMapping(),
+                Parent = new ParentMapping(null),
                 Type = typeof(Target),
                 Unique = true,
                 Update = true
             };
 
             mapping.AddAny(new AnyMapping());
-            mapping.AddCollection(new BagMapping());
-            mapping.AddComponent(new ComponentMapping(ComponentType.Component));
+            mapping.AddCollection(new CollectionMapping());
+            mapping.AddComponent(CreateComponent());
             mapping.AddFilter(new FilterMapping());
             mapping.AddJoin(new JoinMapping());
-            mapping.AddOneToOne(new OneToOneMapping());
-            mapping.AddProperty(new PropertyMapping());
+            mapping.AddOneToOne(new OneToOneMapping(null));
+            mapping.AddProperty(CreateProperty());
             mapping.AddReference(new ManyToOneMapping());
             mapping.AddStoredProcedure(new StoredProcedureMapping());
-            mapping.AddSubclass(new SubclassMapping(SubclassType.Subclass));
+            mapping.AddSubclass(new SubclassMapping(SubclassType.JoinedSubclass));
 
             return mapping;
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_ColumnMappings : MappingEqualitySpec<ColumnMapping>
+    public class WhenComparingTwoIdenticalColumnMappings : MappingEqualitySpec<ColumnMapping>
     {
-        public override ColumnMapping create_mapping()
+        protected override ColumnMapping CreateMapping()
         {
             return new ColumnMapping
             {
@@ -281,16 +283,16 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_DiscriminatorMappings : MappingEqualitySpec<DiscriminatorMapping>
+    public class WhenComparingTwoIdenticalDiscriminatorMappings : MappingEqualitySpec<DiscriminatorMapping>
     {
-        public override DiscriminatorMapping create_mapping()
+        protected override DiscriminatorMapping CreateMapping()
         {
             var mapping = new DiscriminatorMapping
             {
@@ -308,18 +310,18 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_DynamicComponentMappings : MappingEqualitySpec<ComponentMapping>
+    public class WhenComparingTwoIdenticalDynamicComponentMappings : MappingEqualitySpec<ComponentMapping>
     {
-        public override ComponentMapping create_mapping()
+        protected override ComponentMapping CreateMapping()
         {
-            var mapping = new ComponentMapping(ComponentType.DynamicComponent)
+            var mapping = new ComponentMapping(ComponentType.Component)
             {
                 Access = "access",
                 ContainingEntityType = typeof(Target),
@@ -327,37 +329,37 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
                 Member = new DummyPropertyInfo("name", typeof(Target)).ToMember(),
                 Name = "name",
                 OptimisticLock = true,
-                Parent = new ParentMapping(),
+                Parent = new ParentMapping(null),
                 Type = typeof(Target),
                 Unique = true,
                 Update = true
             };
 
             mapping.AddAny(new AnyMapping());
-            mapping.AddCollection(new BagMapping());
-            mapping.AddComponent(new ComponentMapping(ComponentType.Component));
+            mapping.AddCollection(new CollectionMapping());
+            mapping.AddComponent(CreateComponent());
             mapping.AddFilter(new FilterMapping());
             mapping.AddJoin(new JoinMapping());
-            mapping.AddOneToOne(new OneToOneMapping());
-            mapping.AddProperty(new PropertyMapping());
+            mapping.AddOneToOne(new OneToOneMapping(null));
+            mapping.AddProperty(CreateProperty());
             mapping.AddReference(new ManyToOneMapping());
             mapping.AddStoredProcedure(new StoredProcedureMapping());
-            mapping.AddSubclass(new SubclassMapping(SubclassType.Subclass));
+            mapping.AddSubclass(new SubclassMapping(SubclassType.JoinedSubclass));
 
             return mapping;
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_ElementMappings : MappingEqualitySpec<ElementMapping>
+    public class WhenComparingTwoIdenticalElementMappings : MappingEqualitySpec<ElementMapping>
     {
-        public override ElementMapping create_mapping()
+        protected override ElementMapping CreateMapping()
         {
             var mapping = new ElementMapping
             {
@@ -373,18 +375,18 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_ExternalComponentMappings : MappingEqualitySpec<ExternalComponentMapping>
+    public class WhenComparingTwoIdenticalExternalComponentMappings : MappingEqualitySpec<ExternalComponentMapping>
     {
-        public override ExternalComponentMapping create_mapping()
+        protected override ExternalComponentMapping CreateMapping()
         {
-            var mapping = new ExternalComponentMapping(ComponentType.Component)
+            var mapping = new ExternalComponentMapping(typeof(Target))
             {
                 Access = "access",
                 ContainingEntityType = typeof(Target),
@@ -392,37 +394,37 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
                 Member = new DummyPropertyInfo("name", typeof(Target)).ToMember(),
                 Name = "name",
                 OptimisticLock = true,
-                Parent = new ParentMapping(),
+                Parent = new ParentMapping(null),
                 Type = typeof(Target),
                 Unique = true,
                 Update = true
             };
 
             mapping.AddAny(new AnyMapping());
-            mapping.AddCollection(new BagMapping());
-            mapping.AddComponent(new ComponentMapping(ComponentType.Component));
+            mapping.AddCollection(new CollectionMapping());
+            mapping.AddComponent(CreateComponent());
             mapping.AddFilter(new FilterMapping());
             mapping.AddJoin(new JoinMapping());
-            mapping.AddOneToOne(new OneToOneMapping());
-            mapping.AddProperty(new PropertyMapping());
+            mapping.AddOneToOne(new OneToOneMapping(null));
+            mapping.AddProperty(CreateProperty());
             mapping.AddReference(new ManyToOneMapping());
             mapping.AddStoredProcedure(new StoredProcedureMapping());
-            mapping.AddSubclass(new SubclassMapping(SubclassType.Subclass));
+            mapping.AddSubclass(new SubclassMapping(SubclassType.JoinedSubclass));
 
             return mapping;
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_FilterDefinitionMappings : MappingEqualitySpec<FilterDefinitionMapping>
+    public class WhenComparingTwoIdenticalFilterDefinitionMappings : MappingEqualitySpec<FilterDefinitionMapping>
     {
-        public override FilterDefinitionMapping create_mapping()
+        protected override FilterDefinitionMapping CreateMapping()
         {
             var mapping = new FilterDefinitionMapping
             {
@@ -436,16 +438,16 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_FilterMappings : MappingEqualitySpec<FilterMapping>
+    public class WhenComparingTwoIdenticalFilterMappings : MappingEqualitySpec<FilterMapping>
     {
-        public override FilterMapping create_mapping()
+        protected override FilterMapping CreateMapping()
         {
             var mapping = new FilterMapping
             {
@@ -457,16 +459,16 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_GeneratorMappings : MappingEqualitySpec<GeneratorMapping>
+    public class WhenComparingTwoIdenticalGeneratorMappings : MappingEqualitySpec<GeneratorMapping>
     {
-        public override GeneratorMapping create_mapping()
+        protected override GeneratorMapping CreateMapping()
         {
             var mapping = new GeneratorMapping
             {
@@ -474,23 +476,23 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
                 ContainingEntityType = typeof(Target),
             };
 
-            mapping.Params.Add("left", "right");
+            mapping.AddParam(new ParamMapping { Name = "left", Value = "right" });
 
             return mapping;
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
 
     [TestFixture]
-    public class when_comparing_two_identical_HibernateMappings : MappingEqualitySpec<HibernateMapping>
+    public class WhenComparingTwoIdenticalHibernateMappings : MappingEqualitySpec<HibernateMapping>
     {
-        public override HibernateMapping create_mapping()
+        protected override HibernateMapping CreateMapping()
         {
             var mapping = new HibernateMapping
             {
@@ -504,7 +506,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
                 Schema = "schema"
             };
 
-            mapping.AddClass(new ClassMapping());
+            mapping.AddClass(new ClassMapping(typeof(Target)));
             mapping.AddFilter(new FilterDefinitionMapping());
             mapping.AddImport(new ImportMapping());
 
@@ -512,20 +514,19 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_IdMappings : MappingEqualitySpec<IdMapping>
+    public class WhenComparingTwoIdenticalIdMappings : MappingEqualitySpec<IdMapping>
     {
-        public override IdMapping create_mapping()
+        protected override IdMapping CreateMapping()
         {
-            var mapping = new IdMapping
+            var mapping = new IdMapping(new DummyPropertyInfo("prop", typeof(Target)).ToMember())
             {
-                Member = new DummyPropertyInfo("prop", typeof(Target)).ToMember(),
                 Name = "name",
                 Access = "access",
                 ContainingEntityType = typeof(Target),
@@ -541,16 +542,16 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_ImportMappings : MappingEqualitySpec<ImportMapping>
+    public class WhenComparingTwoIdenticalImportMappings : MappingEqualitySpec<ImportMapping>
     {
-        public override ImportMapping create_mapping()
+        protected override ImportMapping CreateMapping()
         {
             return new ImportMapping
             {
@@ -560,21 +561,20 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_IndexManyToManyMappings : MappingEqualitySpec<IndexManyToManyMapping>
+    public class WhenComparingTwoIdenticalIndexManyToManyMappings : MappingEqualitySpec<IndexManyToManyMapping>
     {
-        public override IndexManyToManyMapping create_mapping()
+        protected override IndexManyToManyMapping CreateMapping()
         {
-            var mapping = new IndexManyToManyMapping
+            var mapping = new IndexManyToManyMapping(typeof(Target))
             {
                 ContainingEntityType = typeof(Target),
-                Class = new TypeReference(typeof(Target)),
                 ForeignKey = "fk"
             };
 
@@ -585,16 +585,16 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_IndexMappings : MappingEqualitySpec<IndexMapping>
+    public class WhenComparingTwoIdenticalIndexMappings : MappingEqualitySpec<IndexMapping>
     {
-        public override IndexMapping create_mapping()
+        protected override IndexMapping CreateMapping()
         {
             var mapping = new IndexMapping
             {
@@ -609,16 +609,16 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_JoinedSubclassMappings : MappingEqualitySpec<SubclassMapping>
+    public class WhenComparingTwoIdenticalJoinedSubclassMappings : MappingEqualitySpec<SubclassMapping>
     {
-        public override SubclassMapping create_mapping()
+        protected override SubclassMapping CreateMapping()
         {
             var mapping = new SubclassMapping(SubclassType.JoinedSubclass)
             {
@@ -642,30 +642,30 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
             };
 
             mapping.AddAny(new AnyMapping());
-            mapping.AddCollection(new BagMapping());
-            mapping.AddComponent(new ComponentMapping(ComponentType.Component));
+            mapping.AddCollection(new CollectionMapping());
+            mapping.AddComponent(CreateComponent());
             mapping.AddFilter(new FilterMapping());
             mapping.AddJoin(new JoinMapping());
-            mapping.AddOneToOne(new OneToOneMapping());
-            mapping.AddProperty(new PropertyMapping());
+            mapping.AddOneToOne(new OneToOneMapping(null));
+            mapping.AddProperty(CreateProperty());
             mapping.AddReference(new ManyToOneMapping());
             mapping.AddStoredProcedure(new StoredProcedureMapping());
-            mapping.AddSubclass(new SubclassMapping(SubclassType.Subclass));
+            mapping.AddSubclass(new SubclassMapping(SubclassType.JoinedSubclass));
 
             return mapping;
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_JoinMappings : MappingEqualitySpec<JoinMapping>
+    public class WhenComparingTwoIdenticalJoinMappings : MappingEqualitySpec<JoinMapping>
     {
-        public override JoinMapping create_mapping()
+        protected override JoinMapping CreateMapping()
         {
             var mapping = new JoinMapping
             {
@@ -681,26 +681,26 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
             };
 
             mapping.AddAny(new AnyMapping());
-            mapping.AddComponent(new ComponentMapping(ComponentType.Component));
-            mapping.AddProperty(new PropertyMapping());
+            mapping.AddComponent(CreateComponent());
+            mapping.AddProperty(CreateProperty());
             mapping.AddReference(new ManyToOneMapping());
 
             return mapping;
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_KeyManyToOneMappings : MappingEqualitySpec<KeyManyToOneMapping>
+    public class WhenComparingTwoIdenticalKeyManyToOneMappings : MappingEqualitySpec<KeyManyToOneMapping>
     {
-        public override KeyManyToOneMapping create_mapping()
+        protected override KeyManyToOneMapping CreateMapping()
         {
-            var mapping = new KeyManyToOneMapping
+            var mapping = new KeyManyToOneMapping(null)
             {
                 ContainingEntityType = typeof(Target),
                 ForeignKey = "fk",
@@ -717,18 +717,18 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_KeyPropertyMappings : MappingEqualitySpec<KeyPropertyMapping>
+    public class WhenComparingTwoIdenticalKeyPropertyMappings : MappingEqualitySpec<KeyPropertyMapping>
     {
-        public override KeyPropertyMapping create_mapping()
+        protected override KeyPropertyMapping CreateMapping()
         {
-            var mapping = new KeyPropertyMapping
+            var mapping = new KeyPropertyMapping(null)
             {
                 ContainingEntityType = typeof(Target),
                 Access = "access",
@@ -742,16 +742,16 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_KeyMappings : MappingEqualitySpec<KeyMapping>
+    public class WhenComparingTwoIdenticalKeyMappings : MappingEqualitySpec<KeyMapping>
     {
-        public override KeyMapping create_mapping()
+        protected override KeyMapping CreateMapping()
         {
             var mapping = new KeyMapping
             {
@@ -771,27 +771,29 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_ListMappings : MappingEqualitySpec<ListMapping>
+    public class WhenComparingTwoIdenticalListMappings : MappingEqualitySpec<CollectionMapping>
     {
-        public override ListMapping create_mapping()
+        protected override CollectionMapping CreateMapping()
         {
-            var mapping = new ListMapping
+            var mapping = new CollectionMapping
             {
                 Access = "access", Cascade = "cascade", ContainingEntityType = typeof(Target),
                 Lazy = true, Name = "name", OptimisticLock = "lock",
                 BatchSize = 1, Cache = new CacheMapping(), Check = "check",
-                ChildType = typeof(Target), CollectionType = new TypeReference(typeof(Target)), CompositeElement = new CompositeElementMapping(),
+                ChildType = typeof(Target),
+                CollectionType = new TypeReference(typeof(Target)),
+                CompositeElement = new CompositeElementMapping(typeof(ExampleClass)),
                 Element = new ElementMapping(), Fetch = "fetch", Generic = true,
                 Index = new IndexMapping(), Inverse = true, Key = new KeyMapping(),
-                Member = new DummyPropertyInfo("name", typeof(Target)).ToMember(), Mutable = true, OrderBy = "order-by",
-                OtherSide = new ArrayMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(),
+                Mutable = true, OrderBy = "order-by",
+                OtherSide = new CollectionMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(null),
                 Schema = "schema", Subselect = "subselect", TableName = "table", Where = "where"
             };
 
@@ -801,16 +803,16 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_ManyToOneMappings : MappingEqualitySpec<ManyToOneMapping>
+    public class WhenComparingTwoIdenticalManyToOneMappings : MappingEqualitySpec<ManyToOneMapping>
     {
-        public override ManyToOneMapping create_mapping()
+        protected override ManyToOneMapping CreateMapping()
         {
             var mapping = new ManyToOneMapping
             {
@@ -822,7 +824,6 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
                 ForeignKey = "fk",
                 Insert = true,
                 Lazy = true,
-                Member = new DummyPropertyInfo("prop", typeof(Target)).ToMember(),
                 PropertyRef = "prop",
                 Update = true,
                 Name = "name",
@@ -836,18 +837,18 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_ManyToManyMappings : MappingEqualitySpec<ManyToManyMapping>
+    public class WhenComparingTwoIdenticalManyToManyMappings : MappingEqualitySpec<ManyToManyMapping>
     {
-        public override ManyToManyMapping create_mapping()
+        protected override ManyToManyMapping CreateMapping()
         {
-            var mapping = new ManyToManyMapping
+            var mapping = new ManyToManyMapping(typeof(Target))
             {
                 ContainingEntityType = typeof(Target),
                 Class = new TypeReference(typeof(Target)),
@@ -867,27 +868,29 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_MapMappings : MappingEqualitySpec<MapMapping>
+    public class WhenComparingTwoIdenticalMapMappings : MappingEqualitySpec<CollectionMapping>
     {
-        public override MapMapping create_mapping()
+        protected override CollectionMapping CreateMapping()
         {
-            var mapping = new MapMapping
+            var mapping = new CollectionMapping
             {
                 Access = "access", Cascade = "cascade", ContainingEntityType = typeof(Target),
                 Lazy = true, Name = "name", OptimisticLock = "lock",
                 BatchSize = 1, Cache = new CacheMapping(), Check = "check",
-                ChildType = typeof(Target), CollectionType = new TypeReference(typeof(Target)), CompositeElement = new CompositeElementMapping(),
+                ChildType = typeof(Target),
+                CollectionType = new TypeReference(typeof(Target)),
+                CompositeElement = new CompositeElementMapping(typeof(ExampleClass)),
                 Element = new ElementMapping(), Fetch = "fetch", Generic = true,
                 Index = new IndexMapping(), Inverse = true, Key = new KeyMapping(),
-                Member = new DummyPropertyInfo("name", typeof(Target)).ToMember(), Mutable = true, OrderBy = "order-by",
-                OtherSide = new ArrayMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(),
+                Mutable = true, OrderBy = "order-by",
+                OtherSide = new CollectionMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(null),
                 Schema = "schema", Subselect = "subselect", TableName = "table", Where = "where",
                 Sort = "sort"
             };
@@ -898,59 +901,57 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_MetaValueMappings : MappingEqualitySpec<MetaValueMapping>
+    public class WhenComparingTwoIdenticalMetaValueMappings : MappingEqualitySpec<MetaValueMapping>
     {
-        public override MetaValueMapping create_mapping()
+        protected override MetaValueMapping CreateMapping()
         {
-            return new MetaValueMapping
+            return new MetaValueMapping(typeof(Target))
             {
-                Class = new TypeReference(typeof(Target)),
                 ContainingEntityType = typeof(Target),
                 Value = "value"
             };
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_OneToManyMappings : MappingEqualitySpec<OneToManyMapping>
+    public class WhenComparingTwoIdenticalOneToManyMappings : MappingEqualitySpec<OneToManyMapping>
     {
-        public override OneToManyMapping create_mapping()
+        protected override OneToManyMapping CreateMapping()
         {
-            return new OneToManyMapping
+            return new OneToManyMapping(typeof(Target))
             {
                 ContainingEntityType = typeof(Target),
-                Class = new TypeReference(typeof(Target)),
                 ChildType = typeof(Target),
                 NotFound = "not-found"
             };
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_OneToOneMappings : MappingEqualitySpec<OneToOneMapping>
+    public class WhenComparingTwoIdenticalOneToOneMappings : MappingEqualitySpec<OneToOneMapping>
     {
-        public override OneToOneMapping create_mapping()
+        protected override OneToOneMapping CreateMapping()
         {
-            return new OneToOneMapping
+            return new OneToOneMapping(null)
             {
                 Access = "access",
                 Cascade = "cascade",
@@ -966,18 +967,18 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_ParentMappings : MappingEqualitySpec<ParentMapping>
+    public class WhenComparingTwoIdenticalParentMappings : MappingEqualitySpec<ParentMapping>
     {
-        public override ParentMapping create_mapping()
+        protected override ParentMapping CreateMapping()
         {
-            return new ParentMapping
+            return new ParentMapping(null)
             {
                 ContainingEntityType = typeof(Target),
                 Name = "name"
@@ -985,16 +986,16 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_PropertyMappings : MappingEqualitySpec<PropertyMapping>
+    public class WhenComparingTwoIdenticalPropertyMappings : MappingEqualitySpec<PropertyMapping>
     {
-        public override PropertyMapping create_mapping()
+        protected override PropertyMapping CreateMapping()
         {
             var mapping = new PropertyMapping
             {
@@ -1004,7 +1005,6 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
                 Generated = "generated",
                 Insert = true,
                 Lazy = true,
-                Member = new DummyPropertyInfo("prop", typeof(Target)).ToMember(),
                 Name = "name",
                 OptimisticLock = true,
                 Type = new TypeReference(typeof(Target)),
@@ -1018,59 +1018,61 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_ReferenceComponentMappings : MappingEqualitySpec<ReferenceComponentMapping>
+    public class WhenComparingTwoIdenticalReferenceComponentMappings : MappingEqualitySpec<ReferenceComponentMapping>
     {
-        public override ReferenceComponentMapping create_mapping()
+        protected override ReferenceComponentMapping CreateMapping()
         {
             var mapping = new ReferenceComponentMapping(ComponentType.Component, new DummyPropertyInfo("name", typeof(Target)).ToMember(), typeof(Target), typeof(Target), null);
-            mapping.AssociateExternalMapping(new ExternalComponentMapping(ComponentType.Component));
+            mapping.AssociateExternalMapping(new ExternalComponentMapping(typeof(Target)));
             mapping.Access = "access";
             mapping.ContainingEntityType = typeof(Target);
             mapping.Insert = true;
             mapping.Name = "name";
             mapping.OptimisticLock = true;
-            mapping.Parent = new ParentMapping();
+            mapping.Parent = new ParentMapping(null);
             mapping.Unique = true;
             mapping.Update = true;
             mapping.AddAny(new AnyMapping());
-            mapping.AddCollection(new BagMapping());
-            mapping.AddComponent(new ComponentMapping(ComponentType.Component));
-            mapping.AddOneToOne(new OneToOneMapping());
-            mapping.AddProperty(new PropertyMapping());
+            mapping.AddCollection(new CollectionMapping());
+            mapping.AddComponent(CreateComponent());
+            mapping.AddOneToOne(new OneToOneMapping(null));
+            mapping.AddProperty(CreateProperty());
             mapping.AddReference(new ManyToOneMapping());
 
             return mapping;
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_SetMappings : MappingEqualitySpec<SetMapping>
+    public class WhenComparingTwoIdenticalSetMappings : MappingEqualitySpec<CollectionMapping>
     {
-        public override SetMapping create_mapping()
+        protected override CollectionMapping CreateMapping()
         {
-            var mapping = new SetMapping
+            var mapping = new CollectionMapping
             {
                 Access = "access", Cascade = "cascade", ContainingEntityType = typeof(Target),
                 Lazy = true, Name = "name", OptimisticLock = "lock",
                 BatchSize = 1, Cache = new CacheMapping(), Check = "check",
-                ChildType = typeof(Target), CollectionType = new TypeReference(typeof(Target)), CompositeElement = new CompositeElementMapping(),
+                ChildType = typeof(Target),
+                CollectionType = new TypeReference(typeof(Target)),
+                CompositeElement = new CompositeElementMapping(typeof(ExampleClass)),
                 Element = new ElementMapping(), Fetch = "fetch", Generic = true,
                 Inverse = true, Key = new KeyMapping(),
-                Member = new DummyPropertyInfo("name", typeof(Target)).ToMember(), Mutable = true, OrderBy = "order-by",
-                OtherSide = new ArrayMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(),
+                Mutable = true, OrderBy = "order-by",
+                OtherSide = new CollectionMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(null),
                 Schema = "schema", Subselect = "subselect", TableName = "table", Where = "where",
                 Sort = "sort"
             };
@@ -1081,17 +1083,17 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
 
     [TestFixture]
-    public class when_comparing_two_identical_StoredProcedureMappings : MappingEqualitySpec<StoredProcedureMapping>
+    public class WhenComparingTwoIdenticalStoredProcedureMappings : MappingEqualitySpec<StoredProcedureMapping>
     {
-        public override StoredProcedureMapping create_mapping()
+        protected override StoredProcedureMapping CreateMapping()
         {
             return new StoredProcedureMapping
             {
@@ -1104,17 +1106,18 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
-    public class when_comparing_two_identical_SubclassMappings : MappingEqualitySpec<SubclassMapping>
+    [TestFixture]
+    public class WhenComparingTwoIdenticalSubclassMappings : MappingEqualitySpec<SubclassMapping>
     {
-        public override SubclassMapping create_mapping()
+        protected override SubclassMapping CreateMapping()
         {
-            var mapping = new SubclassMapping(SubclassType.Subclass)
+            var mapping = new SubclassMapping(SubclassType.JoinedSubclass)
             {
                 Abstract = true,
                 DynamicInsert = true,
@@ -1130,30 +1133,30 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
             };
 
             mapping.AddAny(new AnyMapping());
-            mapping.AddCollection(new BagMapping());
-            mapping.AddComponent(new ComponentMapping(ComponentType.Component));
+            mapping.AddCollection(new CollectionMapping());
+            mapping.AddComponent(CreateComponent());
             mapping.AddFilter(new FilterMapping());
             mapping.AddJoin(new JoinMapping());
-            mapping.AddOneToOne(new OneToOneMapping());
-            mapping.AddProperty(new PropertyMapping());
+            mapping.AddOneToOne(new OneToOneMapping(null));
+            mapping.AddProperty(CreateProperty());
             mapping.AddReference(new ManyToOneMapping());
             mapping.AddStoredProcedure(new StoredProcedureMapping());
-            mapping.AddSubclass(new SubclassMapping(SubclassType.Subclass));
+            mapping.AddSubclass(new SubclassMapping(SubclassType.JoinedSubclass));
 
             return mapping;
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_TuplizerMappings : MappingEqualitySpec<TuplizerMapping>
+    public class WhenComparingTwoIdenticalTuplizerMappings : MappingEqualitySpec<TuplizerMapping>
     {
-        public override TuplizerMapping create_mapping()
+        protected override TuplizerMapping CreateMapping()
         {
             return new TuplizerMapping
             {
@@ -1163,18 +1166,18 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     [TestFixture]
-    public class when_comparing_two_identical_VersionMappings : MappingEqualitySpec<VersionMapping>
+    public class WhenComparingTwoIdenticalVersionMappings : MappingEqualitySpec<VersionMapping>
     {
-        public override VersionMapping create_mapping()
+        protected override VersionMapping CreateMapping()
         {
-            var mapping = new VersionMapping
+            var mapping = new VersionMapping(null)
             {
                 Access = "access",
                 ContainingEntityType = typeof(Target),
@@ -1191,30 +1194,45 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         }
 
         [Test]
-        public void should_be_equal()
+        public void ShouldBeEqual()
         {
-            are_equal.ShouldBeTrue();
+            areEqual.ShouldBeTrue();
         }
     }
 
     public abstract class MappingEqualitySpec<T> : Specification
     {
-        public abstract T create_mapping();
+        protected abstract T CreateMapping();
+
+        protected ComponentMapping CreateComponent()
+        {
+            return new ComponentMapping(ComponentType.Component);
+        }
+
+        protected ComponentMapping CreateDynamicComponent()
+        {
+            return new ComponentMapping(ComponentType.Component);
+        }
+
+        protected PropertyMapping CreateProperty()
+        {
+            return new PropertyMapping();
+        }
 
         public override void establish_context()
         {
-            first_mapping = create_mapping();
-            second_mapping = create_mapping();
+            firstMapping = CreateMapping();
+            secondMapping = CreateMapping();
         }
 
         public override void because()
         {
-            are_equal = first_mapping.Equals(second_mapping);
+            areEqual = firstMapping.Equals(secondMapping);
         }
 
-        protected T first_mapping;
-        protected T second_mapping;
-        protected bool are_equal;
+        T firstMapping;
+        T secondMapping;
+        protected bool areEqual;
 
         protected class Target {}
     }

@@ -4,19 +4,31 @@ using System.Diagnostics;
 using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
+using FluentNHibernate.MappingModel.Structure;
 using FluentNHibernate.Utils;
 
 namespace FluentNHibernate.Mapping
 {
     public class SubclassMap<T> : ClasslikeMapBase<T>, IIndeterminateSubclassMappingProvider
     {
-        private readonly AttributeStore<SubclassMapping> attributes = new AttributeStore<SubclassMapping>();
+        readonly IMappingStructure<SubclassMapping> structure;
 
         // this is a bit weird, but we need a way of delaying the generation of the subclass mappings until we know
         // what the parent subclass type is...
         private readonly IDictionary<Type, IIndeterminateSubclassMappingProvider> indetermineateSubclasses = new Dictionary<Type, IIndeterminateSubclassMappingProvider>();
         private bool nextBool = true;
         private IList<JoinMapping> joins = new List<JoinMapping>();
+        IMappingStructure<KeyMapping> keyStructure;
+
+        public SubclassMap()
+            : this(new SubclassStructure(SubclassType.Unknown, typeof(T)))
+        {}
+
+        SubclassMap(IMappingStructure<SubclassMapping> structure)
+            : base(structure)
+        {
+            this.structure = structure;
+        }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public SubclassMap<T> Not
@@ -28,54 +40,62 @@ namespace FluentNHibernate.Mapping
             }
         }
 
-        SubclassMapping IIndeterminateSubclassMappingProvider.GetSubclassMapping(SubclassMapping mapping)
+        IUserDefinedMapping IMappingProvider.GetUserDefinedMappings()
         {
-            GenerateNestedSubclasses(mapping);
+            //var mapping = new SubclassMapping(SubclassType.Unknown);
 
-            attributes.SetDefault(x => x.Type, typeof(T));
-            attributes.SetDefault(x => x.Name, typeof(T).AssemblyQualifiedName);
-            attributes.SetDefault(x => x.DiscriminatorValue, typeof(T).Name);
+            //GenerateNestedSubclasses(mapping);
 
-            // TODO: un-hardcode this
-            var key = new KeyMapping();
-            key.AddDefaultColumn(new ColumnMapping { Name = typeof(T).BaseType.Name + "_id" });
+            //attributes.SetDefault(x => x.Type, typeof(T));
+            //attributes.SetDefault(x => x.Name, typeof(T).AssemblyQualifiedName);
+            //attributes.SetDefault(x => x.DiscriminatorValue, typeof(T).Name);
 
-            attributes.SetDefault(x => x.TableName, GetDefaultTableName());
-            attributes.SetDefault(x => x.Key, key);
+            //// TODO: un-hardcode this
+            //var key = new KeyMapping();
+            //key.AddDefaultColumn(new ColumnMapping { Name = typeof(T).BaseType.Name + "_id" });
 
-            // TODO: this is nasty, we should find a better way
-            mapping.OverrideAttributes(attributes.CloneInner());
+            //attributes.SetDefault(x => x.TableName, GetDefaultTableName());
+            //attributes.SetDefault(x => x.Key, key);
 
-            foreach (var join in joins)
-                mapping.AddJoin(join);
+            //// TODO: this is nasty, we should find a better way
+            //mapping.OverrideAttributes(attributes.CloneInner());
 
-            foreach (var property in properties)
-                mapping.AddProperty(property.GetPropertyMapping());
+            //foreach (var join in joins)
+            //    mapping.AddJoin(join);
 
-            foreach (var component in components)
-                mapping.AddComponent(component.GetComponentMapping());
+            //foreach (var property in properties)
+            //    mapping.AddProperty(property.GetPropertyMapping());
 
-            foreach (var oneToOne in oneToOnes)
-                mapping.AddOneToOne(oneToOne.GetOneToOneMapping());
+            //foreach (var component in components)
+            //    mapping.AddComponent(component.GetComponentMapping());
 
-            foreach (var collection in collections)
-                mapping.AddCollection(collection.GetCollectionMapping());
+            //foreach (var oneToOne in oneToOnes)
+            //    mapping.AddOneToOne(oneToOne.GetOneToOneMapping());
 
-            foreach (var reference in references)
-                mapping.AddReference(reference.GetManyToOneMapping());
+            //foreach (var collection in collections)
+            //    mapping.AddCollection(collection.GetCollectionMapping());
 
-            foreach (var any in anys)
-                mapping.AddAny(any.GetAnyMapping());
+            //foreach (var reference in references)
+            //    mapping.AddReference(reference.GetManyToOneMapping());
 
-            return mapping;
+            //foreach (var any in anys)
+            //    mapping.AddAny(any.GetAnyMapping());
+
+            return new FluentMapUserDefinedMappings(typeof(T), structure);
+        }
+
+        public HibernateMapping GetHibernateMapping()
+        {
+            throw new NotImplementedException();
         }
 
         private void GenerateNestedSubclasses(SubclassMapping mapping)
         {
             foreach (var subclassType in indetermineateSubclasses.Keys)
             {
-                var emptySubclassMapping = new SubclassMapping(mapping.SubclassType);
-                var subclassMapping = indetermineateSubclasses[subclassType].GetSubclassMapping(emptySubclassMapping);
+                var userMappings = indetermineateSubclasses[subclassType].GetUserDefinedMappings();
+                var subclassMapping = (SubclassMapping)userMappings.Structure;
+                subclassMapping.SubclassType = mapping.SubclassType;
 
                 mapping.AddSubclass(subclassMapping);
             }
@@ -102,25 +122,25 @@ namespace FluentNHibernate.Mapping
 
         public void Abstract()
         {
-            attributes.Set(x => x.Abstract, nextBool);
+            structure.SetValue(Attr.Abstract, nextBool);
             nextBool = true;
         }
 
         public void DynamicInsert()
         {
-            attributes.Set(x => x.DynamicInsert, nextBool);
+            structure.SetValue(Attr.DynamicInsert, nextBool);
             nextBool = true;
         }
 
         public void DynamicUpdate()
         {
-            attributes.Set(x => x.DynamicUpdate, nextBool);
+            structure.SetValue(Attr.DynamicUpdate, nextBool);
             nextBool = true;
         }
 
         public void LazyLoad()
         {
-            attributes.Set(x => x.Lazy, nextBool);
+            structure.SetValue(Attr.Lazy, nextBool);
             nextBool = true;
         }
 
@@ -131,12 +151,12 @@ namespace FluentNHibernate.Mapping
 
         public void Proxy(Type proxyType)
         {
-            attributes.Set(x => x.Proxy, proxyType.AssemblyQualifiedName);
+            structure.SetValue(Attr.Proxy, proxyType.AssemblyQualifiedName);
         }
 
         public void SelectBeforeUpdate()
         {
-            attributes.Set(x => x.SelectBeforeUpdate, nextBool);
+            structure.SetValue(Attr.SelectBeforeUpdate, nextBool);
             nextBool = true;
         }
 
@@ -151,66 +171,66 @@ namespace FluentNHibernate.Mapping
 
         public void DiscriminatorValue(object discriminatorValue)
         {
-            attributes.Set(x => x.DiscriminatorValue, discriminatorValue);
+            structure.SetValue(Attr.DiscriminatorValue, discriminatorValue);
         }
 
         public void Table(string table)
         {
-            attributes.Set(x => x.TableName, table);
+            structure.SetValue(Attr.Table, table);
         }
 
         public void Schema(string schema)
         {
-            attributes.Set(x => x.Schema, schema);
+            structure.SetValue(Attr.Schema, schema);
         }
 
         public void Check(string constraint)
         {
-            attributes.Set(x => x.Check, constraint);
+            structure.SetValue(Attr.Check, constraint);
         }
 
-        public void KeyColumn(string column)
+        public void KeyColumn(string columnName)
         {
-            KeyMapping key;
+            if (keyStructure == null)
+            {
+                keyStructure = new FreeStructure<KeyMapping>();
+                structure.AddChild(keyStructure);
+            }
 
-            if (attributes.IsSpecified(x => x.Key))
-                key = attributes.Get(x => x.Key);
-            else
-                key = new KeyMapping();
+            var column = new ColumnStructure(keyStructure);
 
-            key.AddColumn(new ColumnMapping { Name = column });
-
-            attributes.Set(x => x.Key, key);
+            new ColumnPart(column)
+                .Name(columnName);
         }
 
         public void Subselect(string subselect)
         {
-            attributes.Set(x => x.Subselect, subselect);
+            structure.SetValue(Attr.Subselect, subselect);
         }
 
         public void Persister<TPersister>()
         {
-            attributes.Set(x => x.Persister, new TypeReference(typeof(TPersister)));
+            structure.SetValue(Attr.Persister, new TypeReference(typeof(TPersister)));
         }
 
         public void Persister(Type type)
         {
-            attributes.Set(x => x.Persister, new TypeReference(type));
+            structure.SetValue(Attr.Persister, new TypeReference(type));
         }
 
         public void Persister(string type)
         {
-            attributes.Set(x => x.Persister, new TypeReference(type));
+            structure.SetValue(Attr.Persister, new TypeReference(type));
         }
 
         public void BatchSize(int batchSize)
         {
-            attributes.Set(x => x.BatchSize, batchSize);
+            structure.SetValue(Attr.BatchSize, batchSize);
         }
 
         public void EntityName(string entityname)
         {
-            attributes.Set(x => x.EntityName, entityname);
+            structure.SetValue(Attr.EntityName, entityname);
         }
 
         /// <summary>
@@ -221,11 +241,15 @@ namespace FluentNHibernate.Mapping
         /// <param name="action">Joined table mapping</param>
         public void Join(string tableName, Action<JoinPart<T>> action)
         {
-            var join = new JoinPart<T>(tableName);
+            var joinStructure = new FreeStructure<JoinMapping>();
+            var join = new JoinPart<T>(joinStructure);
+
+            if (!string.IsNullOrEmpty(tableName))
+                join.Table(tableName);
 
             action(join);
 
-            joins.Add(((IJoinMappingProvider)join).GetJoinMapping());
+            structure.AddChild(joinStructure);
         }
     }
 }

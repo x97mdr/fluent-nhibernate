@@ -1,24 +1,39 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Reflection;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel.ClassBased
 {
-    public class ComponentMapping : ComponentMappingBase, IComponentMapping
+    public class ComponentMapping : ComponentMappingBase, IComponentMapping, ITypeMapping, IMemberMapping
     {
+        readonly ValueStore values;
         public ComponentType ComponentType { get; set; }
-        private readonly AttributeStore<ComponentMapping> attributes = new AttributeStore<ComponentMapping>();
 
-        public ComponentMapping(ComponentType componentType)
-            : this(componentType, new AttributeStore())
+        public ComponentMapping()
+            : this(new ValueStore())
         {}
 
-        public ComponentMapping(ComponentType componentType, AttributeStore store)
-            : base(store)
+        public ComponentMapping(ComponentType componentType)
+            : this(new ValueStore())
         {
             ComponentType = componentType;
-            attributes = new AttributeStore<ComponentMapping>(store);
+        }
+
+        ComponentMapping(ValueStore values)
+            : base(values)
+        {
+            this.values = values;
+        }
+
+        public void Initialise(Type type)
+        {
+            Class = new TypeReference(type);
+        }
+
+        public void Initialise(Member member)
+        {
+            Name = member.Name;
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
@@ -30,51 +45,40 @@ namespace FluentNHibernate.MappingModel.ClassBased
 
         public override void MergeAttributes(AttributeStore store)
         {
-            attributes.Merge(new AttributeStore<ComponentMapping>(store));
         }
 
         public override string Name
         {
-            get { return attributes.Get(x => x.Name); }
-            set { attributes.Set(x => x.Name, value); }
+            get { return values.Get(Attr.Name); }
+            set { values.Set(Attr.Name, value); }
         }
 
         public override Type Type
         {
-            get { return attributes.Get(x => x.Type); }
-            set { attributes.Set(x => x.Type, value); }
+            get { return values.Get<Type>(Attr.Type); }
+            set { values.Set(Attr.Type, value); }
         }
 
         public TypeReference Class
         {
-            get { return attributes.Get(x => x.Class); }
-            set { attributes.Set(x => x.Class, value); }
+            get { return values.Get<TypeReference>(Attr.Class); }
+            set { values.Set(Attr.Class, value); }
         }
 
         public bool Lazy
         {
-            get { return attributes.Get(x => x.Lazy); }
-            set { attributes.Set(x => x.Lazy, value); }
+            get { return values.Get<bool>(Attr.Lazy); }
+            set { values.Set(Attr.Lazy, value); }
         }
 
         public override bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);
+            return false;
         }
 
-        public bool HasValue<TResult>(Expression<Func<ComponentMapping, TResult>> property)
+        public override bool HasValue(Attr property)
         {
-            return attributes.HasValue(property);
-        }
-
-        public override bool HasValue(string property)
-        {
-            return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<ComponentMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
+            return values.HasValue(property);
         }
 
         public bool Equals(ComponentMapping other)
@@ -82,7 +86,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return base.Equals(other) &&
-                Equals(other.attributes, attributes);
+                Equals(other.values, values);
         }
 
         public override bool Equals(object obj)
@@ -97,9 +101,21 @@ namespace FluentNHibernate.MappingModel.ClassBased
             unchecked
             {
                 {
-                    return (base.GetHashCode() * 397) ^ (attributes != null ? attributes.GetHashCode() : 0);
+                    return (base.GetHashCode() * 397) ^ (values != null ? values.GetHashCode() : 0);
                 }
             }
+        }
+
+        public override void AddChild(IMapping child)
+        {
+            base.AddChild(child);
+
+
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        {
+            values.Merge(otherValues);
         }
     }
 }

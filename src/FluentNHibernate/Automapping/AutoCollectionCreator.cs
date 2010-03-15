@@ -7,12 +7,13 @@ namespace FluentNHibernate.Automapping
 {
     public class AutoCollectionCreator
     {
-        public ICollectionMapping CreateCollectionMapping(Type type)
+        public CollectionMapping CreateCollectionMapping(Type type, Member member)
         {
-            if (type.Namespace.StartsWith("Iesi.Collections") || type.Closes(typeof(HashSet<>)))
-                return new SetMapping();
+            var collection = new CollectionMapping();
 
-            return new BagMapping();
+            collection.Initialise(type, member);
+
+            return collection;
         }
     }
 }

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using FluentNHibernate.Mapping;
+using FluentNHibernate.MappingModel.Identity;
+using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Automapping
 {
@@ -9,7 +11,8 @@ namespace FluentNHibernate.Automapping
     {
         private readonly IList<string> mappedProperties;
 
-        public AutoCompositeIdentityPart(IList<string> mappedProperties)
+        public AutoCompositeIdentityPart(IMappingStructure<CompositeIdMapping> structure, IList<string> mappedProperties)
+            : base(structure)
         {
             this.mappedProperties = mappedProperties;
         }

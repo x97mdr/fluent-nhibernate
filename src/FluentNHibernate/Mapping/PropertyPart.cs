@@ -1,82 +1,32 @@
 using System;
 using System.Diagnostics;
-using System.Linq;
-using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
-using FluentNHibernate.Utils;
+using FluentNHibernate.MappingModel.Structure;
 using NHibernate.UserTypes;
 
 namespace FluentNHibernate.Mapping
 {
-    public class PropertyPart : IPropertyMappingProvider
+    public class PropertyPart
     {
-        private readonly Member property;
-        private readonly Type parentType;
+        readonly IMappingStructure<PropertyMapping> structure;
         private readonly AccessStrategyBuilder<PropertyPart> access;
         private readonly PropertyGeneratedBuilder generated;
         private readonly ColumnMappingCollection<PropertyPart> columns;
-        private readonly AttributeStore<PropertyMapping> attributes = new AttributeStore<PropertyMapping>();
-        private readonly AttributeStore<ColumnMapping> columnAttributes = new AttributeStore<ColumnMapping>();
         
         private bool nextBool = true;
 
-        public PropertyPart(Member property, Type parentType)
+        public PropertyPart(IMappingStructure<PropertyMapping> structure)
         {
-            columns = new ColumnMappingCollection<PropertyPart>(this);            
-            access = new AccessStrategyBuilder<PropertyPart>(this, value => attributes.Set(x => x.Access, value));
-            generated = new PropertyGeneratedBuilder(this, value => attributes.Set(x => x.Generated, value));
+            this.structure = structure;
 
-            this.property = property;
-            this.parentType = parentType;
+            columns = new ColumnMappingCollection<PropertyPart>(this, structure);
+            access = new AccessStrategyBuilder<PropertyPart>(this, value => structure.SetValue(Attr.Access, value));
+            generated = new PropertyGeneratedBuilder(this, value => structure.SetValue(Attr.Generated, value));
         }
 
         public PropertyGeneratedBuilder Generated
         {
             get { return generated; }
-        }
-
-        PropertyMapping IPropertyMappingProvider.GetPropertyMapping()
-        {
-            var mapping = new PropertyMapping(attributes.CloneInner())
-            {
-                ContainingEntityType = parentType,
-                Member = property
-            };
-       
-            if (columns.Count() == 0 && !mapping.IsSpecified("Formula"))
-                mapping.AddDefaultColumn(new ColumnMapping(columnAttributes.CloneInner()) { Name = property.Name });
-
-            foreach (var column in columns)
-                mapping.AddColumn(column);
-
-            foreach(var column in mapping.Columns)
-            {                
-                if (!column.IsSpecified("NotNull") && property.PropertyType.IsNullable() && property.PropertyType.IsEnum())
-                    column.SetDefaultValue(x => x.NotNull, false);
-
-                column.MergeAttributes(columnAttributes);
-            }
-
-            if (!mapping.IsSpecified("Name"))
-                mapping.Name = mapping.Member.Name;
-
-            if (!mapping.IsSpecified("Type"))
-                mapping.SetDefaultValue("Type", GetDefaultType());
-
-            return mapping;
-        }
-
-        private TypeReference GetDefaultType()
-        {
-            var type = new TypeReference(property.PropertyType);
-
-            if (property.PropertyType.IsEnum())
-                type = new TypeReference(typeof(GenericEnumMapper<>).MakeGenericType(property.PropertyType));
-
-            if (property.PropertyType.IsNullable() && property.PropertyType.IsEnum())
-                type = new TypeReference(typeof(GenericEnumMapper<>).MakeGenericType(property.PropertyType.GetGenericArguments()[0]));
-
-            return type;
         }
 
         public PropertyPart Column(string columnName)
@@ -101,7 +51,7 @@ namespace FluentNHibernate.Mapping
 
         public PropertyPart Insert()
         {
-            attributes.Set(x => x.Insert, nextBool);
+            structure.SetValue(Attr.Insert, nextBool);
             nextBool = true;
 
             return this;
@@ -109,7 +59,7 @@ namespace FluentNHibernate.Mapping
 
         public PropertyPart Update()
         {
-            attributes.Set(x => x.Update, nextBool);
+            structure.SetValue(Attr.Update, nextBool);
             nextBool = true;
 
             return this;
@@ -117,41 +67,41 @@ namespace FluentNHibernate.Mapping
 
         public PropertyPart Length(int length)
         {
-            columnAttributes.Set(x => x.Length, length);
+            structure.SetValue(Attr.Length, length);
             return this;
         }
 
         public PropertyPart Nullable()
         {
-            columnAttributes.Set(x => x.NotNull, !nextBool);
+            structure.SetValue(Attr.NotNull, !nextBool);
             nextBool = true;
             return this;
         }
 
         public PropertyPart ReadOnly()
         {
-            attributes.Set(x => x.Insert, !nextBool);
-            attributes.Set(x => x.Update, !nextBool);
+            structure.SetValue(Attr.Insert, !nextBool);
+            structure.SetValue(Attr.Update, !nextBool);
             nextBool = true;
             return this;
         }
 
         public PropertyPart Formula(string formula) 
         {
-            attributes.Set(x => x.Formula, formula);
+            structure.SetValue(Attr.Formula, formula);
             return this;
         }
 
         public PropertyPart LazyLoad()
         {
-            attributes.Set(x => x.Lazy, nextBool);
+            structure.SetValue(Attr.Lazy, nextBool);
             nextBool = true;
             return this;
         }
 
         public PropertyPart Index(string index)
         {
-            columnAttributes.Set(x => x.Index, index);
+            structure.SetValue(Attr.Index, index);
             return this;
         }
 
@@ -185,7 +135,7 @@ namespace FluentNHibernate.Mapping
         /// <returns>This property mapping to continue the method chain</returns>
         public PropertyPart CustomType(string type)
         {
-            attributes.Set(x => x.Type, new TypeReference(type));
+            structure.SetValue(Attr.Type, new TypeReference(type));
 
             return this;
         }
@@ -202,32 +152,32 @@ namespace FluentNHibernate.Mapping
 
         public PropertyPart CustomSqlType(string sqlType)
         {
-            columnAttributes.Set(x => x.SqlType, sqlType);
+            structure.SetValue(Attr.SqlType, sqlType);
             return this;
         }
 
         public PropertyPart Unique()
         {
-            columnAttributes.Set(x => x.Unique, nextBool);
+            structure.SetValue(Attr.Unique, nextBool);
             nextBool = true;
             return this;
         }
 
         public PropertyPart Precision(int precision)
         {
-            columnAttributes.Set(x => x.Precision, precision);
+            structure.SetValue(Attr.Precision, precision);
             return this;
         }
 
         public PropertyPart Scale(int scale)
         {
-            columnAttributes.Set(x => x.Scale, scale);
+            structure.SetValue(Attr.Scale, scale);
             return this;
         }
 
         public PropertyPart Default(string value)
         {
-            columnAttributes.Set(x => x.Default, value);
+            structure.SetValue(Attr.Default, value);
             return this;
         }
 
@@ -237,13 +187,13 @@ namespace FluentNHibernate.Mapping
         /// <param name="keyName">Name of constraint</param>
         public PropertyPart UniqueKey(string keyName)
         {
-            columnAttributes.Set(x => x.UniqueKey, keyName);
+            structure.SetValue(Attr.UniqueKey, keyName);
             return this;
         }
 
         public PropertyPart OptimisticLock()
         {
-            attributes.Set(x => x.OptimisticLock, nextBool);
+            structure.SetValue(Attr.OptimisticLock, nextBool);
             nextBool = true;
             return this;
         }
@@ -263,7 +213,7 @@ namespace FluentNHibernate.Mapping
 
         public PropertyPart Check(string constraint)
         {
-            columnAttributes.Set(x => x.Check, constraint);
+            structure.SetValue(Attr.Check, constraint);
             return this;
         }
     }

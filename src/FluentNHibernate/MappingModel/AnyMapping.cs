@@ -5,25 +5,25 @@ using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
-    public class AnyMapping : MappingBase
+    public class AnyMapping : MappingBase, IMemberMapping
     {
-        private readonly AttributeStore<AnyMapping> attributes;
-        private readonly IDefaultableList<ColumnMapping> typeColumns = new DefaultableList<ColumnMapping>();
-        private readonly IDefaultableList<ColumnMapping> identifierColumns = new DefaultableList<ColumnMapping>();
-        private readonly IList<MetaValueMapping> metaValues = new List<MetaValueMapping>();
+        readonly ValueStore values = new ValueStore();
+        readonly IDefaultableList<ColumnMapping> typeColumns = new DefaultableList<ColumnMapping>();
+        readonly IDefaultableList<ColumnMapping> identifierColumns = new DefaultableList<ColumnMapping>();
+        readonly IList<MetaValueMapping> metaValues = new List<MetaValueMapping>();
 
         public AnyMapping()
-            : this(new AttributeStore())
-        {}
-
-        public AnyMapping(AttributeStore underlyingStore)
         {
-            attributes = new AttributeStore<AnyMapping>(underlyingStore);
+            Insert = true;
+            Update = true;
+            OptimisticLock = true;
+            Lazy = true;
+        }
 
-            attributes.SetDefault(x => x.Insert, true);
-            attributes.SetDefault(x => x.Update, true);
-            attributes.SetDefault(x => x.OptimisticLock, true);
-            attributes.SetDefault(x => x.Lazy, false);
+        public void Initialise(Member member)
+        {
+            Name = member.Name;
+            MetaType = new TypeReference(member.PropertyType);
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
@@ -42,56 +42,56 @@ namespace FluentNHibernate.MappingModel
 
         public string Name
         {
-            get { return attributes.Get(x => x.Name); }
-            set { attributes.Set(x => x.Name, value); }
+            get { return values.Get(Attr.Name); }
+            set { values.Set(Attr.Name, value); }
         }
 
         public string IdType
         {
-            get { return attributes.Get(x => x.IdType); }
-            set { attributes.Set(x => x.IdType, value); }
+            get { return values.Get(Attr.IdType); }
+            set { values.Set(Attr.IdType, value); }
         }
 
         public TypeReference MetaType
         {
-            get { return attributes.Get(x => x.MetaType); }
-            set { attributes.Set(x => x.MetaType, value); }
+            get { return values.Get<TypeReference>(Attr.MetaType); }
+            set { values.Set(Attr.MetaType, value); }
         }
 
         public string Access
         {
-            get { return attributes.Get(x => x.Access); }
-            set { attributes.Set(x => x.Access, value); }
+            get { return values.Get(Attr.Access); }
+            set { values.Set(Attr.Access, value); }
         }
 
         public bool Insert
         {
-            get { return attributes.Get(x => x.Insert); }
-            set { attributes.Set(x => x.Insert, value); }
+            get { return values.Get<bool>(Attr.Insert); }
+            set { values.Set(Attr.Insert, value); }
         }
 
         public bool Update
         {
-            get { return attributes.Get(x => x.Update); }
-            set { attributes.Set(x => x.Update, value); }
+            get { return values.Get<bool>(Attr.Update); }
+            set { values.Set(Attr.Update, value); }
         }
 
         public string Cascade
         {
-            get { return attributes.Get(x => x.Cascade); }
-            set { attributes.Set(x => x.Cascade, value); }
+            get { return values.Get(Attr.Cascade); }
+            set { values.Set(Attr.Cascade, value); }
         }
 
         public bool Lazy
         {
-            get { return attributes.Get(x => x.Lazy); }
-            set { attributes.Set(x => x.Lazy, value); }
+            get { return values.Get<bool>(Attr.Lazy); }
+            set { values.Set(Attr.Lazy, value); }
         }
 
         public bool OptimisticLock
         {
-            get { return attributes.Get(x => x.OptimisticLock); }
-            set { attributes.Set(x => x.OptimisticLock, value); }
+            get { return values.Get<bool>(Attr.OptimisticLock); }
+            set { values.Set(Attr.OptimisticLock, value); }
         }
 
         public IDefaultableEnumerable<ColumnMapping> TypeColumns
@@ -138,22 +138,17 @@ namespace FluentNHibernate.MappingModel
 
         public override bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);
+            return false;
         }
 
-        public bool HasValue<TResult>(Expression<Func<AnyMapping, TResult>> property)
+        public bool HasValue(Attr attr)
         {
-            return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<AnyMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
+            return values.HasValue(attr);
         }
 
         public bool Equals(AnyMapping other)
         {
-            return Equals(other.attributes, attributes) &&
+            return Equals(other.values, values) &&
                 other.typeColumns.ContentEquals(typeColumns) &&
                 other.identifierColumns.ContentEquals(identifierColumns) &&
                 other.metaValues.ContentEquals(metaValues) &&
@@ -170,13 +165,24 @@ namespace FluentNHibernate.MappingModel
         {
             unchecked
             {
-                int result = (attributes != null ? attributes.GetHashCode() : 0);
+                int result = (values != null ? values.GetHashCode() : 0);
                 result = (result * 397) ^ (typeColumns != null ? typeColumns.GetHashCode() : 0);
                 result = (result * 397) ^ (identifierColumns != null ? identifierColumns.GetHashCode() : 0);
                 result = (result * 397) ^ (metaValues != null ? metaValues.GetHashCode() : 0);
                 result = (result * 397) ^ (ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0);
                 return result;
             }
+        }
+
+        public void AddChild(IMapping child)
+        {
+            if (child is MetaValueMapping)
+                AddMetaValue((MetaValueMapping)child);
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        {
+            values.Merge(otherValues);
         }
     }
 }

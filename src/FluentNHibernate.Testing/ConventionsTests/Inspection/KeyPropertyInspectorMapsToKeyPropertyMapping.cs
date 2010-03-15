@@ -21,7 +21,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [SetUp]
         public void CreateDsl()
         {
-            mapping = new KeyPropertyMapping();
+            mapping = new KeyPropertyMapping(null);
             inspector = new KeyPropertyInspector(mapping);
         }
 

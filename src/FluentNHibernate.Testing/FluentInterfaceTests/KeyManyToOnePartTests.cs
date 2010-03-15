@@ -1,66 +1,64 @@
 using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Identity;
+using FluentNHibernate.MappingModel.Structure;
 using NUnit.Framework;
+
 namespace FluentNHibernate.Testing.FluentInterfaceTests
 {
     [TestFixture]
     public class KeyManyToOnePartTests
     {
-
-        private KeyManyToOneMapping mapping;
-        private KeyManyToOnePart keyPart;
+        KeyManyToOnePart part;
+        IMappingStructure<KeyManyToOneMapping> structure;
 
         [SetUp]
         public void SetUp()
         {
-            this.mapping = new KeyManyToOneMapping();
-            this.keyPart = new KeyManyToOnePart(mapping);
+            structure = new FreeStructure<KeyManyToOneMapping>();
+            part = new KeyManyToOnePart(structure);
         }
 
         [Test]
         public void ShouldSetForeignKey()
         {
-            keyPart.ForeignKey("fk1");
-            mapping.ForeignKey.ShouldEqual("fk1");
+            part.ForeignKey("fk1");
+            structure.ShouldHaveValue(Attr.ForeignKey, "fk1");
         }
 
         [Test]
         public void ShouldSetAccessStrategy()
         {
-            keyPart.Access.Field();
-            mapping.Access.ShouldEqual("field");
+            part.Access.Field();
+            structure.ShouldHaveValue(Attr.Access, "field");
         }
 
         [Test]
         public void ShouldSetLazy()
         {
-            keyPart.Lazy();
-            mapping.Lazy.ShouldBeTrue();            
+            part.Lazy();
+            structure.ShouldHaveValue(Attr.Lazy, true);
         }
 
         [Test]
         public void ShouldSetNotLazy()
         {
-            keyPart.Not.Lazy();
-            mapping.Lazy.ShouldBeFalse();
+            part.Not.Lazy();
+            structure.ShouldHaveValue(Attr.Lazy, false);
         }
 
         [Test]
         public void ShouldSetName()
         {
-            keyPart.Name("keypart1");
-            mapping.Name.ShouldEqual("keypart1");
+            part.Name("keypart1");
+            structure.ShouldHaveValue(Attr.Name, "keypart1");
         }
 
         [Test]
         public void ShouldSetNotFound()
         {
-            keyPart.NotFound.Ignore();
-            mapping.NotFound.ShouldEqual("ignore");
+            part.NotFound.Ignore();
+            structure.ShouldHaveValue(Attr.NotFound, "ignore");
         }
-
-
-
     }
 }

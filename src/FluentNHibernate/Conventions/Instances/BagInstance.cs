@@ -6,8 +6,8 @@ namespace FluentNHibernate.Conventions.Instances
 {
     public class BagInstance : BagInspector, IBagInstance
     {
-        private readonly BagMapping mapping;
-        public BagInstance(BagMapping mapping)
+        private readonly CollectionMapping mapping;
+        public BagInstance(CollectionMapping mapping)
             : base(mapping)
         {
             this.mapping = mapping;

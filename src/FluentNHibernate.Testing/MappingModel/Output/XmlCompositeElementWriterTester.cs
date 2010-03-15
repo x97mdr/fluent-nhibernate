@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Xml;
+using FluentNHibernate.Automapping.TestFixtures;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Collections;
 using FluentNHibernate.MappingModel.Output;
@@ -34,7 +35,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteProperties()
         {
-            var mapping = new CompositeElementMapping();
+            var mapping = new CompositeElementMapping(typeof(ExampleClass));
             mapping.AddProperty(new PropertyMapping());
 
             writer.VerifyXml(mapping)
@@ -44,7 +45,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteManyToOnes()
         {
-            var mapping = new CompositeElementMapping();
+            var mapping = new CompositeElementMapping(typeof(ExampleClass));
             mapping.AddReference(new ManyToOneMapping());
 
             writer.VerifyXml(mapping)
@@ -60,8 +61,8 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteParent()
         {
-            var mapping = new CompositeElementMapping();
-            mapping.Parent = new ParentMapping();
+            var mapping = new CompositeElementMapping(typeof(ExampleClass));
+            mapping.Parent = new ParentMapping(null);
 
             writer.VerifyXml(mapping)
                 .Element("parent").Exists();
@@ -70,8 +71,8 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteParentAsFirstElement()
         {
-            var mapping = new CompositeElementMapping();
-            mapping.Parent = new ParentMapping();
+            var mapping = new CompositeElementMapping(typeof(ExampleClass));
+            mapping.Parent = new ParentMapping(null);
             mapping.AddProperty(new PropertyMapping());
 
             writer.VerifyXml(mapping)

@@ -25,28 +25,8 @@ namespace FluentNHibernate.Automapping
         {
             if (!(classMap is ClassMapping)) return;
 
-            var idMapping = new IdMapping { ContainingEntityType = classMap.Type };
-            idMapping.AddDefaultColumn(new ColumnMapping() { Name = property.Name });
-            idMapping.Name = property.Name;
-            idMapping.Type = new TypeReference(property.PropertyType);
-            idMapping.Member = property;
-            idMapping.SetDefaultValue("Generator", GetDefaultGenerator(property));
+            var idMapping = new IdMapping(property) { ContainingEntityType = classMap.Type };
             ((ClassMapping)classMap).Id = idMapping;        
-        }
-
-        private GeneratorMapping GetDefaultGenerator(Member property)
-        {
-            var generatorMapping = new GeneratorMapping();
-            var defaultGenerator = new GeneratorBuilder(generatorMapping, property.PropertyType);
-
-            if (property.PropertyType == typeof(Guid))
-                defaultGenerator.GuidComb();
-            else if (property.PropertyType == typeof(int) || property.PropertyType == typeof(long))
-                defaultGenerator.Identity();
-            else
-                defaultGenerator.Assigned();
-
-            return generatorMapping;
         }
     }
 }

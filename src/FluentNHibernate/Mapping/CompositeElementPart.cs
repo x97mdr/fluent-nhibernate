@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Reflection;
-using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Collections;
+using FluentNHibernate.MappingModel.Structure;
 using FluentNHibernate.Utils;
 
 namespace FluentNHibernate.Mapping
@@ -13,16 +11,13 @@ namespace FluentNHibernate.Mapping
     /// Component-element for component HasMany's.
     /// </summary>
     /// <typeparam name="T">Component type</typeparam>
-    public class CompositeElementPart<T> : ICompositeElementMappingProvider
+    public class CompositeElementPart<T>
     {
-        private readonly Type entity;
-        private readonly IList<IPropertyMappingProvider> properties = new List<IPropertyMappingProvider>();
-        private readonly IList<IManyToOneMappingProvider> references = new List<IManyToOneMappingProvider>();
-        private readonly AttributeStore<CompositeElementMapping> attributes = new AttributeStore<CompositeElementMapping>();
+        readonly IMappingStructure<CompositeElementMapping> structure;
 
-        public CompositeElementPart(Type entity)
+        public CompositeElementPart(IMappingStructure<CompositeElementMapping> structure)
         {
-            this.entity = entity;
+            this.structure = structure;
         }
 
         public PropertyPart Map(Expression<Func<T, object>> expression)
@@ -35,14 +30,15 @@ namespace FluentNHibernate.Mapping
             return Map(expression.ToMember(), columnName);
         }
 
-        protected virtual PropertyPart Map(Member property, string columnName)
+        protected PropertyPart Map(Member property, string columnName)
         {
-            var propertyMap = new PropertyPart(property, typeof(T));
+            var propertyStructure = new MemberStructure<PropertyMapping>(property);
+            var propertyMap = new PropertyPart(propertyStructure);
 
             if (!string.IsNullOrEmpty(columnName))
                 propertyMap.Column(columnName);
 
-            properties.Add(propertyMap);
+            structure.AddChild(propertyStructure);
 
             return propertyMap;
         }
@@ -59,12 +55,13 @@ namespace FluentNHibernate.Mapping
 
         protected virtual ManyToOnePart<TOther> References<TOther>(Member property, string columnName)
         {
-            var part = new ManyToOnePart<TOther>(typeof(T), property);
+            var referencesStructure = new MemberStructure<ManyToOneMapping>(property);
+            var part = new ManyToOnePart<TOther>(referencesStructure);
 
             if (columnName != null)
                 part.Column(columnName);
 
-            references.Add(part);
+            structure.AddChild(referencesStructure);
 
             return part;
         }
@@ -76,31 +73,9 @@ namespace FluentNHibernate.Mapping
         /// <returns>Component being mapped</returns>
         public CompositeElementPart<T> ParentReference(Expression<Func<T, object>> expression)
         {
-            var member = expression.ToMember();
-            attributes.Set(x => x.Parent, new ParentMapping
-            {
-                Name = member.Name,
-                ContainingEntityType = entity
-            });
+            var parentStructure = new MemberStructure<ParentMapping>(expression.ToMember());
+            structure.AddChild(parentStructure);
             return this;
-        }
-
-        CompositeElementMapping ICompositeElementMappingProvider.GetCompositeElementMapping()
-        {
-            var mapping = new CompositeElementMapping(attributes.CloneInner());
-
-            mapping.ContainingEntityType = entity;
-
-            if (!mapping.IsSpecified("Class"))
-                mapping.Class = new TypeReference(typeof(T));
-
-            foreach (var property in properties)
-                mapping.AddProperty(property.GetPropertyMapping());
-
-            foreach (var reference in references)
-                mapping.AddReference(reference.GetManyToOneMapping());
-
-            return mapping;
         }
     }
 }

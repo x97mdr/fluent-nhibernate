@@ -76,7 +76,7 @@ namespace FluentNHibernate.Automapping
                         ContainingEntityType = classType,
                         Type = new TypeReference(typeof(string))
                     };
-                    discriminator.AddDefaultColumn(new ColumnMapping { Name = discriminatorColumn });
+                    discriminator.AddDefaultColumn(new ColumnMapping() { Name = discriminatorColumn });
 
                     ((ClassMapping)mapping).Discriminator = discriminator;
                     discriminatorSet = true;
@@ -89,7 +89,7 @@ namespace FluentNHibernate.Automapping
                 {
                     subclassMapping = new SubclassMapping(SubclassType.JoinedSubclass);
                     subclassMapping.Key = new KeyMapping();
-                    subclassMapping.Key.AddDefaultColumn(new ColumnMapping { Name = mapping.Type.Name + "_id" });
+                    subclassMapping.Key.AddDefaultColumn(new ColumnMapping() { Name = mapping.Type.Name + "_id" });
                 }
                 else
                     subclassMapping = new SubclassMapping(SubclassType.Subclass);
@@ -143,32 +143,10 @@ namespace FluentNHibernate.Automapping
 
         public ClassMapping Map(Type classType, List<AutoMapType> types)
         {
-            var classMap = new ClassMapping { Type = classType };
-
-            classMap.SetDefaultValue(x => x.Name, classType.AssemblyQualifiedName);
-            classMap.SetDefaultValue(x => x.TableName, GetDefaultTableName(classType));
+            var classMap = new ClassMapping(classType);
 
             mappingTypes = types;
             return (ClassMapping)MergeMap(classType, classMap, new List<string>());
-        }
-
-        private string GetDefaultTableName(Type type)
-        {
-            var tableName = type.Name;
-
-            if (type.IsGenericType)
-            {
-                // special case for generics: GenericType_GenericParameterType
-                tableName = type.Name.Substring(0, type.Name.IndexOf('`'));
-
-                foreach (var argument in type.GetGenericArguments())
-                {
-                    tableName += "_";
-                    tableName += argument.Name;
-                }
-            }
-
-            return "`" + tableName + "`";
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿using FluentNHibernate.MappingModel;
+﻿using FluentNHibernate.Automapping.TestFixtures;
+using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Collections;
 using FluentNHibernate.MappingModel.Output;
@@ -16,7 +17,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         private XmlWriterTestHelper<SubclassMapping> create_helper()
         {
             var helper = new XmlWriterTestHelper<SubclassMapping>();
-            helper.CreateInstance(() => new SubclassMapping(SubclassType.Subclass));
+            helper.CreateInstance(() => new SubclassMapping(SubclassType.JoinedSubclass));
             return helper;
         }
 
@@ -127,7 +128,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteProperties()
         {
-            var mapping = new SubclassMapping(SubclassType.Subclass);
+            var mapping = new SubclassMapping(SubclassType.JoinedSubclass);
 
             mapping.AddProperty(new PropertyMapping());
 
@@ -138,7 +139,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteManyToOnes()
         {
-            var mapping = new SubclassMapping(SubclassType.Subclass);
+            var mapping = new SubclassMapping(SubclassType.JoinedSubclass);
 
             mapping.AddReference(new ManyToOneMapping());
 
@@ -149,9 +150,9 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteOneToOnes()
         {
-            var mapping = new SubclassMapping(SubclassType.Subclass);
+            var mapping = new SubclassMapping(SubclassType.JoinedSubclass);
 
-            mapping.AddOneToOne(new OneToOneMapping());
+            mapping.AddOneToOne(new OneToOneMapping(null));
 
             writer.VerifyXml(mapping)
                 .Element("one-to-one").Exists();
@@ -160,7 +161,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteComponents()
         {
-            var mapping = new SubclassMapping(SubclassType.Subclass);
+            var mapping = new SubclassMapping(SubclassType.JoinedSubclass);
 
             mapping.AddComponent(new ComponentMapping(ComponentType.Component));
 
@@ -171,9 +172,9 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteDynamicComponents()
         {
-            var mapping = new SubclassMapping(SubclassType.Subclass);
+            var mapping = new SubclassMapping(SubclassType.JoinedSubclass);
 
-            mapping.AddComponent(new ComponentMapping(ComponentType.DynamicComponent));
+            mapping.AddComponent(new ComponentMapping(ComponentType.Component));
 
             writer.VerifyXml(mapping)
                 .Element("dynamic-component").Exists();
@@ -182,8 +183,8 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteAny()
         {
-            var mapping = new SubclassMapping(SubclassType.Subclass);
-            
+            var mapping = new SubclassMapping(SubclassType.JoinedSubclass);
+
             mapping.AddAny(new AnyMapping());
 
             writer.VerifyXml(mapping)
@@ -193,9 +194,9 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteMap()
         {
-            var mapping = new SubclassMapping(SubclassType.Subclass);
+            var mapping = new SubclassMapping(SubclassType.JoinedSubclass);
 
-            mapping.AddCollection(new MapMapping());
+            mapping.AddCollection(new CollectionMapping());
 
             writer.VerifyXml(mapping)
                 .Element("map").Exists();
@@ -204,9 +205,9 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteSet()
         {
-            var mapping = new SubclassMapping(SubclassType.Subclass);
+            var mapping = new SubclassMapping(SubclassType.JoinedSubclass);
 
-            mapping.AddCollection(new SetMapping());
+            mapping.AddCollection(new CollectionMapping());
 
             writer.VerifyXml(mapping)
                 .Element("set").Exists();
@@ -215,9 +216,9 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteList()
         {
-            var mapping = new SubclassMapping(SubclassType.Subclass);
+            var mapping = new SubclassMapping(SubclassType.JoinedSubclass);
 
-            mapping.AddCollection(new ListMapping());
+            mapping.AddCollection(new CollectionMapping());
 
             writer.VerifyXml(mapping)
                 .Element("list").Exists();
@@ -226,9 +227,9 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteBag()
         {
-            var mapping = new SubclassMapping(SubclassType.Subclass);
+            var mapping = new SubclassMapping(SubclassType.JoinedSubclass);
 
-            mapping.AddCollection(new BagMapping());
+            mapping.AddCollection(new CollectionMapping());
 
             writer.VerifyXml(mapping)
                 .Element("bag").Exists();
@@ -249,7 +250,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteJoin()
         {
-            var mapping = new SubclassMapping(SubclassType.Subclass);
+            var mapping = new SubclassMapping(SubclassType.JoinedSubclass);
 
             mapping.AddJoin(new JoinMapping());
 
@@ -260,9 +261,9 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteSubclass()
         {
-            var mapping = new SubclassMapping(SubclassType.Subclass);
+            var mapping = new SubclassMapping(SubclassType.JoinedSubclass);
 
-            mapping.AddSubclass(new SubclassMapping(SubclassType.Subclass));
+            mapping.AddSubclass(new SubclassMapping(SubclassType.JoinedSubclass));
 
             writer.VerifyXml(mapping)
                 .Element("subclass").Exists();

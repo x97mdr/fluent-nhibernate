@@ -2,7 +2,7 @@ using System;
 
 namespace FluentNHibernate.Mapping.Providers
 {
-    public interface IReferenceComponentMappingProvider : IComponentMappingProvider
+    public interface IReferenceComponentMappingProvider
     {
         Type Type { get; }
     }

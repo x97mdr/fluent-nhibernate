@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics;
 using FluentNHibernate.MappingModel;
+using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Mapping
 {
     public class ColumnPart
     {
-        private ColumnMapping columnMapping;
-        private bool nextBool = true;
+        readonly IMappingStructure structure;
+        bool nextBool = true;
 
-        public ColumnPart(ColumnMapping columnMapping)
+        public ColumnPart(IMappingStructure structure)
         {
-            this.columnMapping = columnMapping;
+            this.structure = structure;
         }
 
         /// <summary>
@@ -32,45 +29,45 @@ namespace FluentNHibernate.Mapping
 
         public ColumnPart Name(string columnName)
         {
-            columnMapping.Name = columnName;
+            structure.SetValue(Attr.Name, columnName);
             return this;
         }
 
         public ColumnPart Length(int length)
         {
-            columnMapping.Length = length;
+            structure.SetValue(Attr.Length, length);
             return this;
         }
 
         public ColumnPart Nullable()
         {
-            columnMapping.NotNull = !nextBool;
+            structure.SetValue(Attr.NotNull, !nextBool);
             nextBool = true;
             return this;
         }
 
         public ColumnPart Unique()
         {
-            columnMapping.Unique = nextBool;
+            structure.SetValue(Attr.Unique, nextBool);
             nextBool = true;
             return this;
         }
 
-        public ColumnPart UniqueKey(string key1)
+        public ColumnPart UniqueKey(string key)
         {
-            columnMapping.UniqueKey = key1;
+            structure.SetValue(Attr.UniqueKey, key);
             return this;
         }
 
         public ColumnPart SqlType(string sqlType)
         {
-            columnMapping.SqlType = sqlType;
+            structure.SetValue(Attr.SqlType, sqlType);
             return this;
         }
 
         public ColumnPart Index(string index)
         {
-            columnMapping.Index = index;
+            structure.SetValue(Attr.Index, index);
             return this;
         }
     }

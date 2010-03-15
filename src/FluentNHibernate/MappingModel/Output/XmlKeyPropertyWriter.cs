@@ -29,13 +29,13 @@ namespace FluentNHibernate.MappingModel.Output
 
             var element = document.AddElement("key-property");
 
-            if (mapping.HasValue(x => x.Name))
+            if (mapping.HasValue(Attr.Name))
                 element.WithAtt("name", mapping.Name);
 
-            if (mapping.HasValue(x => x.Access))
+            if (mapping.HasValue(Attr.Access))
                 element.WithAtt("access", mapping.Access);
 
-            if (mapping.HasValue(x => x.Type))
+            if (mapping.HasValue(Attr.Type))
                 element.WithAtt("type", mapping.Type);
         }
 

@@ -29,11 +29,10 @@ namespace FluentNHibernate.Automapping
             if (property.DeclaringType != classMap.Type)
                 return;
 
-            var mapping = collections.CreateCollectionMapping(property.PropertyType);
+            var mapping = collections.CreateCollectionMapping(property.PropertyType, property);
 
             mapping.ContainingEntityType = classMap.Type;
             mapping.Member = property;
-            mapping.SetDefaultValue(x => x.Name, property.Name);
 
             SetRelationship(property, classMap, mapping);
             keys.SetKey(property, classMap, mapping);
@@ -41,15 +40,14 @@ namespace FluentNHibernate.Automapping
             classMap.AddCollection(mapping);  
         }
 
-        private void SetRelationship(Member property, ClassMappingBase classMap, ICollectionMapping mapping)
+        private void SetRelationship(Member property, ClassMappingBase classMap, CollectionMapping mapping)
         {
-            var relationship = new OneToManyMapping
+            var relationship = new OneToManyMapping(property.PropertyType.GetGenericArguments()[0])
             {
-                Class = new TypeReference(property.PropertyType.GetGenericArguments()[0]),
                 ContainingEntityType = classMap.Type
             };
 
-            mapping.SetDefaultValue(x => x.Relationship, relationship);
+            mapping.Relationship = relationship;
         }
     }
 }

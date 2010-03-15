@@ -1,20 +1,26 @@
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
-    public class OneToOneMapping : MappingBase
+    public class OneToOneMapping : MappingBase, IMemberMapping
     {
-        private readonly AttributeStore<OneToOneMapping> attributes;
+        readonly ValueStore values = new ValueStore();
 
         public OneToOneMapping()
-            : this(new AttributeStore())
         {}
 
-        public OneToOneMapping(AttributeStore underlyingStore)
+        public OneToOneMapping(Member member)
         {
-            attributes = new AttributeStore<OneToOneMapping>(underlyingStore);
+            Initialise(member);
+        }
+
+        public void Initialise(Member member)
+        {
+            Name = member.Name;
+            Class = new TypeReference(member.PropertyType);
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
@@ -24,85 +30,81 @@ namespace FluentNHibernate.MappingModel
 
         public string Name
         {
-            get { return attributes.Get(x => x.Name); }
-            set { attributes.Set(x => x.Name, value); }
+            get { return values.Get(Attr.Name); }
+            set { values.Set(Attr.Name, value); }
         }
 
         public string Access
         {
-            get { return attributes.Get(x => x.Access); }
-            set { attributes.Set(x => x.Access, value); }
+            get { return values.Get(Attr.Access); }
+            set { values.Set(Attr.Access, value); }
         }
 
         public TypeReference Class
         {
-            get { return attributes.Get(x => x.Class); }
-            set { attributes.Set(x => x.Class, value); }
+            get { return values.Get<TypeReference>(Attr.Class); }
+            set { values.Set(Attr.Class, value); }
         }
 
         public string Cascade
         {
-            get { return attributes.Get(x => x.Cascade); }
-            set { attributes.Set(x => x.Cascade, value); }
+            get { return values.Get(Attr.Cascade); }
+            set { values.Set(Attr.Cascade, value); }
         }
+
         public bool Constrained
         {
-            get { return attributes.Get(x => x.Constrained); }
-            set { attributes.Set(x => x.Constrained, value); }
+            get { return values.Get<bool>(Attr.Constrained); }
+            set { values.Set(Attr.Constrained, value); }
         }
 
         public string Fetch
         {
-            get { return attributes.Get(x => x.Fetch); }
-            set { attributes.Set(x => x.Fetch, value); }
+            get { return values.Get(Attr.Fetch); }
+            set { values.Set(Attr.Fetch, value); }
         }
 
         public string ForeignKey
         {
-            get { return attributes.Get(x => x.ForeignKey); }
-            set { attributes.Set(x => x.ForeignKey, value); }
+            get { return values.Get(Attr.ForeignKey); }
+            set { values.Set(Attr.ForeignKey, value); }
         }
 
         public string PropertyRef
         {
-            get { return attributes.Get(x => x.PropertyRef); }
-            set { attributes.Set(x => x.PropertyRef, value); }
+            get { return values.Get(Attr.PropertyRef); }
+            set { values.Set(Attr.PropertyRef, value); }
         }
 
         public bool Lazy
         {
-            get { return attributes.Get(x => x.Lazy); }
-            set { attributes.Set(x => x.Lazy, value); }
+            get { return values.Get<bool>(Attr.Lazy); }
+            set { values.Set(Attr.Lazy, value); }
         }
 
         public string EntityName
         {
-            get { return attributes.Get(x => x.EntityName); }
-            set { attributes.Set(x => x.EntityName, value); }
+            get { return values.Get(Attr.EntityName); }
+            set { values.Set(Attr.EntityName, value); }
         }
 
         public Type ContainingEntityType { get; set; }
 
         public override bool IsSpecified(string property)
         {
-            return attributes.IsSpecified(property);
+            return false;
         }
 
-        public bool HasValue<TResult>(Expression<Func<OneToOneMapping, TResult>> property)
+        public bool HasValue(Attr attr)
         {
-            return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<OneToOneMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
+            return values.HasValue(attr);
         }
 
         public bool Equals(OneToOneMapping other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.attributes, attributes) && Equals(other.ContainingEntityType, ContainingEntityType);
+            return Equals(other.values, values) && Equals(other.ContainingEntityType, ContainingEntityType);
         }
 
         public override bool Equals(object obj)
@@ -117,8 +119,17 @@ namespace FluentNHibernate.MappingModel
         {
             unchecked
             {
-                return ((attributes != null ? attributes.GetHashCode() : 0) * 397) ^ (ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0);
+                return ((values != null ? values.GetHashCode() : 0) * 397) ^ (ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0);
             }
+        }
+
+        public void AddChild(IMapping child)
+        {
+        }
+
+        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        {
+            values.Merge(otherValues);
         }
     }
 }

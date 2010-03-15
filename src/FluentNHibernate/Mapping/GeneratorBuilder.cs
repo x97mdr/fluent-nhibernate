@@ -1,5 +1,7 @@
 using System;
+using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Identity;
+using FluentNHibernate.MappingModel.Structure;
 using NHibernate.Id;
 
 namespace FluentNHibernate.Mapping
@@ -7,22 +9,23 @@ namespace FluentNHibernate.Mapping
     public class GeneratorBuilder
     {
         private readonly Type identityType;
-        private readonly GeneratorMapping mapping;
+        private readonly IMappingStructure<GeneratorMapping> structure;
 
-        public GeneratorBuilder(GeneratorMapping mapping, Type identityType)
+        public GeneratorBuilder(IMappingStructure<GeneratorMapping> structure, Type identityType)
         {
-            this.mapping = mapping;
+            this.structure = structure;
             this.identityType = identityType;
         }
 
         private void SetGenerator(string generator)
         {
-            mapping.Class = generator;
+            structure.SetValue(Attr.Class, generator);
         }
 
         private void AddGeneratorParam(string name, string value)
         {
-            mapping.Params.Add(name, value);
+            new ParamBuilder(structure)
+                .AddParam(name, value);
         }
 
         private void EnsureIntegralIdenityType()
@@ -61,7 +64,7 @@ namespace FluentNHibernate.Mapping
 
         public void Increment(Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(mapping.Params));
+            paramValues(new ParamBuilder(structure));
             Increment();
         }
 
@@ -85,7 +88,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="paramValues">Params configuration</param>
         public void Identity(Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(mapping.Params));
+            paramValues(new ParamBuilder(structure));
             Identity();
         }
 
@@ -112,7 +115,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="paramValues">Params configuration</param>
         public void Sequence(string sequenceName, Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(mapping.Params));
+            paramValues(new ParamBuilder(structure));
             Sequence(sequenceName);
         }
 
@@ -147,7 +150,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="paramValues">Params configuration</param>
         public void HiLo(string table, string column, string maxLo, Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(mapping.Params));
+            paramValues(new ParamBuilder(structure));
             HiLo(table, column, maxLo);
         }
 
@@ -178,7 +181,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="paramValues">Params configuration</param>
         public void HiLo(string maxLo, Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(mapping.Params));
+            paramValues(new ParamBuilder(structure));
             HiLo(maxLo);
         }
 
@@ -204,7 +207,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="paramValues">Params configuration</param>
         public void SeqHiLo(string sequence, string maxLo, Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(mapping.Params));
+            paramValues(new ParamBuilder(structure));
             SeqHiLo(sequence, maxLo);
         }
 
@@ -229,7 +232,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="paramValues">Params configuration</param>
         public void UuidHex(string format, Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(mapping.Params));
+            paramValues(new ParamBuilder(structure));
             UuidHex(format);
         }
 
@@ -249,7 +252,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="paramValues">Params configuration</param>
         public void UuidString(Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(mapping.Params));
+            paramValues(new ParamBuilder(structure));
             UuidString();
         }
 
@@ -265,7 +268,7 @@ namespace FluentNHibernate.Mapping
 
         public void Guid(Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(mapping.Params));
+            paramValues(new ParamBuilder(structure));
             Guid();
         }
 
@@ -277,7 +280,7 @@ namespace FluentNHibernate.Mapping
 
         public void GuidComb(Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(mapping.Params));
+            paramValues(new ParamBuilder(structure));
             GuidComb();
         }
 
@@ -288,7 +291,7 @@ namespace FluentNHibernate.Mapping
 
         public void Assigned(Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(mapping.Params));
+            paramValues(new ParamBuilder(structure));
             Assigned();
         }
 
@@ -300,7 +303,7 @@ namespace FluentNHibernate.Mapping
 
         public void Native(Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(mapping.Params));
+            paramValues(new ParamBuilder(structure));
             Native();
         }
 
@@ -313,7 +316,7 @@ namespace FluentNHibernate.Mapping
 
         public void Native(string sequenceName, Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(mapping.Params));
+            paramValues(new ParamBuilder(structure));
             Native(sequenceName);
         }
 
@@ -325,7 +328,7 @@ namespace FluentNHibernate.Mapping
 
         public void Foreign(string property, Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(mapping.Params));
+            paramValues(new ParamBuilder(structure));
             Foreign(property);
         }
 
@@ -356,7 +359,7 @@ namespace FluentNHibernate.Mapping
 
         public void Custom(string generator, Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(mapping.Params));
+            paramValues(new ParamBuilder(structure));
             SetGenerator(generator);
         }
     }
