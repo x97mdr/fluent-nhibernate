@@ -54,7 +54,7 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void ForeignKey(string constraint)
         {
-            if (!mapping.IsSpecified("ForeignKey"))
+            if (!mapping.HasUserDefinedValue(Attr.ForeignKey))
                 mapping.ForeignKey = constraint;
         }
     }

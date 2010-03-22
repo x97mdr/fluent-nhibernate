@@ -1,11 +1,6 @@
-using System;
-using System.Linq.Expressions;
-using System.Reflection;
-using FluentNHibernate.Automapping.TestFixtures;
 using FluentNHibernate.Conventions.Inspections;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Collections;
-using FluentNHibernate.Utils.Reflection;
 using NUnit.Framework;
 
 namespace FluentNHibernate.Testing.ConventionsTests.Inspection
@@ -33,29 +28,29 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void IndexIsSet()
         {
             mapping.Index = new IndexMapping();
-            inspector.IsSet(Prop(x => x.Index))
+            inspector.IsSet(Attr.Index)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void IndexIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Index))
+            inspector.IsSet(Attr.Index)
                 .ShouldBeFalse();
         }
 
         [Test]
         public void MapsIndexManyToManyToInspector()
         {
-            mapping.Index = new IndexManyToManyMapping(null);
+            mapping.Index = new IndexManyToManyMapping();
             inspector.Index.ShouldBeOfType<IIndexManyToManyInspector>();
         }
 
         [Test]
         public void IndexManyToManyIsSet()
         {
-            mapping.Index = new IndexManyToManyMapping(null);
-            inspector.IsSet(Prop(x => x.Index))
+            mapping.Index = new IndexManyToManyMapping();
+            inspector.IsSet(Attr.Index)
                 .ShouldBeTrue();
         }
 
@@ -63,14 +58,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void OrderByIsSet()
         {
             mapping.OrderBy = "AField";
-            inspector.IsSet(Prop(x => x.OrderBy))
+            inspector.IsSet(Attr.OrderBy)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void OrderByIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.OrderBy))
+            inspector.IsSet(Attr.OrderBy)
                 .ShouldBeFalse();
         }
 
@@ -78,24 +73,15 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void SortByIsSet()
         {
             mapping.Sort = "AField";
-            inspector.IsSet(Prop(x => x.Sort))
+            inspector.IsSet(Attr.Sort)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void SortByIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Sort))
+            inspector.IsSet(Attr.Sort)
                 .ShouldBeFalse();
         }
-
-        #region Helpers
-
-        private Member Prop(Expression<Func<IMapInspector, object>> propertyExpression)
-        {
-            return ReflectionHelper.GetMember(propertyExpression);
-        }
-
-        #endregion
     }
 }

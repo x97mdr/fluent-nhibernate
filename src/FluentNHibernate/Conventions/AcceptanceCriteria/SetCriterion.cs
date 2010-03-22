@@ -2,6 +2,7 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using FluentNHibernate.Conventions.Inspections;
+using FluentNHibernate.MappingModel;
 using FluentNHibernate.Utils;
 
 namespace FluentNHibernate.Conventions.AcceptanceCriteria
@@ -18,9 +19,18 @@ namespace FluentNHibernate.Conventions.AcceptanceCriteria
         public bool IsSatisfiedBy<T>(Expression<Func<T, object>> expression, T inspector) where T : IInspector
         {
             var member = expression.ToMember();
-            var result = inspector.IsSet(member);
+            var attr = ParseEnum(member); // TODO: harden
+            var result = inspector.IsSet(attr);
 
             return inverse ? !result : result;
+        }
+
+        Attr ParseEnum(Member member)
+        {
+            if (member.Name == "TableName")
+                return Attr.Table;
+
+            return (Attr)Enum.Parse(typeof(Attr), member.Name);
         }
     }
 }

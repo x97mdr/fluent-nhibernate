@@ -75,7 +75,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteColumns()
         {
-            var mapping = new KeyManyToOneMapping(null);
+            var mapping = new KeyManyToOneMapping();
 
             mapping.AddColumn(new ColumnMapping());
 

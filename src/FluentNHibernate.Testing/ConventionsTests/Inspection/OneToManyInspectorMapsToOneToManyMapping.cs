@@ -1,11 +1,8 @@
-using System;
-using System.Linq.Expressions;
 using System.Reflection;
 using FluentNHibernate.Automapping.TestFixtures;
 using FluentNHibernate.Conventions.Inspections;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Collections;
-using FluentNHibernate.Utils.Reflection;
 using NUnit.Framework;
 
 namespace FluentNHibernate.Testing.ConventionsTests.Inspection
@@ -19,7 +16,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [SetUp]
         public void CreateDsl()
         {
-            mapping = new OneToManyMapping(null);
+            mapping = new OneToManyMapping();
             inspector = new OneToManyInspector(mapping);
         }
 
@@ -34,14 +31,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void ChildTypeIsSet()
         {
             mapping.ChildType = typeof(ExampleClass);
-            inspector.IsSet(Prop(x => x.ChildType))
+            inspector.IsSet(Attr.ChildType)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void ChildTypeIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.ChildType))
+            inspector.IsSet(Attr.ChildType)
                 .ShouldBeFalse();
         }
 
@@ -56,14 +53,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void ClassIsSet()
         {
             mapping.Class = new TypeReference(typeof(ExampleClass));
-            inspector.IsSet(Prop(x => x.Class))
+            inspector.IsSet(Attr.Class)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void ClassIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Class))
+            inspector.IsSet(Attr.Class)
                 .ShouldBeFalse();
         }
 
@@ -78,24 +75,15 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void NotFoundIsSet()
         {
             mapping.NotFound = "exception";
-            inspector.IsSet(Prop(x => x.NotFound))
+            inspector.IsSet(Attr.NotFound)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void NotFoundIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.NotFound))
+            inspector.IsSet(Attr.NotFound)
                 .ShouldBeFalse();
         }
-
-        #region Helpers
-
-        private Member Prop(Expression<Func<IOneToManyInspector, object>> propertyExpression)
-        {
-            return ReflectionHelper.GetMember(propertyExpression);
-        }
-
-        #endregion
     }
 }

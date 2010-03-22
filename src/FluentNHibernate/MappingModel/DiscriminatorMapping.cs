@@ -14,6 +14,14 @@ namespace FluentNHibernate.MappingModel
             Type = new TypeReference(type);
         }
 
+        public override bool HasUserDefinedValue(Attr property)
+        {
+            if (base.HasUserDefinedValue(property))
+                return true;
+
+            return HasValue(property);
+        }
+
         public override void AcceptVisitor(IMappingModelVisitor visitor)
         {
             visitor.ProcessDiscriminator(this);
@@ -78,7 +86,7 @@ namespace FluentNHibernate.MappingModel
                 AddColumn((ColumnMapping)child);
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

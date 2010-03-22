@@ -9,16 +9,9 @@ namespace FluentNHibernate.MappingModel.Collections
         readonly MappedMembers mappedMembers = new MappedMembers();
         readonly ValueStore values = new ValueStore();
 
-        public CompositeElementMapping()
-        {}
-
-        public CompositeElementMapping(Type type)
-        {
-            Initialise(type);
-        }
-
         public void Initialise(Type type)
         {
+            values.SetDefault(Attr.Class, new TypeReference(type));
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
@@ -61,9 +54,12 @@ namespace FluentNHibernate.MappingModel.Collections
             mappedMembers.AddReference(manyToOne);
         }
 
-        public override bool IsSpecified(string property)
+        public override bool HasUserDefinedValue(Attr property)
         {
-            return false;
+            if (property == Attr.Parent)
+                return Parent != null;
+
+            return values.HasUserDefinedValue(property);
         }
 
         public bool HasValue(Attr attr)
@@ -105,7 +101,7 @@ namespace FluentNHibernate.MappingModel.Collections
                 Parent = (ParentMapping)child;
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

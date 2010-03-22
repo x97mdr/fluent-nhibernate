@@ -6,16 +6,12 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class PropertyInspector : ColumnBasedInspector, IPropertyInspector
     {
-        private readonly InspectorModelMapper<IPropertyInspector, PropertyMapping> propertyMappings = new InspectorModelMapper<IPropertyInspector, PropertyMapping>();
         private readonly PropertyMapping mapping;
 
         public PropertyInspector(PropertyMapping mapping)
             : base(mapping.Columns)
         {
             this.mapping = mapping;
-
-            propertyMappings.Map(x => x.LazyLoad, x => x.Lazy);
-            propertyMappings.Map(x => x.Nullable, "NotNull");
         }
 
         public bool Insert
@@ -75,7 +71,7 @@ namespace FluentNHibernate.Conventions.Inspections
         {
             get
             {
-                if (mapping.IsSpecified("Access"))
+                if (mapping.HasUserDefinedValue(Attr.Access))
                     return Access.FromString(mapping.Access);
 
                 return Access.Unset;
@@ -102,9 +98,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.Member; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(propertyMappings.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
     }
 }

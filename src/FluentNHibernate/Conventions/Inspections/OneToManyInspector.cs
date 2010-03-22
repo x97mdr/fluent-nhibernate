@@ -7,7 +7,6 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class OneToManyInspector : IOneToManyInspector
     {
-        private readonly InspectorModelMapper<IOneToManyInspector, OneToManyMapping> mappedProperties = new InspectorModelMapper<IOneToManyInspector, OneToManyMapping>();
         private readonly OneToManyMapping mapping;
 
         public OneToManyInspector(OneToManyMapping mapping)
@@ -25,9 +24,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.Class.Name; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(mappedProperties.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
 
         public Type ChildType

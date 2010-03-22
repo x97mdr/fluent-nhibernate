@@ -10,14 +10,6 @@ namespace FluentNHibernate.MappingModel.Identity
         readonly ValueStore values = new ValueStore();
         readonly IList<ColumnMapping> columns = new List<ColumnMapping>();
 
-        public KeyPropertyMapping()
-        {}
-
-        public KeyPropertyMapping(Member member)
-        {
-            Initialise(member);
-        }
-
         public void Initialise(Member member)
         {
             Name = member.Name;
@@ -62,9 +54,9 @@ namespace FluentNHibernate.MappingModel.Identity
             columns.Add(mapping);
         }
 
-        public override bool IsSpecified(string property)
+        public override bool HasUserDefinedValue(Attr property)
         {
-            return false;
+            return HasValue(property);
         }
 
         public bool HasValue(Attr attr)
@@ -106,7 +98,7 @@ namespace FluentNHibernate.MappingModel.Identity
                 AddColumn((ColumnMapping)child);
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

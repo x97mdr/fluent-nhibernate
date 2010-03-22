@@ -6,25 +6,57 @@ using NHibernate.Id;
 
 namespace FluentNHibernate.Mapping
 {
-    public class GeneratorBuilder
+    public class GeneratorStructureBuilder : GeneratorBuilder
     {
-        private readonly Type identityType;
-        private readonly IMappingStructure<GeneratorMapping> structure;
+        readonly IMappingStructure<GeneratorMapping> structure;
 
-        public GeneratorBuilder(IMappingStructure<GeneratorMapping> structure, Type identityType)
+        public GeneratorStructureBuilder(IMappingStructure<GeneratorMapping> structure, Type identityType)
+            : base(x => structure.SetValue(Attr.Class, x), identityType)
         {
             this.structure = structure;
+        }
+
+        protected override ParamBuilder CreateParamBuilder()
+        {
+            return new ParamStructureBuilder(structure);
+        }
+    }
+
+    public class GeneratorMappingBuilder : GeneratorBuilder
+    {
+        readonly GeneratorMapping mapping;
+
+        public GeneratorMappingBuilder(GeneratorMapping mapping, Type identityType)
+            : base(x => mapping.Class = x, identityType)
+        {
+            this.mapping = mapping;
+        }
+
+        protected override ParamBuilder CreateParamBuilder()
+        {
+            return new ParamMappingBuilder(mapping);
+        }
+    }
+
+    public abstract class GeneratorBuilder
+    {
+        readonly Action<string> setGenerator;
+        private readonly Type identityType;
+
+        public GeneratorBuilder(Action<string> setGenerator, Type identityType)
+        {
+            this.setGenerator = setGenerator;
             this.identityType = identityType;
         }
 
         private void SetGenerator(string generator)
         {
-            structure.SetValue(Attr.Class, generator);
+            setGenerator(generator);
         }
 
         private void AddGeneratorParam(string name, string value)
         {
-            new ParamBuilder(structure)
+            CreateParamBuilder()
                 .AddParam(name, value);
         }
 
@@ -64,7 +96,7 @@ namespace FluentNHibernate.Mapping
 
         public void Increment(Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(structure));
+            paramValues(CreateParamBuilder());
             Increment();
         }
 
@@ -88,7 +120,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="paramValues">Params configuration</param>
         public void Identity(Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(structure));
+            paramValues(CreateParamBuilder());
             Identity();
         }
 
@@ -115,7 +147,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="paramValues">Params configuration</param>
         public void Sequence(string sequenceName, Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(structure));
+            paramValues(CreateParamBuilder());
             Sequence(sequenceName);
         }
 
@@ -150,7 +182,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="paramValues">Params configuration</param>
         public void HiLo(string table, string column, string maxLo, Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(structure));
+            paramValues(CreateParamBuilder());
             HiLo(table, column, maxLo);
         }
 
@@ -181,7 +213,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="paramValues">Params configuration</param>
         public void HiLo(string maxLo, Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(structure));
+            paramValues(CreateParamBuilder());
             HiLo(maxLo);
         }
 
@@ -207,7 +239,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="paramValues">Params configuration</param>
         public void SeqHiLo(string sequence, string maxLo, Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(structure));
+            paramValues(CreateParamBuilder());
             SeqHiLo(sequence, maxLo);
         }
 
@@ -232,7 +264,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="paramValues">Params configuration</param>
         public void UuidHex(string format, Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(structure));
+            paramValues(CreateParamBuilder());
             UuidHex(format);
         }
 
@@ -252,7 +284,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="paramValues">Params configuration</param>
         public void UuidString(Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(structure));
+            paramValues(CreateParamBuilder());
             UuidString();
         }
 
@@ -268,7 +300,7 @@ namespace FluentNHibernate.Mapping
 
         public void Guid(Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(structure));
+            paramValues(CreateParamBuilder());
             Guid();
         }
 
@@ -280,7 +312,7 @@ namespace FluentNHibernate.Mapping
 
         public void GuidComb(Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(structure));
+            paramValues(CreateParamBuilder());
             GuidComb();
         }
 
@@ -291,7 +323,7 @@ namespace FluentNHibernate.Mapping
 
         public void Assigned(Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(structure));
+            paramValues(CreateParamBuilder());
             Assigned();
         }
 
@@ -303,7 +335,7 @@ namespace FluentNHibernate.Mapping
 
         public void Native(Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(structure));
+            paramValues(CreateParamBuilder());
             Native();
         }
 
@@ -316,7 +348,7 @@ namespace FluentNHibernate.Mapping
 
         public void Native(string sequenceName, Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(structure));
+            paramValues(CreateParamBuilder());
             Native(sequenceName);
         }
 
@@ -328,7 +360,7 @@ namespace FluentNHibernate.Mapping
 
         public void Foreign(string property, Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(structure));
+            paramValues(CreateParamBuilder());
             Foreign(property);
         }
 
@@ -359,8 +391,10 @@ namespace FluentNHibernate.Mapping
 
         public void Custom(string generator, Action<ParamBuilder> paramValues)
         {
-            paramValues(new ParamBuilder(structure));
+            paramValues(CreateParamBuilder());
             SetGenerator(generator);
         }
+
+        protected abstract ParamBuilder CreateParamBuilder();
     }
 }

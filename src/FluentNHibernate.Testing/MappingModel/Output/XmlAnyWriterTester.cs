@@ -137,7 +137,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new AnyMapping();
 
-            mapping.AddMetaValue(new MetaValueMapping(null));
+            mapping.AddMetaValue(new MetaValueMapping());
 
             writer.VerifyXml(mapping)
                 .Element("meta-value").Exists();

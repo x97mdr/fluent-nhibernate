@@ -193,7 +193,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new CollectionMapping();
 
-            mapping.Relationship = new OneToManyMapping(null);
+            mapping.Relationship = new OneToManyMapping();
 
             writer.VerifyXml(mapping)
                 .Element("one-to-many").Exists();

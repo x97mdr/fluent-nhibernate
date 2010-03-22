@@ -6,14 +6,12 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class DiscriminatorInspector : ColumnBasedInspector, IDiscriminatorInspector
     {
-        private readonly InspectorModelMapper<IDiscriminatorInspector, DiscriminatorMapping> propertyMappings = new InspectorModelMapper<IDiscriminatorInspector, DiscriminatorMapping>();
         private readonly DiscriminatorMapping mapping;
 
         public DiscriminatorInspector(DiscriminatorMapping mapping)
             : base(mapping.Columns)
         {
             this.mapping = mapping;
-            propertyMappings.Map(x => x.Nullable, "NotNull");
         }
 
         public bool Insert
@@ -59,9 +57,9 @@ namespace FluentNHibernate.Conventions.Inspections
             }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(propertyMappings.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
     }
 }

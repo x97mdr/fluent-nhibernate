@@ -56,14 +56,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void TypeIsSet()
         {
             mapping.Type = new TypeReference(typeof(ExampleClass));
-            inspector.IsSet(Prop(x => x.Type))
+            inspector.IsSet(Attr.Type)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void TypeIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Type))
+            inspector.IsSet(Attr.Type)
                 .ShouldBeFalse();
         }
 

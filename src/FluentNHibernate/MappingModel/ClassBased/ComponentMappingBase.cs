@@ -10,11 +10,6 @@ namespace FluentNHibernate.MappingModel.ClassBased
         protected ComponentMappingBase(ValueStore values)
         {
             this.values = values;
-
-            Unique = false;
-            Update = true;
-            Insert = true;
-            OptimisticLock = true;
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
@@ -59,9 +54,12 @@ namespace FluentNHibernate.MappingModel.ClassBased
             set { values.Set(Attr.OptimisticLock, value); }
         }
 
-        public override bool IsSpecified(string property)
+        public override bool HasUserDefinedValue(Attr property)
         {
-            return false;
+            if (property == Attr.Parent)
+                return Parent != null;
+
+            return HasValue(property);
         }
 
         public abstract bool HasValue(Attr attr);

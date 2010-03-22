@@ -1,5 +1,4 @@
-﻿using FluentNHibernate.Automapping.TestFixtures;
-using FluentNHibernate.MappingModel;
+﻿using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Collections;
 using FluentNHibernate.MappingModel.Identity;
@@ -29,7 +28,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
 
             mapping.AddIdentifierDefaultColumn(new ColumnMapping { Name = "default-id-col" });
             mapping.AddIdentifierColumn(new ColumnMapping { Name = "id-col" });
-            mapping.AddMetaValue(new MetaValueMapping(null) { Value = "value" });
+            mapping.AddMetaValue(new MetaValueMapping { Value = "value" });
             mapping.AddTypeDefaultColumn(new ColumnMapping { Name = "default-type-col" });
             mapping.AddTypeColumn(new ColumnMapping { Name = "type-col" });
 
@@ -53,11 +52,11 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
                 Access = "access", Cascade = "cascade", ContainingEntityType = typeof(Target),
                 Lazy = true, Name = "name", OptimisticLock = "lock",
                 BatchSize = 1, Cache = new CacheMapping(), Check = "check",
-                ChildType = typeof(Target), CollectionType = new TypeReference(typeof(Target)), CompositeElement = new CompositeElementMapping(typeof(ExampleClass)),
+                ChildType = typeof(Target), CollectionType = new TypeReference(typeof(Target)), CompositeElement = new CompositeElementMapping(),
                 Element = new ElementMapping(), Fetch = "fetch", Generic = true,
                 Index = new IndexMapping(), Inverse = true, Key = new KeyMapping(),
                 Mutable = true, OrderBy = "order-by",
-                OtherSide = new CollectionMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(null),
+                OtherSide = new CollectionMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(),
                 Schema = "schema", Subselect = "subselect", TableName = "table", Where = "where"
             };
 
@@ -85,11 +84,11 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
                 BatchSize = 1, Cache = new CacheMapping(), Check = "check",
                 ChildType = typeof(Target),
                 CollectionType = new TypeReference(typeof(Target)),
-                CompositeElement = new CompositeElementMapping(typeof(ExampleClass)),
+                CompositeElement = new CompositeElementMapping(),
                 Element = new ElementMapping(), Fetch = "fetch", Generic = true,
                 Inverse = true, Key = new KeyMapping(),
                 Mutable = true, OrderBy = "order-by",
-                OtherSide = new CollectionMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(null),
+                OtherSide = new CollectionMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(),
                 Schema = "schema", Subselect = "subselect", TableName = "table", Where = "where"
             };
 
@@ -136,12 +135,12 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
                 Abstract = true, BatchSize = 10, Cache = new CacheMapping(),
                 Check = "check", Discriminator = new DiscriminatorMapping(), DiscriminatorValue = "value",
                 DynamicInsert = true, DynamicUpdate = true, EntityName = "entity-name",
-                Id = new IdMapping(null), Lazy = true, Mutable = true,
+                Id = new IdMapping(), Lazy = true, Mutable = true,
                 Name = "name", OptimisticLock = "lock", Persister = "persister",
                 Polymorphism = "poly", Proxy = "proxy", Schema = "schema",
                 SchemaAction = "action", SelectBeforeUpdate = true, Subselect = "subselect",
                 TableName = "table", Tuplizer = new TuplizerMapping(), Type = typeof(Target),
-                Version = new VersionMapping(null), Where = "where"
+                Version = new VersionMapping(), Where = "where"
             };
 
             mapping.AddAny(new AnyMapping());
@@ -149,7 +148,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
             mapping.AddComponent(CreateComponent());
             mapping.AddFilter(new FilterMapping());
             mapping.AddJoin(new JoinMapping());
-            mapping.AddOneToOne(new OneToOneMapping(null));
+            mapping.AddOneToOne(new OneToOneMapping());
             mapping.AddProperty(CreateProperty());
             mapping.AddReference(new ManyToOneMapping());
             mapping.AddStoredProcedure(new StoredProcedureMapping());
@@ -170,11 +169,11 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
     {
         protected override CompositeElementMapping CreateMapping()
         {
-            var mapping = new CompositeElementMapping(typeof(ExampleClass))
+            var mapping = new CompositeElementMapping
             {
                 Class = new TypeReference(typeof(Target)),
                 ContainingEntityType = typeof(Target),
-                Parent = new ParentMapping(null),
+                Parent = new ParentMapping(),
             };
 
             mapping.AddProperty(CreateProperty());
@@ -195,7 +194,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
     {
         protected override CompositeIdMapping CreateMapping()
         {
-            var mapping = new CompositeIdMapping(null)
+            var mapping = new CompositeIdMapping
             {
                 Class = new TypeReference(typeof(Target)),
                 ContainingEntityType = typeof(Target),
@@ -205,8 +204,8 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
                 UnsavedValue = "unsaved"
             };
 
-            mapping.AddKeyManyToOne(new KeyManyToOneMapping(null));
-            mapping.AddKeyProperty(new KeyPropertyMapping(null));
+            mapping.AddKeyManyToOne(new KeyManyToOneMapping());
+            mapping.AddKeyProperty(new KeyPropertyMapping());
 
             return mapping;
         }
@@ -233,7 +232,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
                 Member = new DummyPropertyInfo("name", typeof(Target)).ToMember(),
                 Name = "name",
                 OptimisticLock = true,
-                Parent = new ParentMapping(null),
+                Parent = new ParentMapping(),
                 Type = typeof(Target),
                 Unique = true,
                 Update = true
@@ -244,7 +243,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
             mapping.AddComponent(CreateComponent());
             mapping.AddFilter(new FilterMapping());
             mapping.AddJoin(new JoinMapping());
-            mapping.AddOneToOne(new OneToOneMapping(null));
+            mapping.AddOneToOne(new OneToOneMapping());
             mapping.AddProperty(CreateProperty());
             mapping.AddReference(new ManyToOneMapping());
             mapping.AddStoredProcedure(new StoredProcedureMapping());
@@ -329,7 +328,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
                 Member = new DummyPropertyInfo("name", typeof(Target)).ToMember(),
                 Name = "name",
                 OptimisticLock = true,
-                Parent = new ParentMapping(null),
+                Parent = new ParentMapping(),
                 Type = typeof(Target),
                 Unique = true,
                 Update = true
@@ -340,7 +339,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
             mapping.AddComponent(CreateComponent());
             mapping.AddFilter(new FilterMapping());
             mapping.AddJoin(new JoinMapping());
-            mapping.AddOneToOne(new OneToOneMapping(null));
+            mapping.AddOneToOne(new OneToOneMapping());
             mapping.AddProperty(CreateProperty());
             mapping.AddReference(new ManyToOneMapping());
             mapping.AddStoredProcedure(new StoredProcedureMapping());
@@ -394,7 +393,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
                 Member = new DummyPropertyInfo("name", typeof(Target)).ToMember(),
                 Name = "name",
                 OptimisticLock = true,
-                Parent = new ParentMapping(null),
+                Parent = new ParentMapping(),
                 Type = typeof(Target),
                 Unique = true,
                 Update = true
@@ -405,7 +404,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
             mapping.AddComponent(CreateComponent());
             mapping.AddFilter(new FilterMapping());
             mapping.AddJoin(new JoinMapping());
-            mapping.AddOneToOne(new OneToOneMapping(null));
+            mapping.AddOneToOne(new OneToOneMapping());
             mapping.AddProperty(CreateProperty());
             mapping.AddReference(new ManyToOneMapping());
             mapping.AddStoredProcedure(new StoredProcedureMapping());
@@ -525,7 +524,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
     {
         protected override IdMapping CreateMapping()
         {
-            var mapping = new IdMapping(new DummyPropertyInfo("prop", typeof(Target)).ToMember())
+            var mapping = new IdMapping
             {
                 Name = "name",
                 Access = "access",
@@ -572,7 +571,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
     {
         protected override IndexManyToManyMapping CreateMapping()
         {
-            var mapping = new IndexManyToManyMapping(typeof(Target))
+            var mapping = new IndexManyToManyMapping
             {
                 ContainingEntityType = typeof(Target),
                 ForeignKey = "fk"
@@ -646,7 +645,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
             mapping.AddComponent(CreateComponent());
             mapping.AddFilter(new FilterMapping());
             mapping.AddJoin(new JoinMapping());
-            mapping.AddOneToOne(new OneToOneMapping(null));
+            mapping.AddOneToOne(new OneToOneMapping());
             mapping.AddProperty(CreateProperty());
             mapping.AddReference(new ManyToOneMapping());
             mapping.AddStoredProcedure(new StoredProcedureMapping());
@@ -670,7 +669,6 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
             var mapping = new JoinMapping
             {
                 Catalog = "catalog",
-                ContainingEntityType = typeof(Target),
                 Fetch = "fetch",
                 Inverse = true,
                 Key = new KeyMapping(),
@@ -700,7 +698,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
     {
         protected override KeyManyToOneMapping CreateMapping()
         {
-            var mapping = new KeyManyToOneMapping(null)
+            var mapping = new KeyManyToOneMapping
             {
                 ContainingEntityType = typeof(Target),
                 ForeignKey = "fk",
@@ -728,7 +726,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
     {
         protected override KeyPropertyMapping CreateMapping()
         {
-            var mapping = new KeyPropertyMapping(null)
+            var mapping = new KeyPropertyMapping
             {
                 ContainingEntityType = typeof(Target),
                 Access = "access",
@@ -789,11 +787,11 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
                 BatchSize = 1, Cache = new CacheMapping(), Check = "check",
                 ChildType = typeof(Target),
                 CollectionType = new TypeReference(typeof(Target)),
-                CompositeElement = new CompositeElementMapping(typeof(ExampleClass)),
+                CompositeElement = new CompositeElementMapping(),
                 Element = new ElementMapping(), Fetch = "fetch", Generic = true,
                 Index = new IndexMapping(), Inverse = true, Key = new KeyMapping(),
                 Mutable = true, OrderBy = "order-by",
-                OtherSide = new CollectionMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(null),
+                OtherSide = new CollectionMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(),
                 Schema = "schema", Subselect = "subselect", TableName = "table", Where = "where"
             };
 
@@ -848,7 +846,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
     {
         protected override ManyToManyMapping CreateMapping()
         {
-            var mapping = new ManyToManyMapping(typeof(Target))
+            var mapping = new ManyToManyMapping
             {
                 ContainingEntityType = typeof(Target),
                 Class = new TypeReference(typeof(Target)),
@@ -886,11 +884,11 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
                 BatchSize = 1, Cache = new CacheMapping(), Check = "check",
                 ChildType = typeof(Target),
                 CollectionType = new TypeReference(typeof(Target)),
-                CompositeElement = new CompositeElementMapping(typeof(ExampleClass)),
+                CompositeElement = new CompositeElementMapping(),
                 Element = new ElementMapping(), Fetch = "fetch", Generic = true,
                 Index = new IndexMapping(), Inverse = true, Key = new KeyMapping(),
                 Mutable = true, OrderBy = "order-by",
-                OtherSide = new CollectionMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(null),
+                OtherSide = new CollectionMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(),
                 Schema = "schema", Subselect = "subselect", TableName = "table", Where = "where",
                 Sort = "sort"
             };
@@ -912,7 +910,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
     {
         protected override MetaValueMapping CreateMapping()
         {
-            return new MetaValueMapping(typeof(Target))
+            return new MetaValueMapping
             {
                 ContainingEntityType = typeof(Target),
                 Value = "value"
@@ -931,7 +929,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
     {
         protected override OneToManyMapping CreateMapping()
         {
-            return new OneToManyMapping(typeof(Target))
+            return new OneToManyMapping
             {
                 ContainingEntityType = typeof(Target),
                 ChildType = typeof(Target),
@@ -951,7 +949,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
     {
         protected override OneToOneMapping CreateMapping()
         {
-            return new OneToOneMapping(null)
+            return new OneToOneMapping
             {
                 Access = "access",
                 Cascade = "cascade",
@@ -978,7 +976,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
     {
         protected override ParentMapping CreateMapping()
         {
-            return new ParentMapping(null)
+            return new ParentMapping
             {
                 ContainingEntityType = typeof(Target),
                 Name = "name"
@@ -1036,13 +1034,13 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
             mapping.Insert = true;
             mapping.Name = "name";
             mapping.OptimisticLock = true;
-            mapping.Parent = new ParentMapping(null);
+            mapping.Parent = new ParentMapping();
             mapping.Unique = true;
             mapping.Update = true;
             mapping.AddAny(new AnyMapping());
             mapping.AddCollection(new CollectionMapping());
             mapping.AddComponent(CreateComponent());
-            mapping.AddOneToOne(new OneToOneMapping(null));
+            mapping.AddOneToOne(new OneToOneMapping());
             mapping.AddProperty(CreateProperty());
             mapping.AddReference(new ManyToOneMapping());
 
@@ -1068,11 +1066,11 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
                 BatchSize = 1, Cache = new CacheMapping(), Check = "check",
                 ChildType = typeof(Target),
                 CollectionType = new TypeReference(typeof(Target)),
-                CompositeElement = new CompositeElementMapping(typeof(ExampleClass)),
+                CompositeElement = new CompositeElementMapping(),
                 Element = new ElementMapping(), Fetch = "fetch", Generic = true,
                 Inverse = true, Key = new KeyMapping(),
                 Mutable = true, OrderBy = "order-by",
-                OtherSide = new CollectionMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(null),
+                OtherSide = new CollectionMapping(), Persister = new TypeReference(typeof(Target)), Relationship = new ManyToManyMapping(),
                 Schema = "schema", Subselect = "subselect", TableName = "table", Where = "where",
                 Sort = "sort"
             };
@@ -1137,7 +1135,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
             mapping.AddComponent(CreateComponent());
             mapping.AddFilter(new FilterMapping());
             mapping.AddJoin(new JoinMapping());
-            mapping.AddOneToOne(new OneToOneMapping(null));
+            mapping.AddOneToOne(new OneToOneMapping());
             mapping.AddProperty(CreateProperty());
             mapping.AddReference(new ManyToOneMapping());
             mapping.AddStoredProcedure(new StoredProcedureMapping());
@@ -1177,7 +1175,7 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
     {
         protected override VersionMapping CreateMapping()
         {
-            var mapping = new VersionMapping(null)
+            var mapping = new VersionMapping
             {
                 Access = "access",
                 ContainingEntityType = typeof(Target),
@@ -1205,11 +1203,6 @@ namespace FluentNHibernate.Testing.MappingModel.Equality
         protected abstract T CreateMapping();
 
         protected ComponentMapping CreateComponent()
-        {
-            return new ComponentMapping(ComponentType.Component);
-        }
-
-        protected ComponentMapping CreateDynamicComponent()
         {
             return new ComponentMapping(ComponentType.Component);
         }

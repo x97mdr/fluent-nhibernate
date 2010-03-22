@@ -8,13 +8,11 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class AnyInspector : IAnyInspector
     {
-        private readonly InspectorModelMapper<IAnyInspector, AnyMapping> propertyMappings = new InspectorModelMapper<IAnyInspector, AnyMapping>();
         private readonly AnyMapping mapping;
 
         public AnyInspector(AnyMapping mapping)
         {
             this.mapping = mapping;
-            propertyMappings.Map(x => x.LazyLoad, x => x.Lazy);
         }
 
         public Type EntityType
@@ -27,9 +25,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.Name; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(propertyMappings.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
 
         public Access Access

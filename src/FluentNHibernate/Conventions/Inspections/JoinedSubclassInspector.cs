@@ -9,13 +9,11 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class JoinedSubclassInspector : IJoinedSubclassInspector
     {
-        private readonly InspectorModelMapper<IJoinedSubclassInspector, SubclassMapping> mappedProperties = new InspectorModelMapper<IJoinedSubclassInspector, SubclassMapping>();
         private readonly SubclassMapping mapping;
 
         public JoinedSubclassInspector(SubclassMapping mapping)
         {
             this.mapping = mapping;
-            mappedProperties.Map(x => x.LazyLoad, x => x.Lazy);
         }
 
         public Type EntityType
@@ -28,9 +26,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.Name; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(mappedProperties.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
 
         public bool Abstract

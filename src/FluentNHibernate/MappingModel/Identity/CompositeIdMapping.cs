@@ -14,14 +14,8 @@ namespace FluentNHibernate.MappingModel.Identity
 
         public CompositeIdMapping()
         {
-            Mapped = false;
-            UnsavedValue = "undefined";
-        }
-
-        public CompositeIdMapping(Member member)
-            : this()
-        {
-            Initialise(member);
+            values.SetDefault(Attr.Mapped, false);
+            values.SetDefault(Attr.UnsavedValue, "undefined");
         }
 
         public void Initialise(Member member)
@@ -92,9 +86,9 @@ namespace FluentNHibernate.MappingModel.Identity
             keyManyToOnes.Add(mapping);
         }
 
-        public override bool IsSpecified(string property)
+        public override bool HasUserDefinedValue(Attr property)
         {
-            return false;
+            return values.HasUserDefinedValue(property);
         }
 
         public bool HasValue(Attr attr)
@@ -140,7 +134,7 @@ namespace FluentNHibernate.MappingModel.Identity
                 AddKeyManyToOne((KeyManyToOneMapping)child);
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

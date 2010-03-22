@@ -65,7 +65,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteColumns()
         {
-            var mapping = new VersionMapping(null);
+            var mapping = new VersionMapping();
 
             mapping.AddColumn(new ColumnMapping() { Name = "Column1" });
 

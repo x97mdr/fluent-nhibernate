@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using FluentNHibernate.Conventions.Inspections;
+using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Collections;
 
 namespace FluentNHibernate.Conventions.Instances
@@ -53,7 +54,7 @@ namespace FluentNHibernate.Conventions.Instances
 
         public bool HasExplicitTable
         {
-            get { return mapping.IsSpecified("TableName"); }
+            get { return mapping.HasUserDefinedValue(Attr.Table); }
         }
 
         IManyToManyCollectionInspector IManyToManyCollectionInspector.OtherSide

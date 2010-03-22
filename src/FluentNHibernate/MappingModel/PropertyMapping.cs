@@ -13,16 +13,24 @@ namespace FluentNHibernate.MappingModel
         public void Initialise(Member member)
         {
             Name = member.Name;
-            Type = GetType(member);
+            values.SetDefault(Attr.Type, GetType(member));
 
             // TODO: need a more explicit way to show that we're setting
             // a property for the columns here
             if (member.PropertyType.Closes(typeof(Nullable<>)))
-                values.Set(Attr.NotNull, false);
+                values.SetDefault(Attr.NotNull, false);
 
             var column = new ColumnMapping { Name = member.Name };
             column.SpecifyParentValues(values);
             AddDefaultColumn(column);
+        }
+
+        public override bool HasUserDefinedValue(Attr property)
+        {
+            if (base.HasUserDefinedValue(property))
+                return true;
+
+            return values.HasUserDefinedValue(property);
         }
 
         static TypeReference GetType(Member member)
@@ -129,7 +137,7 @@ namespace FluentNHibernate.MappingModel
             }
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

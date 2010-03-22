@@ -22,7 +22,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new AccessInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Access"))
+                    if (!mapping.HasUserDefinedValue(Attr.Access))
                         mapping.Access = value;
                 });
             }
@@ -34,7 +34,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new CascadeInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Cascade"))
+                    if (!mapping.HasUserDefinedValue(Attr.Cascade))
                         mapping.Cascade = value;
                 });
             }
@@ -56,7 +56,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new FetchInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Fetch"))
+                    if (!mapping.HasUserDefinedValue(Attr.Fetch))
                         mapping.Fetch = value;
                 });
             }
@@ -64,39 +64,39 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void Class<T>()
         {
-            if (!mapping.IsSpecified("Class"))
+            if (!mapping.HasUserDefinedValue(Attr.Class))
                 mapping.Class = new TypeReference(typeof(T));
         }
 
         public new void Class(Type type)
         {
-            if (!mapping.IsSpecified("Class"))
+            if (!mapping.HasUserDefinedValue(Attr.Class))
                 mapping.Class = new TypeReference(type);
         }
 
         public new void Constrained()
         {
-            if (!mapping.IsSpecified("Constrained"))
+            if (!mapping.HasUserDefinedValue(Attr.Constrained))
                 mapping.Constrained = nextBool;
             nextBool = true;
         }
 
         public new void ForeignKey(string key)
         {
-            if (!mapping.IsSpecified("ForeignKey"))
+            if (!mapping.HasUserDefinedValue(Attr.ForeignKey))
                 mapping.ForeignKey = key;
         }
 
         public new void LazyLoad()
         {
-            if (!mapping.IsSpecified("Lazy"))
+            if (!mapping.HasUserDefinedValue(Attr.Lazy))
                 mapping.Lazy = nextBool;
             nextBool = true;
         }
 
         public new void PropertyRef(string propertyName)
         {
-            if (!mapping.IsSpecified("PropertyRef"))
+            if (!mapping.HasUserDefinedValue(Attr.PropertyRef))
                 mapping.PropertyRef = propertyName;
         }
 

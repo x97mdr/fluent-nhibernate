@@ -8,13 +8,11 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class ManyToOneInspector : IManyToOneInspector
     {
-        private readonly InspectorModelMapper<IManyToOneInspector, ManyToOneMapping> propertyMappings = new InspectorModelMapper<IManyToOneInspector, ManyToOneMapping>();
         private readonly ManyToOneMapping mapping;
 
         public ManyToOneInspector(ManyToOneMapping mapping)
         {
             this.mapping = mapping;
-            propertyMappings.Map(x => x.LazyLoad, x => x.Lazy);
         }
 
         public Access Access
@@ -47,9 +45,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.Name; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(propertyMappings.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
 
         public Member Property

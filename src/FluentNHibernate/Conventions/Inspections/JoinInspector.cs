@@ -8,7 +8,6 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class JoinInspector : IJoinInspector
     {
-        private readonly InspectorModelMapper<IJoinInspector, JoinMapping> propertyMappings = new InspectorModelMapper<IJoinInspector, JoinMapping>();
         private readonly JoinMapping mapping;
 
         public JoinInspector(JoinMapping mapping)
@@ -18,7 +17,7 @@ namespace FluentNHibernate.Conventions.Inspections
 
         public Type EntityType
         {
-            get { return mapping.ContainingEntityType; }
+            get { return mapping.Type; }
         }
 
         public string StringIdentifierForModel
@@ -26,9 +25,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.TableName; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(propertyMappings.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
 
         public IEnumerable<IAnyInspector> Anys

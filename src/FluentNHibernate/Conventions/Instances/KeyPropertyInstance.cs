@@ -1,4 +1,5 @@
 ﻿using FluentNHibernate.Conventions.Inspections;
+using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Identity;
 
 namespace FluentNHibernate.Conventions.Instances
@@ -19,7 +20,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new AccessInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Access"))
+                    if (!mapping.HasUserDefinedValue(Attr.Access))
                         mapping.Access = value;
                 });
             }

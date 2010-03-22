@@ -10,23 +10,25 @@ namespace FluentNHibernate.MappingModel.Identity
     {
         readonly ValueStore values = new ValueStore();
 
-        public IdMapping()
-        {}
-
-        public IdMapping(Member member)
-        {
-            Initialise(member);
-        }
-
         public void Initialise(Member member)
         {
             Name = member.Name;
-            Type = new TypeReference(member.PropertyType);
-            Generator = GetDefaultGenerator(member);
+            values.SetDefault(Attr.Type, new TypeReference(member.PropertyType));
+            values.SetDefault(Attr.Generator, GetDefaultGenerator(member));
 
             var column = new ColumnMapping { Name = member.Name };
             column.SpecifyParentValues(values);
             AddDefaultColumn(column);
+        }
+
+        public override bool HasUserDefinedValue(Attr property)
+        {
+            if (base.HasUserDefinedValue(property))
+                return true;
+            if (property == Attr.Generator)
+                return Generator != null;
+
+            return values.HasUserDefinedValue(property);
         }
 
         private static GeneratorMapping GetDefaultGenerator(Member property)
@@ -42,7 +44,6 @@ namespace FluentNHibernate.MappingModel.Identity
 
             return mapping;
         }
-
 
         public Member Member { get; set; }
         public GeneratorMapping Generator { get; set; }
@@ -117,7 +118,7 @@ namespace FluentNHibernate.MappingModel.Identity
                 AddColumn((ColumnMapping)child);
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

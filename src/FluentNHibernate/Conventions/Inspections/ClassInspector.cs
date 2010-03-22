@@ -10,15 +10,10 @@ namespace FluentNHibernate.Conventions.Inspections
     public class ClassInspector : IClassInspector
     {
         private readonly ClassMapping mapping;
-        private readonly InspectorModelMapper<IClassInspector, ClassMapping> propertyMappings = new InspectorModelMapper<IClassInspector, ClassMapping>();
 
         public ClassInspector(ClassMapping mapping)
         {
             this.mapping = mapping;
-
-            propertyMappings.Map(x => x.LazyLoad, x => x.Lazy);
-            propertyMappings.Map(x => x.ReadOnly, x => x.Mutable);
-            propertyMappings.Map(x => x.EntityType, x => x.Type);
         }
 
         public Type EntityType
@@ -103,7 +98,7 @@ namespace FluentNHibernate.Conventions.Inspections
             get
             {
                 if (mapping.Version == null)
-                    return new VersionInspector(new VersionMapping(null));
+                    return new VersionInspector(new VersionMapping());
 
                 return new VersionInspector(mapping.Version);
             }
@@ -200,9 +195,7 @@ namespace FluentNHibernate.Conventions.Inspections
             get
             {
                 return mapping.Subclasses
-                    .Where(x => x.SubclassType == SubclassType.Subclass)
                     .Select(x => (ISubclassInspectorBase)new SubclassInspector(x))
-                    .Cast<ISubclassInspectorBase>()
                     .ToDefaultableList();
             }
         }
@@ -264,7 +257,7 @@ namespace FluentNHibernate.Conventions.Inspections
             get
             {
                 if (mapping.Id == null)
-                    return new IdentityInspector(new IdMapping(null));
+                    return new IdentityInspector(new IdMapping());
                 if (mapping.Id is CompositeIdMapping)
                     return new CompositeIdentityInspector((CompositeIdMapping)mapping.Id);
 
@@ -272,9 +265,9 @@ namespace FluentNHibernate.Conventions.Inspections
             }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(propertyMappings.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
     }
 }

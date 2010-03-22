@@ -54,14 +54,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void ForeignKeyIsSet()
         {
             mapping.ForeignKey = "key";
-            inspector.IsSet(Prop(x => x.ForeignKey))
+            inspector.IsSet(Attr.ForeignKey)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void ForeignKeyIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.ForeignKey))
+            inspector.IsSet(Attr.ForeignKey)
                 .ShouldBeFalse();
         }
 
@@ -76,14 +76,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void OnDeleteIsSet()
         {
             mapping.OnDelete = "cascade";
-            inspector.IsSet(Prop(x => x.OnDelete))
+            inspector.IsSet(Attr.OnDelete)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void OnDeleteIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.OnDelete))
+            inspector.IsSet(Attr.OnDelete)
                 .ShouldBeFalse();
         }
 
@@ -98,14 +98,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void PropertyRefIsSet()
         {
             mapping.PropertyRef = "ref";
-            inspector.IsSet(Prop(x => x.PropertyRef))
+            inspector.IsSet(Attr.PropertyRef)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void PropertyRefIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.PropertyRef))
+            inspector.IsSet(Attr.PropertyRef)
                 .ShouldBeFalse();
         }
 

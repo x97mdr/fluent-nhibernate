@@ -1,13 +1,9 @@
-using System;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using FluentNHibernate.Automapping.TestFixtures;
 using FluentNHibernate.Conventions;
 using FluentNHibernate.Conventions.Inspections;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Collections;
-using FluentNHibernate.Utils.Reflection;
 using NUnit.Framework;
 
 namespace FluentNHibernate.Testing.ConventionsTests.Inspection
@@ -21,7 +17,8 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [SetUp]
         public void CreateDsl()
         {
-            mapping = new CompositeElementMapping(typeof(ExampleClass));
+            mapping = new CompositeElementMapping();
+            mapping.Initialise(typeof(ExampleClass));
             inspector = new CompositeElementInspector(mapping);
         }
 
@@ -34,21 +31,22 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void ClassIsSet()
         {
-            inspector.IsSet(Prop(x => x.Class))
+            mapping.Class = new TypeReference(typeof(ExampleInheritedClass));
+            inspector.IsSet(Attr.Class)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void ClassIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Class))
+            inspector.IsSet(Attr.Class)
                 .ShouldBeFalse();
         }
 
         [Test]
         public void ParentMapped()
         {
-            mapping.Parent = new ParentMapping(null);
+            mapping.Parent = new ParentMapping();
             mapping.Parent.Name = "test";
             inspector.Parent.Name.ShouldEqual("test");
         }
@@ -56,16 +54,16 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [Test]
         public void ParentIsSet()
         {
-            mapping.Parent = new ParentMapping(null);
+            mapping.Parent = new ParentMapping();
             mapping.Parent.Name = "test";
-            inspector.IsSet(Prop(x => x.Parent))
+            inspector.IsSet(Attr.Parent)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void ParentIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Parent))
+            inspector.IsSet(Attr.Parent)
                 .ShouldBeFalse();
         }
 
@@ -108,14 +106,5 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         {
             inspector.References.IsEmpty().ShouldBeTrue();
         }
-
-        #region Helpers
-
-        private Member Prop(Expression<Func<ICompositeElementInspector, object>> propertyExpression)
-        {
-            return ReflectionHelper.GetMember(propertyExpression);
-        }
-
-        #endregion
     }
 }

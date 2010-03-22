@@ -24,7 +24,7 @@ namespace FluentNHibernate.Testing.MappingModel
         [Test]
         public void CanSetIdToBeStandardIdMapping()
         {
-            var idMapping = new IdMapping(null);
+            var idMapping = new IdMapping();
             _classMapping.Id = idMapping;
 
             _classMapping.Id.ShouldEqual(idMapping);
@@ -33,7 +33,7 @@ namespace FluentNHibernate.Testing.MappingModel
         [Test]
         public void CanSetIdToBeCompositeIdMapping()
         {
-            var idMapping = new CompositeIdMapping(null);
+            var idMapping = new CompositeIdMapping();
             _classMapping.Id = idMapping;
 
             _classMapping.Id.ShouldEqual(idMapping);
@@ -55,7 +55,7 @@ namespace FluentNHibernate.Testing.MappingModel
                           {
                               Name = "bag1",
                               Key = new KeyMapping(),
-                              Relationship = new OneToManyMapping(null) { Class = new TypeReference("class1") }
+                              Relationship = new OneToManyMapping { Class = new TypeReference("class1") }
                           };
             _classMapping.AddCollection(bag);
 
@@ -75,7 +75,7 @@ namespace FluentNHibernate.Testing.MappingModel
         public void Should_pass_id_to_the_visitor()
         {
             var classMap = new ClassMapping(typeof(ExampleClass)) { Name = "class1" };
-            classMap.Id = new IdMapping(null);
+            classMap.Id = new IdMapping();
 
             var visitor = MockRepository.GenerateMock<IMappingModelVisitor>();
             visitor.Expect(x => x.Visit(classMap.Id));

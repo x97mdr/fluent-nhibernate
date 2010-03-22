@@ -9,7 +9,6 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class ElementInspector : IElementInspector
     {
-        private readonly InspectorModelMapper<IElementInspector, ElementMapping> mappedProperties = new InspectorModelMapper<IElementInspector, ElementMapping>();
         private readonly ElementMapping mapping;
 
         public ElementInspector(ElementMapping mapping)
@@ -27,9 +26,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.Type.Name; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(mappedProperties.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
 
         public TypeReference Type

@@ -10,42 +10,35 @@ namespace FluentNHibernate.Conventions.Instances
 {
     public class PropertyInstance : PropertyInspector, IPropertyInstance
     {
-        private readonly PropertyMapping mapping;
-        private bool nextBool = true;
+        readonly ColumnInstanceHelper c;
+        readonly PropertyMapping mapping;
+        bool nextBool = true;
 
         public PropertyInstance(PropertyMapping mapping)
             : base(mapping)
         {
             this.mapping = mapping;
+            c = new ColumnInstanceHelper(mapping);
         }
 
         public new void Insert()
         {
-            if (!mapping.IsSpecified("Insert"))
+            if (!mapping.HasUserDefinedValue(Attr.Insert))
                 mapping.Insert = nextBool;
             nextBool = true;
         }
 
         public new void Update()
         {
-            if (!mapping.IsSpecified("Update"))
+            if (!mapping.HasUserDefinedValue(Attr.Update))
                 mapping.Update = nextBool;
             nextBool = true;
         }
 
         public new void ReadOnly()
         {
-            if (!mapping.IsSpecified("Insert") && !mapping.IsSpecified("Update"))
+            if (!mapping.HasUserDefinedValue(Attr.Insert) && !mapping.HasUserDefinedValue(Attr.Update))
                 mapping.Insert = mapping.Update = !nextBool;
-            nextBool = true;
-        }
-
-        public new void Nullable()
-        {
-            if (!mapping.Columns.First().IsSpecified("NotNull"))
-                foreach (var column in mapping.Columns)
-                    column.NotNull = !nextBool;
-
             nextBool = true;
         }
 
@@ -55,7 +48,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new AccessInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Access"))
+                    if (!mapping.HasUserDefinedValue(Attr.Access))
                         mapping.Access = value;
                 });
             }
@@ -63,7 +56,7 @@ namespace FluentNHibernate.Conventions.Instances
 
         public void CustomType(TypeReference type)
         {
-            if (!mapping.IsSpecified("Type"))
+            if (!mapping.HasUserDefinedValue(Attr.Type))
             {
                 mapping.Type = type;
 
@@ -85,60 +78,6 @@ namespace FluentNHibernate.Conventions.Instances
         public void CustomType(string type)
         {
             CustomType(new TypeReference(type));
-        }
-
-        public void CustomSqlType(string sqlType)
-        {
-            if (mapping.Columns.First().IsSpecified("SqlType"))
-                return;
-         
-            foreach (var column in mapping.Columns)
-                column.SqlType = sqlType;
-        }
-
-        public new void Precision(int precision)
-        {
-            if (mapping.Columns.First().IsSpecified("Precision"))
-                return;
-
-            foreach (var column in mapping.Columns)
-                column.Precision = precision;
-        }
-
-        public new void Scale(int scale)
-        {
-            if (mapping.Columns.First().IsSpecified("Scale"))
-                return;
-
-            foreach (var column in mapping.Columns)
-                column.Scale = scale;
-        }
-
-        public new void Default(string value)
-        {
-            if (mapping.Columns.First().IsSpecified("Default"))
-                return;
-
-            foreach (var column in mapping.Columns)
-                column.Default = value;
-        }
-
-        public new void Unique()
-        {
-            if (!mapping.Columns.First().IsSpecified("Unique"))
-                foreach (var column in mapping.Columns)
-                    column.Unique = nextBool;
-
-            nextBool = true;
-        }
-
-        public new void UniqueKey(string keyName)
-        {
-            if (mapping.Columns.First().IsSpecified("UniqueKey"))
-                return;
-
-            foreach (var column in mapping.Columns)
-                column.UniqueKey = keyName;
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -167,7 +106,7 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void Formula(string formula)
         {
-            if (!mapping.IsSpecified("Formula"))
+            if (!mapping.HasUserDefinedValue(Attr.Formula))
                 mapping.Formula = formula;
         }
 
@@ -177,51 +116,104 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new GeneratedInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Generated"))
+                    if (!mapping.HasUserDefinedValue(Attr.Generated))
                         mapping.Generated = value;
                 });
             }
         }
 
-        public new void OptimisticLock()
-        {
-            if (!mapping.IsSpecified("OptimisticLock"))
-                mapping.OptimisticLock = nextBool;
-            nextBool = true;
-        }
-
-        public new void Length(int length)
-        {
-            if (mapping.Columns.First().IsSpecified("Length"))
-                return;
-
-            foreach (var column in mapping.Columns)
-                column.Length = length;
-        }
-
         public new void LazyLoad()
         {
-            if (!mapping.IsSpecified("Lazy"))
+            if (!mapping.HasUserDefinedValue(Attr.Lazy))
                 mapping.Lazy = nextBool;
             nextBool = true;
         }
 
-        public new void Index(string value)
+        public new void OptimisticLock()
         {
-            if (mapping.Columns.First().IsSpecified("Index"))
+            if (!mapping.HasUserDefinedValue(Attr.OptimisticLock))
+                mapping.OptimisticLock = nextBool;
+            nextBool = true;
+        }
+
+        public new void Nullable()
+        {
+            if (!c.ThisOrColumnHasUserDefinedValue(Attr.NotNull))
+                c.SetOnEachColumn(x => x.NotNull = !nextBool);
+
+            nextBool = true;
+        }
+
+        public void CustomSqlType(string sqlType)
+        {
+            if (c.ThisOrColumnHasUserDefinedValue(Attr.SqlType))
+                return;
+         
+            c.SetOnEachColumn(x => x.SqlType = sqlType);
+        }
+
+        public new void Precision(int precision)
+        {
+            if (c.ThisOrColumnHasUserDefinedValue(Attr.Precision))
                 return;
 
-            foreach (var column in mapping.Columns)
-                column.Index = value;
+            c.SetOnEachColumn(x => x.Precision = precision);
+        }
+
+        public new void Scale(int scale)
+        {
+            if (c.ThisOrColumnHasUserDefinedValue(Attr.Scale))
+                return;
+
+            c.SetOnEachColumn(x => x.Scale = scale);
+        }
+
+        public new void Default(string value)
+        {
+            if (c.ThisOrColumnHasUserDefinedValue(Attr.Default))
+                return;
+
+            c.SetOnEachColumn(x => x.Default = value);
+        }
+
+        public new void Unique()
+        {
+            if (!c.ThisOrColumnHasUserDefinedValue(Attr.Unique))
+                c.SetOnEachColumn(x => x.Unique = nextBool);
+
+            nextBool = true;
+        }
+
+        public new void UniqueKey(string keyName)
+        {
+            if (c.ThisOrColumnHasUserDefinedValue(Attr.UniqueKey))
+                return;
+
+            c.SetOnEachColumn(x => x.UniqueKey = keyName);
+        }
+
+        public new void Length(int length)
+        {
+            if (c.ThisOrColumnHasUserDefinedValue(Attr.Length))
+                return;
+
+            c.SetOnEachColumn(x => x.Length = length);
+        }
+
+        public new void Index(string value)
+        {
+            if (c.ThisOrColumnHasUserDefinedValue(Attr.Index))
+                return;
+
+            c.SetOnEachColumn(x => x.Index = value);
         }
 
         public new void Check(string constraint)
         {
-            if (mapping.Columns.First().IsSpecified("Check"))
+            if (c.ThisOrColumnHasUserDefinedValue(Attr.Check))
                 return;
 
-            foreach (var column in mapping.Columns)
-                column.Check = constraint;
+            c.SetOnEachColumn(x => x.Check = constraint);
         }
 
         private void AddColumnsForCompositeUserType()

@@ -35,9 +35,9 @@ namespace FluentNHibernate.MappingModel
 
         public Type ContainedEntityType { get; set; }
 
-        public override bool IsSpecified(string property)
+        public override bool HasUserDefinedValue(Attr property)
         {
-            return false;
+            return values.HasValue(property);
         }
 
         public bool Equals(CacheMapping other)
@@ -68,7 +68,7 @@ namespace FluentNHibernate.MappingModel
             throw new NotImplementedException();
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

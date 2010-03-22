@@ -37,7 +37,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new CollectionCascadeInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Cascade"))
+                    if (!mapping.HasUserDefinedValue(Attr.Cascade))
                         mapping.Cascade = value;
                 });
             }
@@ -49,7 +49,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new FetchInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Fetch"))
+                    if (!mapping.HasUserDefinedValue(Attr.Fetch))
                         mapping.Fetch = value;
                 });
             }
@@ -61,7 +61,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new OptimisticLockInstance(value =>
                 {
-                    if (!mapping.IsSpecified("OptimisticLock"))
+                    if (!mapping.HasUserDefinedValue(Attr.OptimisticLock))
                         mapping.OptimisticLock = value;
                 });
             }
@@ -69,100 +69,100 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void Check(string constraint)
         {
-            if (!mapping.IsSpecified("Check"))
+            if (!mapping.HasUserDefinedValue(Attr.Check))
                 mapping.Check = constraint;
         }
 
         public new void CollectionType<T>()
         {
-            if (!mapping.IsSpecified("CollectionType"))
+            if (!mapping.HasUserDefinedValue(Attr.CollectionType))
                 mapping.CollectionType = new TypeReference(typeof(T));
         }
 
         public new void CollectionType(string type)
         {
-            if (!mapping.IsSpecified("CollectionType"))
+            if (!mapping.HasUserDefinedValue(Attr.CollectionType))
                 mapping.CollectionType = new TypeReference(type);
         }
 
         public new void CollectionType(Type type)
         {
-            if (!mapping.IsSpecified("CollectionType"))
+            if (!mapping.HasUserDefinedValue(Attr.CollectionType))
                 mapping.CollectionType = new TypeReference(type);
         }
 
         public new void Generic()
         {
-            if (!mapping.IsSpecified("Generic"))
+            if (!mapping.HasUserDefinedValue(Attr.Generic))
                 mapping.Generic = nextBool;
             nextBool = true;
         }
 
         public new void Inverse()
         {
-            if (!mapping.IsSpecified("Inverse"))
+            if (!mapping.HasUserDefinedValue(Attr.Inverse))
                 mapping.Inverse = nextBool;
             nextBool = true;
         }
 
         public new void Persister<T>() where T : IEntityPersister
         {
-            if (!mapping.IsSpecified("Persister"))
+            if (!mapping.HasUserDefinedValue(Attr.Persister))
                 mapping.Persister = new TypeReference(typeof(T));
         }
 
         public new void Where(string whereClause)
         {
-            if (!mapping.IsSpecified("Where"))
+            if (!mapping.HasUserDefinedValue(Attr.Where))
                 mapping.Where = whereClause;
         }
 
         public new void OrderBy(string orderBy)
         {
-            if (!mapping.IsSpecified("OrderBy"))
+            if (!mapping.HasUserDefinedValue(Attr.OrderBy))
                 mapping.OrderBy = orderBy;
         }
 
         public void Subselect(string subselect)
         {
-            if (!mapping.IsSpecified("Subselect"))
+            if (!mapping.HasUserDefinedValue(Attr.Subselect))
                 mapping.Subselect = subselect;
         }
 
         public void Table(string tableName)
         {
-            if (!mapping.IsSpecified("TableName"))
+            if (!mapping.HasUserDefinedValue(Attr.Table))
                 mapping.TableName = tableName;
         }
 
         public new void Name(string name)
         {
-            if (!mapping.IsSpecified("Name"))
+            if (!mapping.HasUserDefinedValue(Attr.Name))
                 mapping.Name = name;
         }
 
         public new void Schema(string schema)
         {
-            if (!mapping.IsSpecified("Schema"))
+            if (!mapping.HasUserDefinedValue(Attr.Schema))
                 mapping.Schema = schema;
         }
 
         public new void LazyLoad()
         {
-            if (!mapping.IsSpecified("Lazy"))
+            if (!mapping.HasUserDefinedValue(Attr.Lazy))
                 mapping.Lazy = nextBool;
             nextBool = true;
         }
 
         public new void BatchSize(int batchSize)
         {
-            if (!mapping.IsSpecified("BatchSize"))
+            if (!mapping.HasUserDefinedValue(Attr.BatchSize))
                 mapping.BatchSize = batchSize;
         }
 
         public void ReadOnly()
         {
-            if (!mapping.IsSpecified("Mutable"))
+            if (!mapping.HasUserDefinedValue(Attr.Mutable))
                 mapping.Mutable = !nextBool;
             nextBool = true;
         }
@@ -195,7 +195,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new AccessInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Access"))
+                    if (!mapping.HasUserDefinedValue(Attr.Access))
                         mapping.Access = value;
                 });
             }

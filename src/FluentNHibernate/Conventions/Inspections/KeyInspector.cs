@@ -8,7 +8,6 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class KeyInspector : IKeyInspector
     {
-        private readonly InspectorModelMapper<IKeyInspector, KeyMapping> propertyMappings = new InspectorModelMapper<IKeyInspector, KeyMapping>();
         private readonly KeyMapping mapping;
 
         public KeyInspector(KeyMapping mapping)
@@ -26,9 +25,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return ""; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(propertyMappings.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
 
         public IEnumerable<IColumnInspector> Columns

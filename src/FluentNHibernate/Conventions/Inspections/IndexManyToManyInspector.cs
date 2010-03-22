@@ -9,7 +9,6 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class IndexManyToManyInspector : IIndexManyToManyInspector
     {
-        private readonly InspectorModelMapper<IIndexManyToManyInspector, IndexManyToManyMapping> mappedProperties = new InspectorModelMapper<IIndexManyToManyInspector, IndexManyToManyMapping>();
         private readonly IndexManyToManyMapping mapping;
 
         public IndexManyToManyInspector(IndexManyToManyMapping mapping)
@@ -27,9 +26,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.Class.Name; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(mappedProperties.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
         
         public TypeReference Class

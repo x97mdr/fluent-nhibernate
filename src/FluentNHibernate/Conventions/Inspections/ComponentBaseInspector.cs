@@ -31,7 +31,7 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.Name; }
         }
 
-        public abstract bool IsSet(Member property);
+        public abstract bool IsSet(Attr property);
 
         public Member Property
         {
@@ -43,7 +43,7 @@ namespace FluentNHibernate.Conventions.Inspections
             get
             {
                 if (mapping.Parent == null)
-                    return new ParentInspector(new ParentMapping(null));
+                    return new ParentInspector(new ParentMapping());
 
                 return new ParentInspector(mapping.Parent);
             }

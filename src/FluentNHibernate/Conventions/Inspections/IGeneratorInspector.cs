@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Identity;
 using FluentNHibernate.Utils;
 
@@ -15,7 +16,6 @@ namespace FluentNHibernate.Conventions.Inspections
 
     public class GeneratorInspector : IGeneratorInspector
     {
-        private readonly InspectorModelMapper<IGeneratorInspector, GeneratorMapping> propertyMappings = new InspectorModelMapper<IGeneratorInspector, GeneratorMapping>();
         private readonly GeneratorMapping mapping;
 
         public GeneratorInspector(GeneratorMapping mapping)
@@ -33,9 +33,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.Class; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(propertyMappings.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
 
         public string Class

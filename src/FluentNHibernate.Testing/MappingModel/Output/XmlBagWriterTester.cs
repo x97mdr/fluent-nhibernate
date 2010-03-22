@@ -188,7 +188,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new CollectionMapping
             {
-                Relationship = new OneToManyMapping(null)
+                Relationship = new OneToManyMapping()
             };
 
             writer.VerifyXml(mapping)
@@ -211,7 +211,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new CollectionMapping();
 
-            mapping.CompositeElement = new CompositeElementMapping(typeof(ExampleClass));
+            mapping.CompositeElement = new CompositeElementMapping();
 
             writer.VerifyXml(mapping)
                 .Element("composite-element").Exists();

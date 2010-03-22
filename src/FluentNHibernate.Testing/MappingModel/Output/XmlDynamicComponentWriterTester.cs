@@ -113,7 +113,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new ComponentMapping(ComponentType.DynamicComponent);
 
-            mapping.AddOneToOne(new OneToOneMapping(null));
+            mapping.AddOneToOne(new OneToOneMapping());
 
             writer.VerifyXml(mapping)
                 .Element("one-to-one").Exists();

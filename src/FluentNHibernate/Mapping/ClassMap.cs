@@ -232,7 +232,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="action">Joined table mapping</param>
         public void Join(string tableName, Action<JoinPart<T>> action)
         {
-            var joinStructure = new FreeStructure<JoinMapping>();
+            var joinStructure = new TypeStructure<JoinMapping>(typeof(T));
             var join = new JoinPart<T>(joinStructure);
 
             join.Table(tableName);

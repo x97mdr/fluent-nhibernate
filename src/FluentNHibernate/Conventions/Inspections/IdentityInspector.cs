@@ -9,14 +9,12 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class IdentityInspector : ColumnBasedInspector, IIdentityInspector
     {
-        private readonly InspectorModelMapper<IIdentityInspector, IdMapping> propertyMappings = new InspectorModelMapper<IIdentityInspector, IdMapping>();
         private readonly IdMapping mapping;
 
         public IdentityInspector(IdMapping mapping)
             : base(mapping.Columns)
         {
             this.mapping = mapping;
-            propertyMappings.Map(x => x.Nullable, "NotNull");
         }
 
         public Type EntityType
@@ -29,9 +27,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.Name; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(propertyMappings.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
 
         public Member Property

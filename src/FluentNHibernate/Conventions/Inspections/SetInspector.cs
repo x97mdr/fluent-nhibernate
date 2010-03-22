@@ -6,19 +6,12 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class SetInspector : CollectionInspector, ISetInspector
     {
-        private readonly InspectorModelMapper<ISetInspector, CollectionMapping> mappedProperties = new InspectorModelMapper<ISetInspector, CollectionMapping>();
         private readonly CollectionMapping mapping;
 
         public SetInspector(CollectionMapping mapping)
             : base(mapping)
         {
             this.mapping = mapping;
-            mappedProperties.Map(x => x.LazyLoad, x => x.Lazy);
-        }
-
-        public new bool IsSet(Member property)
-        {
-            return mapping.IsSpecified(mappedProperties.Get(property));
         }
 
         public new string OrderBy

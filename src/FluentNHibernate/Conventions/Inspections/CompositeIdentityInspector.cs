@@ -9,7 +9,6 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class CompositeIdentityInspector : ICompositeIdentityInspector
     {
-        private readonly InspectorModelMapper<ICompositeIdentityInspector, CompositeIdMapping> mappedProperties = new InspectorModelMapper<ICompositeIdentityInspector, CompositeIdMapping>();
         private readonly CompositeIdMapping mapping;
 
         public CompositeIdentityInspector(CompositeIdMapping mapping)
@@ -27,9 +26,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.Name; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(mappedProperties.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
 
         public Access Access

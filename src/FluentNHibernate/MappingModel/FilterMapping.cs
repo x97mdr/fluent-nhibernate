@@ -24,9 +24,9 @@ namespace FluentNHibernate.MappingModel
             visitor.ProcessFilter(this);
         }
 
-        public bool IsSpecified(string property)
+        public bool HasUserDefinedValue(Attr property)
         {
-            return false;
+            return values.HasValue(property);
         }
 
         public bool Equals(FilterMapping other)
@@ -54,7 +54,7 @@ namespace FluentNHibernate.MappingModel
             
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

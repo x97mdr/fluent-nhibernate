@@ -32,14 +32,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void IncludeIsSet()
         {
             mapping.Include = "all";
-            inspector.IsSet(Prop(x => x.Include))
+            inspector.IsSet(Attr.Include)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void IncludeIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Include))
+            inspector.IsSet(Attr.Include)
                 .ShouldBeFalse();
         }
 
@@ -54,14 +54,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void RegionIsSet()
         {
             mapping.Region = "region";
-            inspector.IsSet(Prop(x => x.Region))
+            inspector.IsSet(Attr.Region)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void RegionIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Region))
+            inspector.IsSet(Attr.Region)
                 .ShouldBeFalse();
         }
 
@@ -76,14 +76,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void UsageIsSet()
         {
             mapping.Usage = "usage";
-            inspector.IsSet(Prop(x => x.Usage))
+            inspector.IsSet(Attr.Usage)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void UsageIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Usage))
+            inspector.IsSet(Attr.Usage)
                 .ShouldBeFalse();
         }
 

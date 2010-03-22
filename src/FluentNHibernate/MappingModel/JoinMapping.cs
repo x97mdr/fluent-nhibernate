@@ -7,7 +7,7 @@ using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
-    public class JoinMapping : IMappingBase, IMapping
+    public class JoinMapping : IMappingBase, ITypeMapping
     {
         readonly ValueStore values = new ValueStore();
         readonly MappedMembers mappedMembers = new MappedMembers();
@@ -96,7 +96,7 @@ namespace FluentNHibernate.MappingModel
             set { values.Set(Attr.Optional, value); }
         }
 
-        public Type ContainingEntityType { get; set; }
+        public Type Type { get; set; }
 
         public void AcceptVisitor(IMappingModelVisitor visitor)
         {
@@ -108,9 +108,12 @@ namespace FluentNHibernate.MappingModel
             mappedMembers.AcceptVisitor(visitor);
         }
 
-        public bool IsSpecified(string property)
+        public bool HasUserDefinedValue(Attr property)
         {
-            return false;
+            if (property == Attr.Key)
+                return Key != null;
+
+            return values.HasValue(property);
         }
 
         public bool HasValue(Attr attr)
@@ -123,8 +126,7 @@ namespace FluentNHibernate.MappingModel
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return Equals(other.values, values) &&
-                Equals(other.mappedMembers, mappedMembers) &&
-                Equals(other.ContainingEntityType, ContainingEntityType);
+                Equals(other.mappedMembers, mappedMembers);
         }
 
         public override bool Equals(object obj)
@@ -141,7 +143,6 @@ namespace FluentNHibernate.MappingModel
             {
                 int result = (values != null ? values.GetHashCode() : 0);
                 result = (result * 397) ^ (mappedMembers != null ? mappedMembers.GetHashCode() : 0);
-                result = (result * 397) ^ (ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0);
                 return result;
             }
         }
@@ -154,9 +155,14 @@ namespace FluentNHibernate.MappingModel
                 Key = (KeyMapping)child;
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
+        }
+
+        public void Initialise(Type type)
+        {
+            Type = type;
         }
     }
 }

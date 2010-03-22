@@ -13,16 +13,16 @@ namespace FluentNHibernate.MappingModel
             visitor.Visit(this);
         }
 
-        public override bool IsSpecified(string property)
+        public override bool HasUserDefinedValue(Attr property)
         {
-            throw new NotImplementedException();
+            return values.HasValue(property);
         }
 
         public void AddChild(IMapping child)
         {
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

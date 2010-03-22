@@ -14,7 +14,7 @@ namespace FluentNHibernate.Mapping
         {
             this.parent = parent;
 
-            builder = new GeneratorBuilder(structure, identityType);
+            builder = new GeneratorStructureBuilder(structure, identityType);
         }
 
         internal bool IsDirty { get; private set; }

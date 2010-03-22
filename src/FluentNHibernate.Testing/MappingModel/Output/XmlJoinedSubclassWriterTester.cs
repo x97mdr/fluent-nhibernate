@@ -199,7 +199,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new SubclassMapping(SubclassType.JoinedSubclass);
 
-            mapping.AddOneToOne(new OneToOneMapping(null));
+            mapping.AddOneToOne(new OneToOneMapping());
 
             writer.VerifyXml(mapping)
                 .Element("one-to-one").Exists();

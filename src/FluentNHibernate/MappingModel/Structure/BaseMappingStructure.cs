@@ -19,7 +19,7 @@ namespace FluentNHibernate.MappingModel.Structure
 
         public void ApplyCustomisations()
         {
-            node.UpdateValues(Values);
+            node.UpdateValues(new ValueStore(Values));
             alterations.Each(x => x(node));
 
             Children.Each(x => x.ApplyCustomisations());

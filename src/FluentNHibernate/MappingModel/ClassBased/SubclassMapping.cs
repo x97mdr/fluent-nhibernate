@@ -18,6 +18,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
         public void Initialise(Type type)
         {
             Name = type.AssemblyQualifiedName;
+            Type = type;
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
@@ -135,9 +136,12 @@ namespace FluentNHibernate.MappingModel.ClassBased
             set { values.Set(Attr.BatchSize, value); }
         }
 
-        public override bool IsSpecified(string property)
+        public override bool HasUserDefinedValue(Attr property)
         {
-            return false;
+            if (property == Attr.Key)
+                return Key != null;
+
+            return HasValue(property);
         }
 
         public bool HasValue(Attr attr)
@@ -177,7 +181,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
                 Key = (KeyMapping)child;
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

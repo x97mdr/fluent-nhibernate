@@ -9,7 +9,6 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class CompositeElementInspector : ICompositeElementInspector
     {
-        private readonly InspectorModelMapper<ICompositeElementInspector, CompositeElementMapping> mappedProperties = new InspectorModelMapper<ICompositeElementInspector, CompositeElementMapping>();
         private readonly CompositeElementMapping mapping;
 
         public CompositeElementInspector(CompositeElementMapping mapping)
@@ -27,9 +26,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.Class.Name; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(mappedProperties.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
 
         public TypeReference Class
@@ -42,7 +41,7 @@ namespace FluentNHibernate.Conventions.Inspections
             get
             {
                 if (mapping.Parent == null)
-                    return new ParentInspector(new ParentMapping(null));
+                    return new ParentInspector(new ParentMapping());
 
                 return new ParentInspector(mapping.Parent);
             }

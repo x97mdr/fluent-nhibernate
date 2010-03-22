@@ -48,6 +48,7 @@ namespace FluentNHibernate.MappingModel.Collections
             Type = GetCollectionType(member.PropertyType);
             ChildType = GetChildType(member.PropertyType);
             Member = member;
+            ContainingEntityType = type;
 
             if (IsCustomCollection(member.PropertyType))
                 CollectionType = new TypeReference(member.PropertyType);
@@ -120,9 +121,22 @@ namespace FluentNHibernate.MappingModel.Collections
                 visitor.Visit(Index);
         }
 
-        public override bool IsSpecified(string property)
+        public override bool HasUserDefinedValue(Attr property)
         {
-            return false;
+            if (property == Attr.Index)
+                return Index != null;
+            if (property == Attr.Cache)
+                return Cache != null;
+            if (property == Attr.CompositeElement)
+                return CompositeElement != null;
+            if (property == Attr.Element)
+                return Element != null;
+            if (property == Attr.Key)
+                return Key != null;
+            if (property == Attr.Relationship)
+                return Relationship != null;
+
+            return HasValue(property);
         }
 
         public Type ChildType
@@ -269,7 +283,7 @@ namespace FluentNHibernate.MappingModel.Collections
                 filters.Add((FilterMapping)child);
         }
         
-        public virtual void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public virtual void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

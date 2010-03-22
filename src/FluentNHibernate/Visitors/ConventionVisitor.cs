@@ -150,36 +150,44 @@ namespace FluentNHibernate.Visitors
 
         public override void ProcessCollection(CollectionMapping mapping)
         {
-            var generalConventions = finder.Find<ICollectionConvention>();
-
-            Apply<ICollectionInspector, ICollectionInstance>(generalConventions,
-                new CollectionInstance(mapping));
-
-            if (mapping.Relationship is ManyToManyMapping)
+            if (mapping.Type == Collection.Array)
             {
-                var conventions = finder.Find<IHasManyToManyConvention>();
+                var conventions = finder.Find<IArrayConvention>();
 
-                Apply<IManyToManyCollectionInspector, IManyToManyCollectionInstance>(conventions,
-                    new ManyToManyCollectionInstance(mapping));
+                Apply<IArrayInspector, IArrayInstance>(conventions,
+                    new ArrayInstance(mapping));
             }
-            else
+            else if (mapping.Type == Collection.Bag)
             {
-                var conventions = finder.Find<IHasManyConvention>();
+                var conventions = finder.Find<IBagConvention>();
 
-                Apply<IOneToManyCollectionInspector, IOneToManyCollectionInstance>(conventions,
-                    new OneToManyCollectionInstance(mapping));
+                Apply<IBagInspector, IBagInstance>(conventions,
+                    new BagInstance(mapping));
             }
+            else if (mapping.Type == Collection.Set)
+            {
+                var conventions = finder.Find<ISetConvention>();
+
+                Apply<ISetInspector, ISetInstance>(conventions,
+                    new SetInstance(mapping));
+            }
+            else if (mapping.Type == Collection.Map)
+            {
+                var conventions = finder.Find<IMapConvention>();
+
+                Apply<IMapInspector, IMapInstance>(conventions,
+                    new MapInstance(mapping));
+            }
+            else if (mapping.Type == Collection.List)
+            {
+                var conventions = finder.Find<IListConvention>();
+
+                Apply<IListInspector, IListInstance>(conventions,
+                    new ListInstance(mapping));
+            }
+
+            ApplyCollectionConventions(mapping);
         }
-
-        //public override void ProcessArray(CollectionMapping mapping)
-        //{
-        //    var conventions = finder.Find<IArrayConvention>();
-
-        //    Apply<IArrayInspector, IArrayInstance>(conventions,
-        //        new ArrayInstance(mapping));
-
-        //    ApplyCollectionConventions(mapping);
-        //}
 
         //public override void ProcessBag(CollectionMapping collectionMapping)
         //{

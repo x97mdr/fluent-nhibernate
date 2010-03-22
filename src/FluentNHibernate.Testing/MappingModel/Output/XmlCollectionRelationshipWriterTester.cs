@@ -19,7 +19,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteManyToManyForManyToManyMapping()
         {
-            var mapping = new ManyToManyMapping(null);
+            var mapping = new ManyToManyMapping();
 
             writer.VerifyXml(mapping)
                 .RootElement.HasName("many-to-many");
@@ -28,7 +28,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteOneToManyForOneToManyMapping()
         {
-            var mapping = new OneToManyMapping(null);
+            var mapping = new OneToManyMapping();
 
             writer.VerifyXml(mapping)
                 .RootElement.HasName("one-to-many");

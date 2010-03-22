@@ -1,3 +1,4 @@
+using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Collections;
 
 namespace FluentNHibernate.Visitors
@@ -17,15 +18,15 @@ namespace FluentNHibernate.Visitors
             else
             {
                 // bi-directional
-                if (mapping.IsSpecified("TableName") && mapping.OtherSide.IsSpecified("TableName"))
+                if (mapping.HasUserDefinedValue(Attr.Table) && mapping.OtherSide.HasUserDefinedValue(Attr.Table))
                 {
                     // TODO: We could check if they're the same here and warn the user if they're not
                     return;
                 }
 
-                if (mapping.IsSpecified("TableName") && !mapping.OtherSide.IsSpecified("TableName"))
+                if (mapping.HasUserDefinedValue(Attr.Table) && !mapping.OtherSide.HasUserDefinedValue(Attr.Table))
                     mapping.OtherSide.TableName = mapping.TableName;
-                else if (!mapping.IsSpecified("TableName") && mapping.OtherSide.IsSpecified("TableName"))
+                else if (!mapping.HasUserDefinedValue(Attr.Table) && mapping.OtherSide.HasUserDefinedValue(Attr.Table))
                     mapping.TableName = mapping.OtherSide.TableName;
                 else
                 {

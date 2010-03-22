@@ -25,7 +25,7 @@ namespace FluentNHibernate.Automapping
         {
             if (!(classMap is ClassMapping)) return;
 
-            var idMapping = new IdMapping(property) { ContainingEntityType = classMap.Type };
+            var idMapping = new IdMapping { ContainingEntityType = classMap.Type };
             ((ClassMapping)classMap).Id = idMapping;        
         }
     }

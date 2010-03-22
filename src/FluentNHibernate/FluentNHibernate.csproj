@@ -100,6 +100,7 @@
     <Compile Include="Automapping\InlineOverride.cs" />
     <Compile Include="Automapping\IPropertyIgnorer.cs" />
     <Compile Include="CombinedAssemblyTypeSource.cs" />
+    <Compile Include="Conventions\Instances\ColumnInstanceHelper.cs" />
     <Compile Include="IMappingProvider.cs" />
     <Compile Include="ITypeSource.cs" />
     <Compile Include="Automapping\PrivateAutoMapper.cs" />

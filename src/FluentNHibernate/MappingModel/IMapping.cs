@@ -6,7 +6,7 @@ namespace FluentNHibernate.MappingModel
     public interface IMapping
     {
         void AddChild(IMapping child);
-        void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues);
+        void UpdateValues(ValueStore otherValues);
     }
 
     /// <summary>

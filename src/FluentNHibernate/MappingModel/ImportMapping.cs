@@ -26,9 +26,9 @@ namespace FluentNHibernate.MappingModel
             set { values.Set(Attr.Class, value); }
         }
 
-        public override bool IsSpecified(string property)
+        public override bool HasUserDefinedValue(Attr property)
         {
-            return false;
+            return HasValue(property);
         }
 
         public bool HasValue(Attr attr)
@@ -61,7 +61,7 @@ namespace FluentNHibernate.MappingModel
             
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

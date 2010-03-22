@@ -1,25 +1,19 @@
 ﻿using System;
 using System.Reflection;
 using FluentNHibernate.Mapping;
+using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Collections;
 
 namespace FluentNHibernate.Conventions.Inspections
 {
     public class ListInspector : CollectionInspector, IListInspector
     {
-        private readonly InspectorModelMapper<IListInspector, CollectionMapping> mappedProperties = new InspectorModelMapper<IListInspector, CollectionMapping>();
         private readonly CollectionMapping mapping;
 
         public ListInspector(CollectionMapping mapping)
             : base(mapping)
         {
             this.mapping = mapping;
-            mappedProperties.Map(x => x.LazyLoad, x => x.Lazy);
-        }
-
-        public new bool IsSet(Member property)
-        {
-            return mapping.IsSpecified(mappedProperties.Get(property));
         }
 
         public IIndexInspectorBase Index

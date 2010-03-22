@@ -30,9 +30,9 @@ namespace FluentNHibernate.MappingModel
             visitor.ProcessStoredProcedure(this);
         }
 
-        public override bool IsSpecified(string property)
+        public override bool HasUserDefinedValue(Attr property)
         {
-            return false;
+            return values.HasValue(property);
         }
 
         public string Check
@@ -82,7 +82,7 @@ namespace FluentNHibernate.MappingModel
             
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

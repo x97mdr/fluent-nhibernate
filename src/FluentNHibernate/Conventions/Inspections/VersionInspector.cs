@@ -6,14 +6,12 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class VersionInspector : ColumnBasedInspector, IVersionInspector
     {
-        private readonly InspectorModelMapper<IVersionInspector, VersionMapping> propertyMappings = new InspectorModelMapper<IVersionInspector, VersionMapping>();
         private readonly VersionMapping mapping;
 
         public VersionInspector(VersionMapping mapping)
             : base(mapping.Columns)
         {
             this.mapping = mapping;
-            propertyMappings.Map(x => x.Nullable, "NotNull");
         }
 
         public Type EntityType
@@ -26,9 +24,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.Name; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(propertyMappings.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
 
         public string Name

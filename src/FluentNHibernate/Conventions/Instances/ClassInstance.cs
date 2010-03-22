@@ -33,7 +33,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new SchemaActionInstance(value =>
                 {
-                    if (!mapping.IsSpecified("SchemaAction"))
+                    if (!mapping.HasUserDefinedValue(Attr.SchemaAction))
                         mapping.SchemaAction = value;
                 });
             }
@@ -41,20 +41,20 @@ namespace FluentNHibernate.Conventions.Instances
 
         public void Table(string tableName)
         {
-            if (!mapping.IsSpecified("TableName"))
+            if (!mapping.HasUserDefinedValue(Attr.Table))
                 mapping.TableName = tableName;
         }
 
         public new void DynamicInsert()
         {
-            if (!mapping.IsSpecified("DynamicInsert"))
+            if (!mapping.HasUserDefinedValue(Attr.DynamicInsert))
                 mapping.DynamicInsert = nextBool;
             nextBool = true;
         }
 
         public new void DynamicUpdate()
         {
-            if (!mapping.IsSpecified("DynamicUpdate"))
+            if (!mapping.HasUserDefinedValue(Attr.DynamicUpdate))
                 mapping.DynamicUpdate = nextBool;
             nextBool = true;
         }
@@ -65,7 +65,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new OptimisticLockInstance(value =>
                 {
-                    if (!mapping.IsSpecified("OptimisticLock"))
+                    if (!mapping.HasUserDefinedValue(Attr.OptimisticLock))
                         mapping.OptimisticLock = value;
                 });
             }
@@ -73,13 +73,13 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void BatchSize(int size)
         {
-            if (!mapping.IsSpecified("BatchSize"))
+            if (!mapping.HasUserDefinedValue(Attr.BatchSize))
                 mapping.BatchSize = size;
         }
 
         public new void LazyLoad()
         {
-            if (!mapping.IsSpecified("Lazy"))
+            if (!mapping.HasUserDefinedValue(Attr.Lazy))
                 mapping.Lazy = nextBool;
             nextBool = true;
         }
@@ -87,26 +87,26 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void ReadOnly()
         {
-            if (!mapping.IsSpecified("Mutable"))
+            if (!mapping.HasUserDefinedValue(Attr.Mutable))
                 mapping.Mutable = !nextBool;
             nextBool = true;
         }
 
         public new void Schema(string schema)
         {
-            if (!mapping.IsSpecified("Schema"))
+            if (!mapping.HasUserDefinedValue(Attr.Schema))
                 mapping.Schema = schema;
         }
 
         public new void Where(string where)
         {
-            if (!mapping.IsSpecified("Where"))
+            if (!mapping.HasUserDefinedValue(Attr.Where))
                 mapping.Where = where;
         }
 
         public new void Subselect(string subselectSql)
         {
-            if (!mapping.IsSpecified("Subselect"))
+            if (!mapping.HasUserDefinedValue(Attr.Subselect))
                 mapping.Subselect = subselectSql;
         }
 
@@ -117,13 +117,13 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void Proxy(Type type)
         {
-            if (!mapping.IsSpecified("Proxy"))
+            if (!mapping.HasUserDefinedValue(Attr.Proxy))
                 mapping.Proxy = type.AssemblyQualifiedName;
         }
 
         public new void Proxy(string type)
         {
-            if (!mapping.IsSpecified("Proxy"))
+            if (!mapping.HasUserDefinedValue(Attr.Proxy))
                 mapping.Proxy = type;
         }
     }

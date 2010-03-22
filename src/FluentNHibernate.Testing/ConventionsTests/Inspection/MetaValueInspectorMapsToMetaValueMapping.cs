@@ -1,11 +1,8 @@
-using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using FluentNHibernate.Conventions;
 using FluentNHibernate.Conventions.Inspections;
 using FluentNHibernate.MappingModel;
-using FluentNHibernate.Utils.Reflection;
 using NUnit.Framework;
 
 namespace FluentNHibernate.Testing.ConventionsTests.Inspection
@@ -19,7 +16,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [SetUp]
         public void CreateDsl()
         {
-            mapping = new MetaValueMapping(null);
+            mapping = new MetaValueMapping();
             inspector = new MetaValueInspector(mapping);
         }
 
@@ -34,14 +31,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void ClassIsSet()
         {
             mapping.Class = new TypeReference(typeof(string));
-            inspector.IsSet(Prop(x => x.Class))
+            inspector.IsSet(Attr.Class)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void ClassIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Class))
+            inspector.IsSet(Attr.Class)
                 .ShouldBeFalse();
         }
 
@@ -56,24 +53,15 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void ValueIsSet()
         {
             mapping.Value = "value";
-            inspector.IsSet(Prop(x => x.Value))
+            inspector.IsSet(Attr.Value)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void ValueIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Value))
+            inspector.IsSet(Attr.Value)
                 .ShouldBeFalse();
         }
-
-        #region Helpers
-
-        private Member Prop(Expression<Func<IMetaValueInspector, object>> propertyExpression)
-        {
-            return ReflectionHelper.GetMember(propertyExpression);
-        }
-
-        #endregion
     }
 }

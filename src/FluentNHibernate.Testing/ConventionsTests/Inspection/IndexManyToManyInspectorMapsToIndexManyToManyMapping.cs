@@ -1,13 +1,9 @@
-using System;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using FluentNHibernate.Automapping.TestFixtures;
 using FluentNHibernate.Conventions;
 using FluentNHibernate.Conventions.Inspections;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Collections;
-using FluentNHibernate.Utils.Reflection;
 using NUnit.Framework;
 
 namespace FluentNHibernate.Testing.ConventionsTests.Inspection
@@ -21,7 +17,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [SetUp]
         public void CreateDsl()
         {
-            mapping = new IndexManyToManyMapping(null);
+            mapping = new IndexManyToManyMapping();
             inspector = new IndexManyToManyInspector(mapping);
         }
 
@@ -56,14 +52,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void ClassIsSet()
         {
             mapping.Class = new TypeReference(typeof(ExampleClass));
-            inspector.IsSet(Prop(x => x.Class))
+            inspector.IsSet(Attr.Class)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void TypeIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Class))
+            inspector.IsSet(Attr.Class)
                 .ShouldBeFalse();
         }
 
@@ -104,14 +100,5 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
             inspector.ForeignKey
                 .ShouldBeNull();
         }
-
-        #region Helpers
-
-        private Member Prop(Expression<Func<IIndexManyToManyInspector, object>> propertyExpression)
-        {
-            return ReflectionHelper.GetMember(propertyExpression);
-        }
-
-        #endregion
     }
 }

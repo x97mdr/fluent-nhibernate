@@ -9,14 +9,6 @@ namespace FluentNHibernate.MappingModel.Collections
     {
         readonly ValueStore values = new ValueStore();
 
-        public OneToManyMapping()
-        {}
-
-        public OneToManyMapping(Type type)
-        {
-            Initialise(type);
-        }
-
         public void Initialise(Type type)
         {
             Class = new TypeReference(type);
@@ -53,9 +45,9 @@ namespace FluentNHibernate.MappingModel.Collections
 
         public Type ContainingEntityType { get; set; }
 
-        public override bool IsSpecified(string property)
+        public override bool HasUserDefinedValue(Attr property)
         {
-            return false;
+            return HasValue(property);
         }
 
         public bool HasValue(Attr attr)
@@ -90,7 +82,7 @@ namespace FluentNHibernate.MappingModel.Collections
         {
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

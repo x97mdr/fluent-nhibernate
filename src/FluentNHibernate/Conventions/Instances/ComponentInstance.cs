@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using FluentNHibernate.Conventions.Inspections;
+using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
 
 namespace FluentNHibernate.Conventions.Instances
@@ -30,7 +31,7 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void LazyLoad()
         {
-            if (!mapping.IsSpecified("Lazy"))
+            if (!mapping.HasUserDefinedValue(Attr.Lazy))
                 mapping.Lazy = nextBool;
             nextBool = true;
         }
@@ -41,7 +42,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new AccessInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Access"))
+                    if (!mapping.HasUserDefinedValue(Attr.Access))
                         mapping.Access = value;
                 });
             }
@@ -49,28 +50,28 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void Update()
         {
-            if (!mapping.IsSpecified("Update"))
+            if (!mapping.HasUserDefinedValue(Attr.Update))
                 mapping.Update = nextBool;
             nextBool = true;
         }
 
         public new void Insert()
         {
-            if (!mapping.IsSpecified("Insert"))
+            if (!mapping.HasUserDefinedValue(Attr.Insert))
                 mapping.Insert = nextBool;
             nextBool = true;
         }
 
         public new void Unique()
         {
-            if (!mapping.IsSpecified("Unique"))
+            if (!mapping.HasUserDefinedValue(Attr.Unique))
                 mapping.Unique = nextBool;
             nextBool = true;
         }
 
         public new void OptimisticLock()
         {
-            if (!mapping.IsSpecified("OptimisticLock"))
+            if (!mapping.HasUserDefinedValue(Attr.OptimisticLock))
                 mapping.OptimisticLock = nextBool;
             nextBool = true;
         }

@@ -22,7 +22,7 @@ namespace FluentNHibernate.Automapping
         {
             if (!(classMap is ClassMapping)) return;
 
-            var version = new VersionMapping(property);
+            var version = new VersionMapping();
 
             if (IsSqlTimestamp(property))
             {

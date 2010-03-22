@@ -9,7 +9,6 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class IndexInspector : IIndexInspector
     {
-        private readonly InspectorModelMapper<IIndexInspector, IndexMapping> mappedProperties = new InspectorModelMapper<IIndexInspector, IndexMapping>();
         private readonly IndexMapping mapping;
 
         public IndexInspector(IndexMapping mapping)
@@ -27,9 +26,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.Type.Name; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(mappedProperties.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
 
         public TypeReference Type

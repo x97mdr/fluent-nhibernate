@@ -235,7 +235,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new ClassMapping(typeof(ExampleClass));
 
-            mapping.Id = new IdMapping(null);
+            mapping.Id = new IdMapping();
 
             writer.VerifyXml(mapping)
                 .Element("id").Exists();
@@ -257,7 +257,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new ClassMapping(typeof(ExampleClass));
 
-            mapping.Id = new CompositeIdMapping(null);
+            mapping.Id = new CompositeIdMapping();
 
             writer.VerifyXml(mapping)
                 .Element("composite-id").Exists();
@@ -268,7 +268,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new ClassMapping(typeof(ExampleClass));
 
-            mapping.Version = new VersionMapping(null);
+            mapping.Version = new VersionMapping();
 
             writer.VerifyXml(mapping)
                 .Element("version").Exists();
@@ -301,7 +301,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new ClassMapping(typeof(ExampleClass));
 
-            mapping.AddOneToOne(new OneToOneMapping(null));
+            mapping.AddOneToOne(new OneToOneMapping());
 
             writer.VerifyXml(mapping)
                 .Element("one-to-one").Exists();

@@ -1,5 +1,6 @@
 ﻿using System;
 using FluentNHibernate.Conventions.Inspections;
+using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Collections;
 
 namespace FluentNHibernate.Conventions.Instances
@@ -15,7 +16,7 @@ namespace FluentNHibernate.Conventions.Instances
 
         public void SetOrderBy(string orderBy)
         {
-            if (mapping.IsSpecified("OrderBy"))
+            if (mapping.HasUserDefinedValue(Attr.OrderBy))
                 return;
 
             mapping.OrderBy = orderBy;
@@ -27,7 +28,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new AccessInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Access"))
+                    if (!mapping.HasUserDefinedValue(Attr.Access))
                         mapping.Access = value;
                 });
             }

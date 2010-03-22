@@ -8,13 +8,11 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class ManyToManyInspector : IManyToManyInspector
     {
-        private readonly InspectorModelMapper<IManyToManyInspector, ManyToManyMapping> mappedProperties = new InspectorModelMapper<IManyToManyInspector, ManyToManyMapping>();
         private readonly ManyToManyMapping mapping;
 
         public ManyToManyInspector(ManyToManyMapping mapping)
         {
             this.mapping = mapping;
-            mappedProperties.Map(x => x.LazyLoad, x => x.Lazy);
         }
 
         public Type EntityType
@@ -27,9 +25,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.Class.Name; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(mappedProperties.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
 
         public IDefaultableEnumerable<IColumnInspector> Columns

@@ -52,7 +52,7 @@ namespace FluentNHibernate.Testing.MappingModel
     {
         public override void establish_context()
         {
-            parent_mapping = new ParentMapping(null);
+            parent_mapping = new ParentMapping();
             external_component_mapping = new ExternalComponentMapping(typeof(Target))
             {
                 Access = "access",
@@ -67,7 +67,7 @@ namespace FluentNHibernate.Testing.MappingModel
             external_component_mapping.AddCollection(new CollectionMapping());
             external_component_mapping.AddComponent(new ComponentMapping(ComponentType.Component));
             external_component_mapping.AddFilter(new FilterMapping());
-            external_component_mapping.AddOneToOne(new OneToOneMapping(null));
+            external_component_mapping.AddOneToOne(new OneToOneMapping());
             external_component_mapping.AddProperty(new PropertyMapping());
             external_component_mapping.AddReference(new ManyToOneMapping());
 

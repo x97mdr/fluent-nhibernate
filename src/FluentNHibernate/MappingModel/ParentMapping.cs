@@ -9,14 +9,6 @@ namespace FluentNHibernate.MappingModel
     {
         readonly ValueStore values = new ValueStore();
 
-        public ParentMapping()
-        {}
-
-        public ParentMapping(Member member)
-        {
-            Initialise(member);
-        }
-
         public void Initialise(Member member)
         {
             Name = member.Name;
@@ -35,9 +27,9 @@ namespace FluentNHibernate.MappingModel
 
         public Type ContainingEntityType { get; set; }
 
-        public override bool IsSpecified(string property)
+        public override bool HasUserDefinedValue(Attr property)
         {
-            return false;
+            return HasValue(property);
         }
 
         public bool HasValue(Attr attr)
@@ -71,7 +63,7 @@ namespace FluentNHibernate.MappingModel
             
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

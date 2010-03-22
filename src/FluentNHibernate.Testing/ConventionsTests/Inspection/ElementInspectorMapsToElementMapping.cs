@@ -56,14 +56,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void TypeIsSet()
         {
             mapping.Type = new TypeReference(typeof(ExampleClass));
-            inspector.IsSet(Prop(x => x.Type))
+            inspector.IsSet(Attr.Type)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void TypeIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Type))
+            inspector.IsSet(Attr.Type)
                 .ShouldBeFalse();
         }
 
@@ -78,14 +78,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void FormulaIsSet()
         {
             mapping.Formula = "formula";
-            inspector.IsSet(Prop(x => x.Formula))
+            inspector.IsSet(Attr.Formula)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void FormulaIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Formula))
+            inspector.IsSet(Attr.Formula)
                 .ShouldBeFalse();
         }
 
@@ -100,14 +100,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void LengthIsSet()
         {
             mapping.Length = 50;
-            inspector.IsSet(Prop(x => x.Length))
+            inspector.IsSet(Attr.Length)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void LengthIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Length))
+            inspector.IsSet(Attr.Length)
                 .ShouldBeFalse();
         }
 

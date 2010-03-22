@@ -65,11 +65,11 @@ namespace FluentNHibernate.Automapping
 
         private ICollectionRelationshipMapping CreateManyToMany(Member property, Type child, Type parent)
         {
-            var mapping = new ManyToManyMapping(property.PropertyType.GetGenericArguments()[0])
+            var mapping = new ManyToManyMapping
             {
                 ContainingEntityType = parent
             };
-
+            mapping.Initialise(property.PropertyType.GetGenericArguments()[0]);
             mapping.AddDefaultColumn(new ColumnMapping() { Name = child.Name + "_id" });
 
             return mapping;

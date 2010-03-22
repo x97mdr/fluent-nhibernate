@@ -32,7 +32,7 @@ namespace FluentNHibernate.Conventions.Inspections
             {
                 return new FetchInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Fetch"))
+                    if (!mapping.HasUserDefinedValue(Attr.Fetch))
                         mapping.Fetch = value;
                 });
             }
@@ -40,7 +40,7 @@ namespace FluentNHibernate.Conventions.Inspections
 
         public new void Inverse()
         {
-            if (!mapping.IsSpecified("Inverse"))
+            if (!mapping.HasUserDefinedValue(Attr.Inverse))
                 mapping.Inverse = nextBool;
             nextBool = true;
         }
@@ -52,32 +52,32 @@ namespace FluentNHibernate.Conventions.Inspections
 
         public new void Optional()
         {
-            if (!mapping.IsSpecified("Optional"))
+            if (!mapping.HasUserDefinedValue(Attr.Optional))
                 mapping.Optional = nextBool;
             nextBool = true;
         }
 
         public new void Schema(string schema)
         {
-            if (!mapping.IsSpecified("Schema"))
+            if (!mapping.HasUserDefinedValue(Attr.Schema))
                 mapping.Schema = schema;
         }
 
         public void Table(string table)
         {
-            if (!mapping.IsSpecified("TableName"))
+            if (!mapping.HasUserDefinedValue(Attr.Table))
                 mapping.TableName = table;
         }
 
         public new void Catalog(string catalog)
         {
-            if (!mapping.IsSpecified("Catalog"))
+            if (!mapping.HasUserDefinedValue(Attr.Catalog))
                 mapping.Catalog = catalog;
         }
 
         public new void Subselect(string subselect)
         {
-            if (!mapping.IsSpecified("Subselect"))
+            if (!mapping.HasUserDefinedValue(Attr.Subselect))
                 mapping.Subselect = subselect;
         }
     }

@@ -9,13 +9,15 @@ namespace FluentNHibernate.Conventions.Instances
 {
     public class VersionInstance : VersionInspector, IVersionInstance
     {
-        private readonly VersionMapping mapping;
-        private bool nextBool = true;
+        readonly ColumnInstanceHelper c;
+        readonly VersionMapping mapping;
+        bool nextBool = true;
 
         public VersionInstance(VersionMapping mapping)
             : base(mapping)
         {
             this.mapping = mapping;
+            c = new ColumnInstanceHelper(mapping);
         }
 
         public new IAccessInstance Access
@@ -24,7 +26,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new AccessInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Access"))
+                    if (!mapping.HasUserDefinedValue(Attr.Access))
                         mapping.Access = value;
                 });
             }
@@ -36,7 +38,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new GeneratedInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Generated"))
+                    if (!mapping.HasUserDefinedValue(Attr.Generated))
                         mapping.Generated = value;
                 });
             }
@@ -68,58 +70,70 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void UnsavedValue(string unsavedValue)
         {
-            if (!mapping.IsSpecified("UnsavedValue"))
+            if (!mapping.HasUserDefinedValue(Attr.UnsavedValue))
                 mapping.UnsavedValue = unsavedValue;
+        }
+
+        public void CustomType(string type)
+        {
+            if (!mapping.HasUserDefinedValue(Attr.Type))
+                mapping.Type = new TypeReference(type);
+        }
+
+        public void CustomType(Type type)
+        {
+            if (!mapping.HasUserDefinedValue(Attr.Type))
+                mapping.Type = new TypeReference(type);
+        }
+
+        public void CustomType<T>()
+        {
+            CustomType(typeof(T));
         }
 
         public new void Length(int length)
         {
-            if (mapping.Columns.First().IsSpecified("Length"))
+            if (c.ThisOrColumnHasUserDefinedValue(Attr.Length))
                 return;
 
-            foreach (var column in mapping.Columns)
-                column.Length = length;
+            c.SetOnEachColumn(x => x.Length = length);
         }
 
         public new void Precision(int precision)
         {
-            if (mapping.Columns.First().IsSpecified("Precision"))
+            if (c.ThisOrColumnHasUserDefinedValue(Attr.Precision))
                 return;
 
-            foreach (var column in mapping.Columns)
-                column.Precision = precision;
+            c.SetOnEachColumn(x => x.Precision = precision);
         }
 
         public new void Scale(int scale)
         {
-            if (mapping.Columns.First().IsSpecified("Scale"))
+            if (c.ThisOrColumnHasUserDefinedValue(Attr.Scale))
                 return;
 
-            foreach (var column in mapping.Columns)
-                column.Scale = scale;
+            c.SetOnEachColumn(x => x.Scale = scale);
         }
 
         public new void Nullable()
         {
-            if (!mapping.Columns.First().IsSpecified("NotNull"))
-                foreach (var column in mapping.Columns)
-                    column.NotNull = !nextBool;
+            if (!c.ThisOrColumnHasUserDefinedValue(Attr.NotNull))
+                c.SetOnEachColumn(x => x.NotNull = !nextBool);
 
             nextBool = true;
         }
 
         public new void Unique()
         {
-            if (!mapping.Columns.First().IsSpecified("Unique"))
-                foreach (var column in mapping.Columns)
-                    column.Unique = nextBool;
+            if (!c.ThisOrColumnHasUserDefinedValue(Attr.Unique))
+                c.SetOnEachColumn(x => x.Unique = nextBool);
 
             nextBool = true;
         }
 
         public new void UniqueKey(string columns)
         {
-            if (mapping.Columns.First().IsSpecified("UniqueKey"))
+            if (c.ThisOrColumnHasUserDefinedValue(Attr.UniqueKey))
                 return;
 
             foreach (var column in mapping.Columns)
@@ -128,55 +142,34 @@ namespace FluentNHibernate.Conventions.Instances
 
         public void CustomSqlType(string sqlType)
         {
-            if (mapping.Columns.First().IsSpecified("SqlType"))
+            if (c.ThisOrColumnHasUserDefinedValue(Attr.SqlType))
                 return;
 
-            foreach (var column in mapping.Columns)
-                column.SqlType = sqlType;
+            c.SetOnEachColumn(x => x.SqlType = sqlType);
         }
 
         public new void Index(string index)
         {
-            if (mapping.Columns.First().IsSpecified("Index"))
+            if (c.ThisOrColumnHasUserDefinedValue(Attr.Index))
                 return;
 
-            foreach (var column in mapping.Columns)
-                column.Index = index;
+            c.SetOnEachColumn(x => x.Index = index);
         }
 
         public new void Check(string constraint)
         {
-            if (mapping.Columns.First().IsSpecified("Check"))
+            if (c.ThisOrColumnHasUserDefinedValue(Attr.Check))
                 return;
 
-            foreach (var column in mapping.Columns)
-                column.Check = constraint;
+            c.SetOnEachColumn(x => x.Check = constraint);
         }
 
         public new void Default(object value)
         {
-            if (mapping.Columns.First().IsSpecified("Default"))
+            if (c.ThisOrColumnHasUserDefinedValue(Attr.Default))
                 return;
 
-            foreach (var column in mapping.Columns)
-                column.Default = value.ToString();
-        }
-
-        public void CustomType(string type)
-        {
-            if (!mapping.IsSpecified("Type"))
-                mapping.Type = new TypeReference(type);
-        }
-
-        public void CustomType(Type type)
-        {
-            if (!mapping.IsSpecified("Type"))
-                mapping.Type = new TypeReference(type);
-        }
-
-        public void CustomType<T>()
-        {
-            CustomType(typeof(T));
+            c.SetOnEachColumn(x => x.Default = value.ToString());
         }
     }
 }

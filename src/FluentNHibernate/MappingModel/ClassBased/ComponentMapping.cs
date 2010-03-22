@@ -67,11 +67,6 @@ namespace FluentNHibernate.MappingModel.ClassBased
             set { values.Set(Attr.Lazy, value); }
         }
 
-        public override bool IsSpecified(string property)
-        {
-            return false;
-        }
-
         public override bool HasValue(Attr property)
         {
             return values.HasValue(property);
@@ -109,7 +104,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
 
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

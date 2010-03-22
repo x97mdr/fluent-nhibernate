@@ -9,22 +9,22 @@ namespace FluentNHibernate.MappingModel
     {
         readonly ValueStore values = new ValueStore();
 
-        public VersionMapping()
-        {}
-
-        public VersionMapping(Member member)
-        {
-            Initialise(member);
-        }
-
         public void Initialise(Member member)
         {
             Name = member.Name;
-            Type = member.PropertyType == typeof(DateTime) ? new TypeReference("timestamp") : new TypeReference(member.PropertyType);
+            values.SetDefault(Attr.Type, member.PropertyType == typeof(DateTime) ? new TypeReference("timestamp") : new TypeReference(member.PropertyType));
             
             var column = new ColumnMapping { Name = member.Name };
             column.SpecifyParentValues(values);
             AddDefaultColumn(column);
+        }
+
+        public override bool HasUserDefinedValue(Attr property)
+        {
+            if (base.HasUserDefinedValue(property))
+                return true;
+
+            return values.HasUserDefinedValue(property);
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
@@ -90,7 +90,7 @@ namespace FluentNHibernate.MappingModel
             }
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

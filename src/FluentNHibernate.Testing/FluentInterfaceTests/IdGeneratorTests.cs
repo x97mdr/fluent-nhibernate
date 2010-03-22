@@ -3,6 +3,7 @@ using System.Linq;
 using FluentNHibernate.Conventions;
 using FluentNHibernate.Conventions.Instances;
 using FluentNHibernate.Mapping;
+using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Identity;
 using NHibernate.Engine;
 using NHibernate.Id;
@@ -42,7 +43,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         {
             ClassMap<IdentityExamples>()
                 .Mapping(m => m.Id(x => x.Guid))
-                .ModelShouldMatch(x => ((IdMapping)x.Id).IsSpecified(p => p.Generator).ShouldBeFalse());
+                .ModelShouldMatch(x => ((IdMapping)x.Id).HasUserDefinedValue(Attr.Generator).ShouldBeFalse());
         }
 
         [Test]
@@ -50,7 +51,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         {
             ClassMap<IdentityExamples>()
                 .Mapping(m => m.Id(x => x.Int).GeneratedBy.Assigned())
-                .ModelShouldMatch(x => ((IdMapping)x.Id).IsSpecified(p => p.Generator).ShouldBeTrue());
+                .ModelShouldMatch(x => ((IdMapping)x.Id).HasUserDefinedValue(Attr.Generator).ShouldBeTrue());
         }
 
         [Test]

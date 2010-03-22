@@ -66,9 +66,9 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteKeyProperties()
         {
-            var mapping = new CompositeIdMapping(null);
+            var mapping = new CompositeIdMapping();
 
-            mapping.AddKeyProperty(new KeyPropertyMapping(null));
+            mapping.AddKeyProperty(new KeyPropertyMapping());
 
             writer.VerifyXml(mapping)
                 .Element("key-property").Exists();
@@ -77,9 +77,9 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteKeyManyToOnes()
         {
-            var mapping = new CompositeIdMapping(null);
+            var mapping = new CompositeIdMapping();
 
-            mapping.AddKeyManyToOne(new KeyManyToOneMapping(null));
+            mapping.AddKeyManyToOne(new KeyManyToOneMapping());
 
             writer.VerifyXml(mapping)
                 .Element("key-many-to-one").Exists();

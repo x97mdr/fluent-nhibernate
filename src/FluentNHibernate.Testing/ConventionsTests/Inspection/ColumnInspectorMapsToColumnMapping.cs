@@ -33,14 +33,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void CheckIsSet()
         {
             mapping.Check = "chk";
-            inspector.IsSet(Prop(x => x.Check))
+            inspector.IsSet(Attr.Check)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void CheckIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Check))
+            inspector.IsSet(Attr.Check)
                 .ShouldBeFalse();
         }
 
@@ -55,14 +55,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void DefaultIsSet()
         {
             mapping.Default = "value";
-            inspector.IsSet(Prop(x => x.Default))
+            inspector.IsSet(Attr.Default)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void DefaultIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Default))
+            inspector.IsSet(Attr.Default)
                 .ShouldBeFalse();
         }
 
@@ -77,14 +77,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void IndexIsSet()
         {
             mapping.Index = "ix";
-            inspector.IsSet(Prop(x => x.Index))
+            inspector.IsSet(Attr.Index)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void IndexIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Index))
+            inspector.IsSet(Attr.Index)
                 .ShouldBeFalse();
         }
 
@@ -99,14 +99,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void LengthIsSet()
         {
             mapping.Length = 100;
-            inspector.IsSet(Prop(x => x.Length))
+            inspector.IsSet(Attr.Length)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void LengthIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Length))
+            inspector.IsSet(Attr.Length)
                 .ShouldBeFalse();
         }
 
@@ -121,14 +121,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void NameIsSet()
         {
             mapping.Name = "name";
-            inspector.IsSet(Prop(x => x.Name))
+            inspector.IsSet(Attr.Name)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void NameIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Name))
+            inspector.IsSet(Attr.Name)
                 .ShouldBeFalse();
         }
 
@@ -143,14 +143,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void NotNullIsSet()
         {
             mapping.NotNull = true;
-            inspector.IsSet(Prop(x => x.NotNull))
+            inspector.IsSet(Attr.NotNull)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void NotNullIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.NotNull))
+            inspector.IsSet(Attr.NotNull)
                 .ShouldBeFalse();
         }
 
@@ -165,14 +165,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void PrecisionIsSet()
         {
             mapping.Precision = 10;
-            inspector.IsSet(Prop(x => x.Precision))
+            inspector.IsSet(Attr.Precision)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void PrecisionIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Precision))
+            inspector.IsSet(Attr.Precision)
                 .ShouldBeFalse();
         }
 
@@ -187,14 +187,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void ScaleIsSet()
         {
             mapping.Scale = 10;
-            inspector.IsSet(Prop(x => x.Scale))
+            inspector.IsSet(Attr.Scale)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void ScaleIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Scale))
+            inspector.IsSet(Attr.Scale)
                 .ShouldBeFalse();
         }
 
@@ -209,14 +209,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void SqlTypeIsSet()
         {
             mapping.SqlType = "type";
-            inspector.IsSet(Prop(x => x.SqlType))
+            inspector.IsSet(Attr.SqlType)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void SqlTypeIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.SqlType))
+            inspector.IsSet(Attr.SqlType)
                 .ShouldBeFalse();
         }
 
@@ -231,14 +231,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void UniqueIsSet()
         {
             mapping.Unique = true;
-            inspector.IsSet(Prop(x => x.Unique))
+            inspector.IsSet(Attr.Unique)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void UniqueIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Unique))
+            inspector.IsSet(Attr.Unique)
                 .ShouldBeFalse();
         }
 
@@ -253,14 +253,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void UniqueKeyIsSet()
         {
             mapping.UniqueKey = "key";
-            inspector.IsSet(Prop(x => x.UniqueKey))
+            inspector.IsSet(Attr.UniqueKey)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void UniqueKeyIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.UniqueKey))
+            inspector.IsSet(Attr.UniqueKey)
                 .ShouldBeFalse();
         }
 

@@ -21,7 +21,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [SetUp]
         public void CreateDsl()
         {
-            mapping = new KeyPropertyMapping(null);
+            mapping = new KeyPropertyMapping();
             inspector = new KeyPropertyInspector(mapping);
         }
 
@@ -36,14 +36,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void AccessIsSet()
         {
             mapping.Access = "field";
-            inspector.IsSet(Prop(x => x.Access))
+            inspector.IsSet(Attr.Access)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void AccessIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Access))
+            inspector.IsSet(Attr.Access)
                 .ShouldBeFalse();
         }
 
@@ -58,14 +58,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void NameIsSet()
         {
             mapping.Name = "name";
-            inspector.IsSet(Prop(x => x.Name))
+            inspector.IsSet(Attr.Name)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void NameIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Name))
+            inspector.IsSet(Attr.Name)
                 .ShouldBeFalse();
         }
 
@@ -80,14 +80,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void TypeIsSet()
         {
             mapping.Type = new TypeReference(typeof(ExampleClass));
-            inspector.IsSet(Prop(x => x.Type))
+            inspector.IsSet(Attr.Type)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void TypeIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Type))
+            inspector.IsSet(Attr.Type)
                 .ShouldBeFalse();
         }
 

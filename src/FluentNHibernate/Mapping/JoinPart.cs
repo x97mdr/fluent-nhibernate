@@ -21,7 +21,6 @@ namespace FluentNHibernate.Mapping
             this.structure = structure;
             this.keyStructure = new TypeStructure<KeyMapping>(typeof(T));
             structure.AddChild(keyStructure);
-
             fetch = new FetchTypeExpression<JoinPart<T>>(this, value => structure.SetValue(Attr.Fetch, value));
         }
 

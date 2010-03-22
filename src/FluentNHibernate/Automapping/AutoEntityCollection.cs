@@ -42,11 +42,11 @@ namespace FluentNHibernate.Automapping
 
         private void SetRelationship(Member property, ClassMappingBase classMap, CollectionMapping mapping)
         {
-            var relationship = new OneToManyMapping(property.PropertyType.GetGenericArguments()[0])
+            var relationship = new OneToManyMapping
             {
                 ContainingEntityType = classMap.Type
             };
-
+            relationship.Initialise(property.PropertyType.GetGenericArguments()[0]);
             mapping.Relationship = relationship;
         }
     }

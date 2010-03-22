@@ -32,14 +32,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void CatalogIsSet()
         {
             mapping.Catalog = "cat";
-            inspector.IsSet(Prop(x => x.Catalog))
+            inspector.IsSet(Attr.Catalog)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void CatalogIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Catalog))
+            inspector.IsSet(Attr.Catalog)
                 .ShouldBeFalse();
         }
 
@@ -54,14 +54,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void DefaultAccessIsSet()
         {
             mapping.DefaultAccess = "field";
-            inspector.IsSet(Prop(x => x.DefaultAccess))
+            inspector.IsSet(Attr.DefaultAccess)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void DefaultAccessIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.DefaultAccess))
+            inspector.IsSet(Attr.DefaultAccess)
                 .ShouldBeFalse();
         }
 
@@ -76,14 +76,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void DefaultCascadeIsSet()
         {
             mapping.DefaultCascade = "all";
-            inspector.IsSet(Prop(x => x.DefaultCascade))
+            inspector.IsSet(Attr.DefaultCascade)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void DefaultCascadeIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.DefaultCascade))
+            inspector.IsSet(Attr.DefaultCascade)
                 .ShouldBeFalse();
         }
 
@@ -98,14 +98,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void DefaultLazyIsSet()
         {
             mapping.DefaultLazy = true;
-            inspector.IsSet(Prop(x => x.DefaultLazy))
+            inspector.IsSet(Attr.DefaultLazy)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void DefaultLazyIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.DefaultLazy))
+            inspector.IsSet(Attr.DefaultLazy)
                 .ShouldBeFalse();
         }
 
@@ -120,14 +120,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void SchemaIsSet()
         {
             mapping.Schema = "dbo";
-            inspector.IsSet(Prop(x => x.Schema))
+            inspector.IsSet(Attr.Schema)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void SchemaIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Schema))
+            inspector.IsSet(Attr.Schema)
                 .ShouldBeFalse();
         }
 

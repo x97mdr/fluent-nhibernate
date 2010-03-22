@@ -7,7 +7,6 @@ namespace FluentNHibernate.Conventions.Inspections
     public class ColumnInspector : IColumnInspector
     {
         private readonly ColumnMapping mapping;
-        private readonly InspectorModelMapper<IColumnInspector, ColumnMapping> propertyMappings = new InspectorModelMapper<IColumnInspector, ColumnMapping>();
 
         public ColumnInspector(Type containingEntityType, ColumnMapping mapping)
         {
@@ -81,9 +80,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.Name; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(propertyMappings.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
     }
 }

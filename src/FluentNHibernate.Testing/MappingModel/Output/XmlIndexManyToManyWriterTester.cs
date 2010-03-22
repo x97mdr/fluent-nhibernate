@@ -30,9 +30,10 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteForeignKey()
         {
-            var mapping = new IndexManyToManyMapping(null);
-
-            mapping.ForeignKey = "FKTest";
+            var mapping = new IndexManyToManyMapping
+            {
+                ForeignKey = "FKTest"
+            };
 
             writer.VerifyXml(mapping)
                 .HasAttribute("foreign-key","FKTest");
@@ -41,7 +42,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteColumns()
         {
-            var mapping = new IndexManyToManyMapping(null);
+            var mapping = new IndexManyToManyMapping();
 
             mapping.AddColumn(new ColumnMapping());
 

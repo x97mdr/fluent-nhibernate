@@ -1,11 +1,6 @@
-using System;
-using System.Linq.Expressions;
-using System.Reflection;
-using FluentNHibernate.Automapping.TestFixtures;
 using FluentNHibernate.Conventions.Inspections;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Collections;
-using FluentNHibernate.Utils.Reflection;
 using NUnit.Framework;
 
 namespace FluentNHibernate.Testing.ConventionsTests.Inspection
@@ -34,39 +29,30 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void IndexIsSet()
         {
             mapping.Index = new IndexMapping();
-            inspector.IsSet(Prop(x => x.Index))
+            inspector.IsSet(Attr.Index)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void IndexIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Index))
+            inspector.IsSet(Attr.Index)
                 .ShouldBeFalse();
         }
 
         [Test]
         public void MapsIndexManyToManyToInspector()
         {
-            mapping.Index = new IndexManyToManyMapping(null);
+            mapping.Index = new IndexManyToManyMapping();
             inspector.Index.ShouldBeOfType<IIndexManyToManyInspector>();
         }
 
         [Test]
         public void IndexManyToManyIsSet()
         {
-            mapping.Index = new IndexManyToManyMapping(null);
-            inspector.IsSet(Prop(x => x.Index))
+            mapping.Index = new IndexManyToManyMapping();
+            inspector.IsSet(Attr.Index)
                 .ShouldBeTrue();
         }
-
-        #region Helpers
-
-        private Member Prop(Expression<Func<IArrayInspector, object>> propertyExpression)
-        {
-            return ReflectionHelper.GetMember(propertyExpression);
-        }
-
-        #endregion
     }
 }

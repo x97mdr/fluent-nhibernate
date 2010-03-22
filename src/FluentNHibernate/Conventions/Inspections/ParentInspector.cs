@@ -6,7 +6,6 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class ParentInspector : IParentInspector
     {
-        private readonly InspectorModelMapper<IPropertyInspector, ParentMapping> mappedProperties = new InspectorModelMapper<IPropertyInspector, ParentMapping>();
         private readonly ParentMapping mapping;
 
         public ParentInspector(ParentMapping mapping)
@@ -24,9 +23,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.Name; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(mappedProperties.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
 
         public string Name

@@ -254,7 +254,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
             throw new NotImplementedException();
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> values)
+        public void UpdateValues(ValueStore values)
         {
             throw new NotImplementedException();
         }

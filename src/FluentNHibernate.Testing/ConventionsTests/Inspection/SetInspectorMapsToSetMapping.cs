@@ -27,14 +27,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void OrderByIsSet()
         {
             mapping.OrderBy = "AField";
-            inspector.IsSet(Prop(x => x.OrderBy))
+            inspector.IsSet(Attr.OrderBy)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void OrderByIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.OrderBy))
+            inspector.IsSet(Attr.OrderBy)
                 .ShouldBeFalse();
         }
 
@@ -42,14 +42,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void SortByIsSet()
         {
             mapping.Sort = "AField";
-            inspector.IsSet(Prop(x => x.Sort))
+            inspector.IsSet(Attr.Sort)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void SortByIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Sort))
+            inspector.IsSet(Attr.Sort)
                 .ShouldBeFalse();
         }
 

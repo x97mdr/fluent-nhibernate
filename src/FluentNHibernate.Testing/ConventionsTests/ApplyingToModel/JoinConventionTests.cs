@@ -22,7 +22,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.ApplyingToModel
             model = new PersistenceModel();
         }
 
-        [Test]
+        [Test, Ignore("Disabled, tables are _always_ set manually")]
         public void ShouldSetTableProperty()
         {
             Convention(x => x.Table("xxx"));

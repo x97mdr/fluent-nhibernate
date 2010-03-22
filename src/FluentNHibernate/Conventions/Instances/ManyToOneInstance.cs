@@ -8,13 +8,15 @@ namespace FluentNHibernate.Conventions.Instances
 {
     public class ManyToOneInstance : ManyToOneInspector, IManyToOneInstance
     {
-        private readonly ManyToOneMapping mapping;
-        private bool nextBool = true;
+        readonly ColumnInstanceHelper c;
+        readonly ManyToOneMapping mapping;
+        bool nextBool = true;
 
         public ManyToOneInstance(ManyToOneMapping mapping)
             : base(mapping)
         {
             this.mapping = mapping;
+            c = new ColumnInstanceHelper(mapping);
         }
 
         public void Column(string columnName)
@@ -33,13 +35,13 @@ namespace FluentNHibernate.Conventions.Instances
 
         public void CustomClass<T>()
         {
-            if (!mapping.IsSpecified("Class"))
+            if (!mapping.HasUserDefinedValue(Attr.Class))
                 mapping.Class = new TypeReference(typeof(T));
         }
 
         public void CustomClass(Type type)
         {
-            if (!mapping.IsSpecified("Class"))
+            if (!mapping.HasUserDefinedValue(Attr.Class))
                 mapping.Class = new TypeReference(type);
         }
 
@@ -49,7 +51,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new AccessInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Access"))
+                    if (!mapping.HasUserDefinedValue(Attr.Access))
                         mapping.Access = value;
                 });
             }
@@ -61,7 +63,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new CascadeInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Cascade"))
+                    if (!mapping.HasUserDefinedValue(Attr.Cascade))
                         mapping.Cascade = value;
                 });
             }
@@ -73,7 +75,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new FetchInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Fetch"))
+                    if (!mapping.HasUserDefinedValue(Attr.Fetch))
                         mapping.Fetch = value;
                 });
             }
@@ -95,53 +97,35 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new NotFoundInstance(value =>
                 {
-                    if (!mapping.IsSpecified("NotFound"))
+                    if (!mapping.HasUserDefinedValue(Attr.NotFound))
                         mapping.NotFound = value;
                 });
             }
         }
 
-        public void Index(string index)
-        {
-            if (mapping.Columns.First().IsSpecified("Index"))
-                return;
-
-            foreach (var column in mapping.Columns)
-                column.Index = index;
-        }
-
         public new void Insert()
         {
-            if (!mapping.IsSpecified("Insert"))
+            if (!mapping.HasUserDefinedValue(Attr.Insert))
                 mapping.Insert = nextBool;
             nextBool = true;
         }
 
         public new void LazyLoad()
         {
-            if (!mapping.IsSpecified("Lazy"))
+            if (!mapping.HasUserDefinedValue(Attr.Lazy))
                 mapping.Lazy = nextBool;
-            nextBool = true;
-        }
-
-        public void Nullable()
-        {
-            if (!mapping.Columns.First().IsSpecified("NotNull"))
-                foreach (var column in mapping.Columns)
-                    column.NotNull = !nextBool;
-
             nextBool = true;
         }
 
         public new void PropertyRef(string property)
         {
-            if (!mapping.IsSpecified("PropertyRef"))
+            if (!mapping.HasUserDefinedValue(Attr.PropertyRef))
                 mapping.PropertyRef = property;
         }
 
         public void ReadOnly()
         {
-            if (!mapping.IsSpecified("Insert") && !mapping.IsSpecified("Update"))
+            if (!mapping.HasUserDefinedValue(Attr.Insert) && !mapping.HasUserDefinedValue(Attr.Update))
             {
                 mapping.Insert = !nextBool;
                 mapping.Update = !nextBool;
@@ -149,34 +133,48 @@ namespace FluentNHibernate.Conventions.Instances
             nextBool = true;
         }
 
+        public void Index(string index)
+        {
+            if (c.ThisOrColumnHasUserDefinedValue(Attr.Index))
+                return;
+
+            c.SetOnEachColumn(x => x.Index = index);
+        }
+
+        public void Nullable()
+        {
+            if (!c.ThisOrColumnHasUserDefinedValue(Attr.NotNull))
+                c.SetOnEachColumn(x => x.NotNull = !nextBool);
+
+            nextBool = true;
+        }
+
         public void Unique()
         {
-            if (!mapping.Columns.First().IsSpecified("Unique"))
-                foreach (var column in mapping.Columns)
-                    column.Unique = nextBool;
+            if (!c.ThisOrColumnHasUserDefinedValue(Attr.Unique))
+                c.SetOnEachColumn(x => x.Unique = nextBool);
 
             nextBool = true;
         }
 
         public void UniqueKey(string key)
         {
-            if (mapping.Columns.First().IsSpecified("UniqueKey"))
+            if (c.ThisOrColumnHasUserDefinedValue(Attr.UniqueKey))
                 return;
 
-            foreach (var column in mapping.Columns)
-                column.UniqueKey = key;
+            c.SetOnEachColumn(x => x.UniqueKey = key);
         }
 
         public new void Update()
         {
-            if (!mapping.IsSpecified("Update"))
+            if (!mapping.HasUserDefinedValue(Attr.Update))
                 mapping.Update = nextBool;
             nextBool = true;
         }
 
         public new void ForeignKey(string key)
         {
-            if (!mapping.IsSpecified("ForeignKey"))
+            if (!mapping.HasUserDefinedValue(Attr.ForeignKey))
                 mapping.ForeignKey = key;
         }
 

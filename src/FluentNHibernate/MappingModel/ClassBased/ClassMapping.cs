@@ -23,8 +23,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
             Type = type;
 
             Name = type.AssemblyQualifiedName;
-            TableName = GetDefaultTableName(type);
-            Mutable = true;
+            values.SetDefault(Attr.Table, GetDefaultTableName(type));
         }
 
         private static string GetDefaultTableName(Type type)
@@ -64,7 +63,6 @@ namespace FluentNHibernate.MappingModel.ClassBased
             get { return values.Get<Type>(Attr.Type); }
             set { values.Set(Attr.Type, value); }
         }
-
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
         {
@@ -205,9 +203,18 @@ namespace FluentNHibernate.MappingModel.ClassBased
             set { values.Set(Attr.EntityName, value); }
         }       
 
-        public override bool IsSpecified(string property)
+        public override bool HasUserDefinedValue(Attr property)
         {
-            return false;
+            if (property == Attr.Id)
+                return Id != null;
+            if (property == Attr.Cache)
+                return Cache != null;
+            if (property == Attr.Discriminator)
+                return Discriminator != null;
+            if (property == Attr.Version)
+                return Version != null;
+
+            return values.HasUserDefinedValue(property);
         }
 
         public bool HasValue(Attr attr)
@@ -258,7 +265,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
                 AddStoredProcedure((StoredProcedureMapping)child);
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

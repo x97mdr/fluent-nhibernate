@@ -41,96 +41,96 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void Abstract()
         {
-            if (!mapping.IsSpecified("Abstract"))
+            if (!mapping.HasUserDefinedValue(Attr.Abstract))
                 mapping.Abstract = nextBool;
             nextBool = true;
         }
 
         public new void Check(string constraint)
         {
-            if (!mapping.IsSpecified("Check"))
+            if (!mapping.HasUserDefinedValue(Attr.Check))
                 mapping.Check = constraint;
         }
 
         public new void DynamicInsert()
         {
-            if (!mapping.IsSpecified("DynamicInsert"))
+            if (!mapping.HasUserDefinedValue(Attr.DynamicInsert))
                 mapping.DynamicInsert = nextBool;
             nextBool = true;
         }
 
         public new void DynamicUpdate()
         {
-            if (!mapping.IsSpecified("DynamicUpdate"))
+            if (!mapping.HasUserDefinedValue(Attr.DynamicUpdate))
                 mapping.DynamicUpdate = nextBool;
             nextBool = true;
         }
 
         public new void LazyLoad()
         {
-            if (!mapping.IsSpecified("Lazy"))
+            if (!mapping.HasUserDefinedValue(Attr.Lazy))
                 mapping.Lazy = nextBool;
             nextBool = true;
         }
 
         public new void Proxy(Type type)
         {
-            if (!mapping.IsSpecified("Proxy"))
+            if (!mapping.HasUserDefinedValue(Attr.Proxy))
                 mapping.Proxy = type.AssemblyQualifiedName;
         }
 
         public new void Proxy<T>()
         {
-            if (!mapping.IsSpecified("Proxy"))
+            if (!mapping.HasUserDefinedValue(Attr.Proxy))
                 mapping.Proxy = typeof(T).AssemblyQualifiedName;
         }
 
         public void Schema(string schema)
         {
-            if (!mapping.IsSpecified("Schema"))
+            if (!mapping.HasUserDefinedValue(Attr.Schema))
                 mapping.Schema = schema;
         }
 
         public new void SelectBeforeUpdate()
         {
-            if (!mapping.IsSpecified("SelectBeforeUpdate"))
+            if (!mapping.HasUserDefinedValue(Attr.SelectBeforeUpdate))
                 mapping.SelectBeforeUpdate = nextBool;
             nextBool = true;
         }
 
         public void Table(string tableName)
         {
-            if (!mapping.IsSpecified("TableName"))
+            if (!mapping.HasUserDefinedValue(Attr.Table))
                 mapping.TableName = tableName;
         }
 
         public void Subselect(string subselect)
         {
-            if (!mapping.IsSpecified("Subselect"))
+            if (!mapping.HasUserDefinedValue(Attr.Subselect))
                 mapping.Subselect = subselect;
         }
 
         public void Persister<T>() where T : IEntityPersister
         {
-            if (!mapping.IsSpecified("Persister"))
+            if (!mapping.HasUserDefinedValue(Attr.Persister))
                 mapping.Persister = new TypeReference(typeof(T));
         }
 
         public void Persister(Type type)
         {
-            if (!mapping.IsSpecified("Persister"))
+            if (!mapping.HasUserDefinedValue(Attr.Persister))
                 mapping.Persister = new TypeReference(type);
         }
 
         public void Persister(string type)
         {
-            if (!mapping.IsSpecified("Persister"))
+            if (!mapping.HasUserDefinedValue(Attr.Persister))
                 mapping.Persister = new TypeReference(type);
         }
 
         public void BatchSize(int batchSize)
         {
-            if (!mapping.IsSpecified("BatchSize"))
+            if (!mapping.HasUserDefinedValue(Attr.BatchSize))
                 mapping.BatchSize = batchSize;
         }
     }

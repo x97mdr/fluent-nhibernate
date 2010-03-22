@@ -7,7 +7,6 @@ namespace FluentNHibernate.Conventions.Inspections
 {
     public class HibernateMappingInspector : IHibernateMappingInspector
     {
-        private readonly InspectorModelMapper<IHibernateMappingInspector, HibernateMapping> propertyMappings = new InspectorModelMapper<IHibernateMappingInspector, HibernateMapping>();
         private readonly HibernateMapping mapping;
 
         public HibernateMappingInspector(HibernateMapping mapping)
@@ -25,9 +24,9 @@ namespace FluentNHibernate.Conventions.Inspections
             get { return mapping.Classes.First().Name; }
         }
 
-        public bool IsSet(Member property)
+        public bool IsSet(Attr property)
         {
-            return mapping.IsSpecified(propertyMappings.Get(property));
+            return mapping.HasUserDefinedValue(property);
         }
 
         public string Catalog

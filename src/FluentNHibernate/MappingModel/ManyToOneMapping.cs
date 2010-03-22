@@ -4,15 +4,15 @@ using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
-    public class ManyToOneMapping : MappingBase, IHasColumnMappings, IMemberMapping
+    public class ManyToOneMapping : ColumnBasedMappingBase, IHasColumnMappings, IMemberMapping
     {
         readonly ValueStore values = new ValueStore();
-        readonly IDefaultableList<ColumnMapping> columns = new DefaultableList<ColumnMapping>();
 
         public void Initialise(Member member)
         {
             Name = member.Name;
-            Class = new TypeReference(member.PropertyType);
+            Member = member;
+            values.SetDefault(Attr.Class, new TypeReference(member.PropertyType));
 
             var column = new ColumnMapping { Name = member.Name + "_id" };
             column.SpecifyParentValues(values);
@@ -102,29 +102,9 @@ namespace FluentNHibernate.MappingModel
             set { values.Set(Attr.EntityName, value); }
         }
 
-        public IDefaultableEnumerable<ColumnMapping> Columns
+        public override bool HasUserDefinedValue(Attr property)
         {
-            get { return columns; }
-        }
-
-        public void AddColumn(ColumnMapping column)
-        {
-            columns.Add(column);
-        }
-
-        public void AddDefaultColumn(ColumnMapping column)
-        {
-            columns.AddDefault(column);
-        }
-
-        public void ClearColumns()
-        {
-            columns.Clear();
-        }
-
-        public override bool IsSpecified(string property)
-        {
-            return false;
+            return values.HasUserDefinedValue(property);
         }
 
         public bool HasValue(Attr attr)
@@ -162,13 +142,7 @@ namespace FluentNHibernate.MappingModel
             }
         }
 
-        public void AddChild(IMapping child)
-        {
-            if (child is ColumnMapping)
-                AddColumn((ColumnMapping)child);
-        }
-
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

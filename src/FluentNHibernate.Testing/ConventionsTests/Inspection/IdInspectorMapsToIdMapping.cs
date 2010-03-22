@@ -20,7 +20,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         [SetUp]
         public void CreateDsl()
         {
-            mapping = new IdMapping(null);
+            mapping = new IdMapping();
             inspector = new IdentityInspector(mapping);
         }
 
@@ -35,14 +35,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void AccessIsSet()
         {
             mapping.Access = "field";
-            inspector.IsSet(Prop(x => x.Access))
+            inspector.IsSet(Attr.Access)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void AccessIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Access))
+            inspector.IsSet(Attr.Access)
                 .ShouldBeFalse();
         }
 
@@ -79,14 +79,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         {
             mapping.Generator = new GeneratorMapping();
             mapping.Generator.Class = "class";
-            inspector.IsSet(Prop(x => x.Generator))
+            inspector.IsSet(Attr.Generator)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void GeneratorIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Generator))
+            inspector.IsSet(Attr.Generator)
                 .ShouldBeFalse();
         }
 
@@ -101,14 +101,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void NameIsSet()
         {
             mapping.Name = "name";
-            inspector.IsSet(Prop(x => x.Name))
+            inspector.IsSet(Attr.Name)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void NameIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Name))
+            inspector.IsSet(Attr.Name)
                 .ShouldBeFalse();
         }
 
@@ -123,14 +123,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void TypeIsSet()
         {
             mapping.Type = new TypeReference(typeof(string));
-            inspector.IsSet(Prop(x => x.Type))
+            inspector.IsSet(Attr.Type)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void TypeIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Type))
+            inspector.IsSet(Attr.Type)
                 .ShouldBeFalse();
         }
 
@@ -145,14 +145,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void UnsavedValueIsSet()
         {
             mapping.UnsavedValue = "value";
-            inspector.IsSet(Prop(x => x.UnsavedValue))
+            inspector.IsSet(Attr.UnsavedValue)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void UnsavedValueIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.UnsavedValue))
+            inspector.IsSet(Attr.UnsavedValue)
                 .ShouldBeFalse();
         }
 
@@ -167,14 +167,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void LengthIsSet()
         {
             mapping.AddColumn(new ColumnMapping() { Length = 100 });
-            inspector.IsSet(Prop(x => x.Length))
+            inspector.IsSet(Attr.Length)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void LengthIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Length))
+            inspector.IsSet(Attr.Length)
                 .ShouldBeFalse();
         }
 
@@ -182,14 +182,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void PrecisionIsSet()
         {
             mapping.AddColumn(new ColumnMapping() { Precision = 10 });
-            inspector.IsSet(Prop(x => x.Precision))
+            inspector.IsSet(Attr.Precision)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void PrecisionIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Precision))
+            inspector.IsSet(Attr.Precision)
                 .ShouldBeFalse();
         }
 
@@ -204,14 +204,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void ScaleIsSet()
         {
             mapping.AddColumn(new ColumnMapping() { Scale = 10 });
-            inspector.IsSet(Prop(x => x.Scale))
+            inspector.IsSet(Attr.Scale)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void ScaleIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Scale))
+            inspector.IsSet(Attr.Scale)
                 .ShouldBeFalse();
         }
 
@@ -226,14 +226,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void NullableIsSet()
         {
             mapping.AddColumn(new ColumnMapping() { NotNull = false });
-            inspector.IsSet(Prop(x => x.Nullable))
+            inspector.IsSet(Attr.NotNull)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void NullableIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Nullable))
+            inspector.IsSet(Attr.NotNull)
                 .ShouldBeFalse();
         }
 
@@ -248,14 +248,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void UniqueIsSet()
         {
             mapping.AddColumn(new ColumnMapping() { Unique = true });
-            inspector.IsSet(Prop(x => x.Unique))
+            inspector.IsSet(Attr.Unique)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void UniqueIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Unique))
+            inspector.IsSet(Attr.Unique)
                 .ShouldBeFalse();
         }
 
@@ -270,14 +270,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void UniqueKeyIsSet()
         {
             mapping.AddColumn(new ColumnMapping() { UniqueKey = "key" });
-            inspector.IsSet(Prop(x => x.UniqueKey))
+            inspector.IsSet(Attr.UniqueKey)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void UniqueKeyIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.UniqueKey))
+            inspector.IsSet(Attr.UniqueKey)
                 .ShouldBeFalse();
         }
 
@@ -292,14 +292,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void SqlTypeIsSet()
         {
             mapping.AddColumn(new ColumnMapping() { SqlType = "sql" });
-            inspector.IsSet(Prop(x => x.SqlType))
+            inspector.IsSet(Attr.SqlType)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void SqlTypeIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.SqlType))
+            inspector.IsSet(Attr.SqlType)
                 .ShouldBeFalse();
         }
 
@@ -314,14 +314,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void IndexIsSet()
         {
             mapping.AddColumn(new ColumnMapping() { Index = "index" });
-            inspector.IsSet(Prop(x => x.Index))
+            inspector.IsSet(Attr.Index)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void IndexIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Index))
+            inspector.IsSet(Attr.Index)
                 .ShouldBeFalse();
         }
 
@@ -336,14 +336,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void CheckIsSet()
         {
             mapping.AddColumn(new ColumnMapping() { Check = "key" });
-            inspector.IsSet(Prop(x => x.Check))
+            inspector.IsSet(Attr.Check)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void CheckIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Check))
+            inspector.IsSet(Attr.Check)
                 .ShouldBeFalse();
         }
 
@@ -358,14 +358,14 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         public void DefaultIsSet()
         {
             mapping.AddColumn(new ColumnMapping() { Default = "key" });
-            inspector.IsSet(Prop(x => x.Default))
+            inspector.IsSet(Attr.Default)
                 .ShouldBeTrue();
         }
 
         [Test]
         public void DefaultIsNotSet()
         {
-            inspector.IsSet(Prop(x => x.Default))
+            inspector.IsSet(Attr.Default)
                 .ShouldBeFalse();
         }
 

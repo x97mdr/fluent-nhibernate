@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using FluentNHibernate.Mapping;
+using FluentNHibernate.MappingModel;
 
 namespace FluentNHibernate.Conventions.Inspections
 {
@@ -17,6 +18,6 @@ namespace FluentNHibernate.Conventions.Inspections
         /// </summary>
         string StringIdentifierForModel { get; }
 
-        bool IsSet(Member property);
+        bool IsSet(Attr property);
     }
 }

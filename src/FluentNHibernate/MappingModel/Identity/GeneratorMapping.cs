@@ -32,9 +32,9 @@ namespace FluentNHibernate.MappingModel.Identity
 
         public Type ContainingEntityType { get; set; }
 
-        public override bool IsSpecified(string property)
+        public override bool HasUserDefinedValue(Attr property)
         {
-            return false;
+            return HasValue(property);
         }
 
         public bool HasValue(Attr attr)
@@ -76,7 +76,7 @@ namespace FluentNHibernate.MappingModel.Identity
                 AddParam((ParamMapping)child);
         }
 
-        public void UpdateValues(IEnumerable<KeyValuePair<Attr, object>> otherValues)
+        public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
         }

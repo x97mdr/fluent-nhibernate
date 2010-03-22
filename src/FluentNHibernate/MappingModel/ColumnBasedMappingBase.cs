@@ -5,7 +5,7 @@ namespace FluentNHibernate.MappingModel
 {
     public abstract class ColumnBasedMappingBase : MappingBase, IHasColumnMappings
     {
-        private readonly string[] columnAttributes = new[] { "Length", "Precision", "Scale", "NotNull", "Unique", "UniqueKey", "SqlType", "Index", "Check", "Default" };
+        private readonly Attr[] columnAttributes = new[] { Attr.Length, Attr.Precision, Attr.Scale, Attr.NotNull, Attr.Unique, Attr.UniqueKey, Attr.SqlType, Attr.Index, Attr.Check, Attr.Default };
         protected readonly IDefaultableList<ColumnMapping> columns = new DefaultableList<ColumnMapping>();
 
         public virtual void AddChild(IMapping child)
@@ -14,10 +14,10 @@ namespace FluentNHibernate.MappingModel
                 columns.Add((ColumnMapping)child);
         }
 
-        public override bool IsSpecified(string property)
+        public override bool HasUserDefinedValue(Attr property)
         {
             if (columnAttributes.Contains(property))
-                return columns.Any(x => x.IsSpecified(property));
+                return columns.Any(x => x.HasUserDefinedValue(property));
 
             return false;
         }

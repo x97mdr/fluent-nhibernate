@@ -75,7 +75,6 @@ namespace FluentNHibernate.MappingModel
         Element,
         Generic,
         Relationship,
-        Nullable,
         Extends,
         OnDelete,
         ParentType,

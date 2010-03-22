@@ -18,13 +18,13 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void Catalog(string catalog)
         {
-            if (!mapping.IsSpecified("Catalog"))
+            if (!mapping.HasUserDefinedValue(Attr.Catalog))
                 mapping.Catalog = catalog;
         }
 
         public new void Schema(string schema)
         {
-            if (!mapping.IsSpecified("Schema"))
+            if (!mapping.HasUserDefinedValue(Attr.Schema))
                 mapping.Schema = schema;
         }
 
@@ -40,14 +40,14 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void DefaultLazy()
         {
-            if (!mapping.IsSpecified("DefaultLazy"))
+            if (!mapping.HasUserDefinedValue(Attr.DefaultLazy))
                 mapping.DefaultLazy = nextBool;
             nextBool = true;
         }
 
         public new void AutoImport()
         {
-            if (!mapping.IsSpecified("AutoImport"))
+            if (!mapping.HasUserDefinedValue(Attr.AutoImport))
                 mapping.AutoImport = nextBool;
             nextBool = true;
         }
@@ -58,7 +58,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new CascadeInstance(value =>
                 {
-                    if (!mapping.IsSpecified("DefaultCascade"))
+                    if (!mapping.HasUserDefinedValue(Attr.DefaultCascade))
                         mapping.DefaultCascade = value;
                 });
             }
@@ -70,7 +70,7 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new AccessInstance(value =>
                 {
-                    if (!mapping.IsSpecified("DefaultAccess"))
+                    if (!mapping.HasUserDefinedValue(Attr.DefaultAccess))
                         mapping.DefaultAccess = value;
                 });
             }
