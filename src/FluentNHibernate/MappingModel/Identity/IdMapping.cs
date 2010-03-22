@@ -14,7 +14,6 @@ namespace FluentNHibernate.MappingModel.Identity
         {
             Name = member.Name;
             values.SetDefault(Attr.Type, new TypeReference(member.PropertyType));
-            values.SetDefault(Attr.Generator, GetDefaultGenerator(member));
 
             var column = new ColumnMapping { Name = member.Name };
             column.SpecifyParentValues(values);
@@ -29,20 +28,6 @@ namespace FluentNHibernate.MappingModel.Identity
                 return Generator != null;
 
             return values.HasUserDefinedValue(property);
-        }
-
-        private static GeneratorMapping GetDefaultGenerator(Member property)
-        {
-            var mapping = new GeneratorMapping();
-
-            if (property.PropertyType == typeof(Guid))
-                mapping.Class = "guid.comb";
-            else if (property.PropertyType == typeof(int) || property.PropertyType == typeof(long))
-                mapping.Class = "identity";
-            else
-                mapping.Class = "assigned";
-
-            return mapping;
         }
 
         public Member Member { get; set; }

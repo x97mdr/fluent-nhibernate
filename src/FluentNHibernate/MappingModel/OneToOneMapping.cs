@@ -11,7 +11,7 @@ namespace FluentNHibernate.MappingModel
         public void Initialise(Member member)
         {
             Name = member.Name;
-            values.SetDefault(Attr.Class, member.PropertyType);
+            values.SetDefault(Attr.Class, new TypeReference(member.PropertyType));
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)

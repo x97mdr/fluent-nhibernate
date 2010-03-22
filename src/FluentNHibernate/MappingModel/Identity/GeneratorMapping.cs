@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using FluentNHibernate.Utils;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel.Identity
 {
-    public class GeneratorMapping : MappingBase, IMapping
+    public class GeneratorMapping : MappingBase, ITypeMapping
     {
         readonly ValueStore values = new ValueStore();
         readonly List<ParamMapping> parameters = new List<ParamMapping>();
@@ -34,7 +35,7 @@ namespace FluentNHibernate.MappingModel.Identity
 
         public override bool HasUserDefinedValue(Attr property)
         {
-            return HasValue(property);
+            return values.HasUserDefinedValue(property);
         }
 
         public bool HasValue(Attr attr)
@@ -79,6 +80,16 @@ namespace FluentNHibernate.MappingModel.Identity
         public void UpdateValues(ValueStore otherValues)
         {
             values.Merge(otherValues);
+        }
+
+        public void Initialise(Type type)
+        {
+            if (type == typeof(Guid))
+                values.SetDefault(Attr.Class, "guid.comb");
+            else if (type.In(typeof(int), typeof(long)))
+                values.SetDefault(Attr.Class, "identity");
+            else
+                values.SetDefault(Attr.Class, "assigned");
         }
     }
 }

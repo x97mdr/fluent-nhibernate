@@ -12,27 +12,23 @@ namespace FluentNHibernate.Mapping
     public class IdentityPart<T>
     {
         readonly IMappingStructure<IdMapping> structure;
+        readonly IMappingStructure<GeneratorMapping> generatorStructure;
         readonly AccessStrategyBuilder<IdentityPart<T>> access;
         bool nextBool = true;
-        IMappingStructure<GeneratorMapping> generatorStructure;
 
         public IdentityPart(IMappingStructure<IdMapping> structure)
         {
             this.structure = structure;
 
             access = new AccessStrategyBuilder<IdentityPart<T>>(this, value => structure.SetValue(Attr.Access, value));
+            generatorStructure = new TypeStructure<GeneratorMapping>(typeof(T));
+            structure.AddChild(generatorStructure);
         }
 
         public IdentityGenerationStrategyBuilder<IdentityPart<T>> GeneratedBy
         {
             get
             {
-                if (generatorStructure == null)
-                {
-                    generatorStructure = new FreeStructure<GeneratorMapping>();
-                    structure.AddChild(generatorStructure);
-                }
-
                 return new IdentityGenerationStrategyBuilder<IdentityPart<T>>(generatorStructure, this, typeof(T));
             }
         }
