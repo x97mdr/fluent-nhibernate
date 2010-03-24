@@ -69,7 +69,7 @@ namespace FluentNHibernate.Mapping
 
         public AnyPart<T> EntityIdentifierColumn(string columnName)
         {
-            var column = new ColumnStructure(structure);
+            var column = new IdentifierColumnStructure(structure);
             var part = new ColumnPart(column);
             part.Name(columnName);
             structure.AddChild(column);

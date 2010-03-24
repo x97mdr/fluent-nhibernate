@@ -39,22 +39,6 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         }
 
         [Test]
-        public void ShouldBeSetAsDefaultWhenNotExplicitlySpecified()
-        {
-            ClassMap<IdentityExamples>()
-                .Mapping(m => m.Id(x => x.Guid))
-                .ModelShouldMatch(x => ((IdMapping)x.Id).HasUserDefinedValue(Attr.Generator).ShouldBeFalse());
-        }
-
-        [Test]
-        public void ShouldntBeSetAsDefaultWhenExplicitlySpecified()
-        {
-            ClassMap<IdentityExamples>()
-                .Mapping(m => m.Id(x => x.Int).GeneratedBy.Assigned())
-                .ModelShouldMatch(x => ((IdMapping)x.Id).HasUserDefinedValue(Attr.Generator).ShouldBeTrue());
-        }
-
-        [Test]
         public void ShouldAllowOverridingOfDefaultInConventions()
         {
             var model = new PersistenceModel();

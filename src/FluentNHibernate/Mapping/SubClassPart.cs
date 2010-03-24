@@ -6,23 +6,23 @@ using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Mapping
 {
-    public class SubClassPart<TSubclass> : ClasslikeMapBase<TSubclass>
+    public class SubclassPart<TSubclass> : ClasslikeMapBase<TSubclass>
     {
         readonly DiscriminatorPart parent;
         readonly IMappingStructure<SubclassMapping> structure;
         bool nextBool = true;
 
-        public SubClassPart(DiscriminatorPart parent, IMappingStructure<SubclassMapping> structure)
+        public SubclassPart(DiscriminatorPart parent, IMappingStructure<SubclassMapping> structure)
             : base(structure)
         {
             this.parent = parent;
             this.structure = structure;
         }
 
-        public DiscriminatorPart SubClass<TChild>(object discriminatorValue, Action<SubClassPart<TChild>> action)
+        public DiscriminatorPart SubClass<TChild>(object discriminatorValue, Action<SubclassPart<TChild>> action)
         {
             var subclassStructure = new SubclassStructure(SubclassType.Subclass, typeof(TChild));
-            var subclass = new SubClassPart<TChild>(parent, subclassStructure);
+            var subclass = new SubclassPart<TChild>(parent, subclassStructure);
 
             if (discriminatorValue != null)
                 subclass.DiscriminatorValue(discriminatorValue);
@@ -34,7 +34,7 @@ namespace FluentNHibernate.Mapping
             return parent;
         }
 
-        public DiscriminatorPart SubClass<TChild>(Action<SubClassPart<TChild>> action)
+        public DiscriminatorPart SubClass<TChild>(Action<SubclassPart<TChild>> action)
         {
             return SubClass(null, action);
         }
@@ -43,46 +43,46 @@ namespace FluentNHibernate.Mapping
         /// Sets whether this subclass is lazy loaded
         /// </summary>
         /// <returns></returns>
-        public SubClassPart<TSubclass> LazyLoad()
+        public SubclassPart<TSubclass> LazyLoad()
         {
             structure.SetValue(Attr.Lazy, nextBool);
             nextBool = true;
             return this;
         }
 
-        public SubClassPart<TSubclass> Proxy(Type type)
+        public SubclassPart<TSubclass> Proxy(Type type)
         {
             structure.SetValue(Attr.Proxy, type.AssemblyQualifiedName);
             return this;
         }
 
-        public SubClassPart<TSubclass> Proxy<T>()
+        public SubclassPart<TSubclass> Proxy<T>()
         {
             return Proxy(typeof(T));
         }
 
-        public SubClassPart<TSubclass> DynamicUpdate()
+        public SubclassPart<TSubclass> DynamicUpdate()
         {
             structure.SetValue(Attr.DynamicUpdate, nextBool);
             nextBool = true;
             return this;
         }
 
-        public SubClassPart<TSubclass> DynamicInsert()
+        public SubclassPart<TSubclass> DynamicInsert()
         {
             structure.SetValue(Attr.DynamicInsert, nextBool);
             nextBool = true;
             return this;
         }
 
-        public SubClassPart<TSubclass> SelectBeforeUpdate()
+        public SubclassPart<TSubclass> SelectBeforeUpdate()
         {
             structure.SetValue(Attr.SelectBeforeUpdate, nextBool);
             nextBool = true;
             return this;
         }
 
-        public SubClassPart<TSubclass> Abstract()
+        public SubclassPart<TSubclass> Abstract()
         {
             structure.SetValue(Attr.Abstract, nextBool);
             nextBool = true;
@@ -102,7 +102,7 @@ namespace FluentNHibernate.Mapping
         /// Inverts the next boolean
         /// </summary>
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        public SubClassPart<TSubclass> Not
+        public SubclassPart<TSubclass> Not
         {
             get
             {
@@ -111,7 +111,7 @@ namespace FluentNHibernate.Mapping
             }
         }
 
-        public SubClassPart<TSubclass> DiscriminatorValue(object value)
+        public SubclassPart<TSubclass> DiscriminatorValue(object value)
         {
             structure.SetValue(Attr.DiscriminatorValue, value);
             return this;

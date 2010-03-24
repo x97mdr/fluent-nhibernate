@@ -228,7 +228,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteIndexElement()
         {
-            var mapping = new CollectionMapping();
+            var mapping = new CollectionMapping { Type = Collection.Array };
 
             mapping.Index = new IndexMapping();
 

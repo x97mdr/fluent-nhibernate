@@ -214,13 +214,6 @@ namespace FluentNHibernate.Testing.ConventionsTests.Inspection
         }
 
         [Test]
-        public void KeyIsNotSet()
-        {
-            inspector.IsSet(Attr.Key)
-                .ShouldBeFalse();
-        }
-
-        [Test]
         public void LazyMapped()
         {
             mapping.Lazy = true;

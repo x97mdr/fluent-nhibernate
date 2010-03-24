@@ -204,11 +204,11 @@ namespace FluentNHibernate.Automapping
 			return JoinedSubClass<TSubclass>(keyColumn, null);
 		}
 
-		public AutoSubClassPart<TSubclass> SubClass<TSubclass>(object discriminatorValue, Action<AutoSubClassPart<TSubclass>> action)
+		public AutoSubclassPart<TSubclass> SubClass<TSubclass>(object discriminatorValue, Action<AutoSubclassPart<TSubclass>> action)
 			where TSubclass : T
         {
-            var genericType = typeof(AutoSubClassPart<>).MakeGenericType(typeof(TSubclass));
-            var subclass = (AutoSubClassPart<TSubclass>)Activator.CreateInstance(genericType, null, discriminatorValue);
+            var genericType = typeof(AutoSubclassPart<>).MakeGenericType(typeof(TSubclass));
+            var subclass = (AutoSubclassPart<TSubclass>)Activator.CreateInstance(genericType, null, discriminatorValue);
             
             if (action != null)
                 action(subclass);
@@ -219,7 +219,7 @@ namespace FluentNHibernate.Automapping
 		    return subclass;
         }
 
-        public AutoSubClassPart<TSubclass> SubClass<TSubclass>(object discriminatorValue)
+        public AutoSubclassPart<TSubclass> SubClass<TSubclass>(object discriminatorValue)
 			where TSubclass : T
 		{
 			return SubClass<TSubclass>(discriminatorValue, null);
@@ -227,7 +227,7 @@ namespace FluentNHibernate.Automapping
 
         public IAutoClasslike SubClass(Type type, string discriminatorValue)
         {
-            var genericType = typeof(AutoSubClassPart<>).MakeGenericType(type);
+            var genericType = typeof(AutoSubclassPart<>).MakeGenericType(type);
             var subclass = (ISubclassMappingProvider)Activator.CreateInstance(genericType, null, discriminatorValue);
 
             // remove any mappings for the same type, then re-add

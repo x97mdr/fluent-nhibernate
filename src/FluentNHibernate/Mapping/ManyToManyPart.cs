@@ -116,6 +116,8 @@ namespace FluentNHibernate.Mapping
         {
             EnsureDictionary();
 
+            structure.SetValue(Attr.ChildType, valueType);
+
             var indexStructure = new TypeStructure<IndexManyToManyMapping>(entity);
             var part = new IndexManyToManyPart(indexStructure);
             part.Column(indexColumn);

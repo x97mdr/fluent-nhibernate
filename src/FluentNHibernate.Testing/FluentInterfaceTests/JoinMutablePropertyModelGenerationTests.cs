@@ -10,7 +10,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void WithTableNameShouldSetModelTableNamePropertyToValue()
         {
             Join<PropertyTarget>()
-                .Mapping(m => { })
+                .Mapping(m => m.Table("table"))
                 .ModelShouldMatch(x => x.TableName.ShouldEqual("table"));
         }
 

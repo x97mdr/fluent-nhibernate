@@ -13,6 +13,7 @@ namespace FluentNHibernate.MappingModel
         public void Initialise(Member member)
         {
             Name = member.Name;
+            Member = member;
             values.SetDefault(Attr.Type, GetType(member));
 
             // TODO: need a more explicit way to show that we're setting

@@ -30,7 +30,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
         {
             var tableName = type.Name;
 
-            if (type.IsGenericType)
+            if (type.Name.Contains("`"))
             {
                 // special case for generics: GenericType_GenericParameterType
                 tableName = type.Name.Substring(0, type.Name.IndexOf('`'));

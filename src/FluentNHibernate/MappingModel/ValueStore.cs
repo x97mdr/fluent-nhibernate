@@ -73,5 +73,28 @@ namespace FluentNHibernate.MappingModel
         {
             return GetEnumerator();
         }
+
+        public bool Equals(ValueStore other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return other.defaults.ContentEquals(defaults) && other.values.ContentEquals(values);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != typeof(ValueStore)) return false;
+            return Equals((ValueStore)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((defaults != null ? defaults.GetHashCode() : 0) * 397) ^ (values != null ? values.GetHashCode() : 0);
+            }
+        }
     }
 }

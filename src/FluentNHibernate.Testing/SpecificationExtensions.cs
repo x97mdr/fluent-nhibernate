@@ -16,7 +16,7 @@ namespace FluentNHibernate.Testing
     {
         public static void ShouldHaveValue(this IMappingStructure structure, Attr property, object value)
         {
-            structure.Values.Any(x => x.Key == property && x.Value == value)
+            structure.Values.Any(x => x.Key == property && x.Value.Equals(value))
                 .ShouldBeTrue();
         }
 

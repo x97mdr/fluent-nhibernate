@@ -13,7 +13,7 @@ namespace FluentNHibernate.Visitors
             if (mapping.OtherSide == null)
             {
                 // uni-directional
-                //mapping.TableName = mapping.ChildType.Name + "To" + mapping.ContainingEntityType.Name;
+                mapping.SetDefaultTableName(mapping.ChildType.Name + "To" + mapping.ContainingEntityType.Name);
             }
             else
             {
@@ -25,15 +25,15 @@ namespace FluentNHibernate.Visitors
                 }
 
                 if (mapping.HasUserDefinedValue(Attr.Table) && !mapping.OtherSide.HasUserDefinedValue(Attr.Table))
-                    mapping.OtherSide.TableName = mapping.TableName;
+                    mapping.OtherSide.SetDefaultTableName(mapping.TableName);
                 else if (!mapping.HasUserDefinedValue(Attr.Table) && mapping.OtherSide.HasUserDefinedValue(Attr.Table))
-                    mapping.TableName = mapping.OtherSide.TableName;
+                    mapping.SetDefaultTableName(mapping.OtherSide.TableName);
                 else
                 {
                     var tableName = mapping.Member.Name + "To" + mapping.OtherSide.Member.Name;
 
-                    mapping.TableName = tableName;
-                    mapping.OtherSide.TableName = tableName;
+                    mapping.SetDefaultTableName(tableName);
+                    mapping.OtherSide.SetDefaultTableName(tableName);
                 }
             }
         }

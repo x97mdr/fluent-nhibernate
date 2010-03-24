@@ -4,6 +4,11 @@ using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
+    /// <summary>
+    /// For Any mappings
+    /// </summary>
+    public class IdentifierColumnMapping : ColumnMapping
+    {}
     public class ColumnMapping : MappingBase, IMapping
     {
         IEnumerable<KeyValuePair<Attr, object>> parentValues = new ValueStore();

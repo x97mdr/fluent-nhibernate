@@ -65,14 +65,6 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         }
 
         [Test]
-        public void ElementMappingShouldntHaveOneToMany()
-        {
-            OneToMany(x => x.ListOfChildren)
-                .Mapping(m => m.Element("element"))
-                .ModelShouldMatch(x => x.Relationship.ShouldBeNull());
-        }
-
-        [Test]
         public void ShouldPerformKeyColumnMapping()
         {
             OneToMany(x => x.ListOfChildren)

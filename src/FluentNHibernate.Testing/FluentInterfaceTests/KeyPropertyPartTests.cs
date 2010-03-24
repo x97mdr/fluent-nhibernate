@@ -1,4 +1,5 @@
-﻿using FluentNHibernate.Mapping;
+﻿using System.Linq;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Structure;
 using NUnit.Framework;
@@ -23,7 +24,8 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void ShouldSetColumnName()
         {
             part.ColumnName("col1");
-            structure.ShouldHaveValue(Attr.Name, "col1");
+            structure.Children.ShouldHaveCount(1);
+            structure.Children.Single().ShouldHaveValue(Attr.Name, "col1");
         }
 
         [Test]

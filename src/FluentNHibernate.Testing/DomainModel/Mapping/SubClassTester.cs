@@ -25,20 +25,6 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         }
 
         [Test]
-        public void CanUseDefaultDiscriminatorValue()
-        {
-            new MappingTester<MappedObject>()
-                .ForMapping(m =>
-                {
-				    m.Id(x => x.Id);
-                    m.DiscriminateSubClassesOnColumn<string>("Type")
-                        .SubClass<SecondMappedObject>(sc => sc.Map(x => x.Name));
-                })
-                .Element("class/subclass")
-                    .DoesntHaveAttribute("discriminator-value");
-        }
-
-        [Test]
         public void ShouldSetTheName()
         {
             new MappingTester<MappedObject>()

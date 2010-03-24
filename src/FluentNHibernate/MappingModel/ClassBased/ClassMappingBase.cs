@@ -160,11 +160,6 @@ namespace FluentNHibernate.MappingModel.ClassBased
         }
         #endregion
 
-        public override string ToString()
-        {
-            return string.Format("ClassMapping({0})", Type.Name);
-        }
-
         public bool Equals(ClassMappingBase other)
         {
             if (ReferenceEquals(null, other)) return false;

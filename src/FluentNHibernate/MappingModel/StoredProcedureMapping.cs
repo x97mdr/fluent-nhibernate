@@ -10,7 +10,9 @@ namespace FluentNHibernate.MappingModel
 
         public StoredProcedureMapping()
         {
+            SPType = "sql-update";
             Check = "rowcount";
+            Query = "";
         }
 
         public string Name

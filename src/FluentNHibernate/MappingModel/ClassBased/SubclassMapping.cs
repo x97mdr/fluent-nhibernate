@@ -13,12 +13,18 @@ namespace FluentNHibernate.MappingModel.ClassBased
         public SubclassMapping(SubclassType subclassType)
         {
             SubclassType = subclassType;
+
+            Key = new KeyMapping();
         }
 
         public void Initialise(Type type)
         {
             Name = type.AssemblyQualifiedName;
             Type = type;
+            values.SetDefault(Attr.Table, "`" + type.Name + "`");
+            values.SetDefault(Attr.DiscriminatorValue, type.Name);
+
+            Key.AddDefaultColumn(new ColumnMapping { Name = type.BaseType.Name + "_id" });
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
@@ -141,7 +147,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
             if (property == Attr.Key)
                 return Key != null;
 
-            return HasValue(property);
+            return values.HasUserDefinedValue(property);
         }
 
         public bool HasValue(Attr attr)

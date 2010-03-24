@@ -59,6 +59,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
             mergedComponent.Name = property.Name;
             mergedComponent.Class = new TypeReference(componentType);
             mergedComponent.Type = componentType;
+            mergedComponent.ComponentType = ComponentType;
         }
 
         public IEnumerable<ManyToOneMapping> References

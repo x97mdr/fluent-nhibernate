@@ -19,7 +19,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteBagForBagMapping()
         {
-            var mapping = new CollectionMapping();
+            var mapping = new CollectionMapping { Type = Collection.Bag };
 
             writer.VerifyXml(mapping)
                 .RootElement.HasName("bag");
@@ -28,7 +28,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteListForListMapping()
         {
-            var mapping = new CollectionMapping();
+            var mapping = new CollectionMapping { Type = Collection.List };
 
             writer.VerifyXml(mapping)
                 .RootElement.HasName("list");
@@ -37,7 +37,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteSetForSetMapping()
         {
-            var mapping = new CollectionMapping();
+            var mapping = new CollectionMapping { Type = Collection.Set };
 
             writer.VerifyXml(mapping)
                 .RootElement.HasName("set");
@@ -46,7 +46,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteMapForMapMapping()
         {
-            var mapping = new CollectionMapping();
+            var mapping = new CollectionMapping { Type = Collection.Map };
 
             writer.VerifyXml(mapping)
                 .RootElement.HasName("map");
@@ -55,7 +55,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteArrayForArrayMapping()
         {
-            var mapping = new CollectionMapping();
+            var mapping = new CollectionMapping { Type = Collection.Array };
 
             writer.VerifyXml(mapping)
                 .RootElement.HasName("array");

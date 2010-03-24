@@ -170,6 +170,13 @@ namespace FluentNHibernate.MappingModel
         {
             if (child is MetaValueMapping)
                 AddMetaValue((MetaValueMapping)child);
+            if (child is ColumnMapping)
+            {
+                if (child is IdentifierColumnMapping)
+                    AddIdentifierColumn((ColumnMapping)child);
+                else
+                    AddTypeColumn((ColumnMapping)child);
+            }
         }
 
         public void UpdateValues(ValueStore otherValues)

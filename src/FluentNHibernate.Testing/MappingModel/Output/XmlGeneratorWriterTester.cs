@@ -26,7 +26,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new GeneratorMapping();
 
-            mapping.AddParam(new ParamMapping { Name = "left", Value = "value" });
+            mapping.AddParam(new ParamMapping { Name = "first", Value = "value" });
             mapping.AddParam(new ParamMapping { Name = "second", Value = "another-value" });
 
             writer = new XmlGeneratorWriter();

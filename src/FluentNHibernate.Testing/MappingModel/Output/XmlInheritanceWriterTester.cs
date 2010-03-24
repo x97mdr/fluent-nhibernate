@@ -20,7 +20,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         [Test]
         public void ShouldWriteSubclassForSubclassMapping()
         {
-            var mapping = new SubclassMapping(SubclassType.JoinedSubclass);
+            var mapping = new SubclassMapping(SubclassType.Subclass);
 
             writer.VerifyXml(mapping)
                 .RootElement.HasName("subclass");

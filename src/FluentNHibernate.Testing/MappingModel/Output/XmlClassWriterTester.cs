@@ -323,7 +323,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new ClassMapping(typeof(ExampleClass));
 
-            mapping.AddComponent(new ComponentMapping(ComponentType.Component));
+            mapping.AddComponent(new ComponentMapping(ComponentType.DynamicComponent));
 
             writer.VerifyXml(mapping)
                 .Element("dynamic-component").Exists();
@@ -345,7 +345,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new ClassMapping(typeof(ExampleClass));
 
-            mapping.AddCollection(new CollectionMapping());
+            mapping.AddCollection(new CollectionMapping { Type = Collection.Map });
 
             writer.VerifyXml(mapping)
                 .Element("map").Exists();
@@ -356,7 +356,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new ClassMapping(typeof(ExampleClass));
 
-            mapping.AddCollection(new CollectionMapping());
+            mapping.AddCollection(new CollectionMapping { Type = Collection.Set });
 
             writer.VerifyXml(mapping)
                 .Element("set").Exists();
@@ -367,7 +367,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new ClassMapping(typeof(ExampleClass));
 
-            mapping.AddCollection(new CollectionMapping());
+            mapping.AddCollection(new CollectionMapping { Type = Collection.List });
 
             writer.VerifyXml(mapping)
                 .Element("list").Exists();
@@ -378,7 +378,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new ClassMapping(typeof(ExampleClass));
 
-            mapping.AddCollection(new CollectionMapping());
+            mapping.AddCollection(new CollectionMapping { Type = Collection.Bag });
 
             writer.VerifyXml(mapping)
                 .Element("bag").Exists();
@@ -418,7 +418,7 @@ namespace FluentNHibernate.Testing.MappingModel.Output
         {
             var mapping = new ClassMapping(typeof(ExampleClass));
 
-            mapping.AddSubclass(new SubclassMapping(SubclassType.JoinedSubclass));
+            mapping.AddSubclass(new SubclassMapping(SubclassType.Subclass));
 
             writer.VerifyXml(mapping)
                 .Element("subclass").Exists();

@@ -1,15 +1,16 @@
 using System;
 using FluentNHibernate.Mapping;
+using FluentNHibernate.MappingModel;
 
 namespace FluentNHibernate.Testing.FluentInterfaceTests
 {
     public class ModelTester<TFluentClass, TModel>
     {
         private readonly Func<TFluentClass> instantiatePart;
-        private readonly Func<TModel> getModel;
+        private readonly Func<IMapping> getModel;
         private TFluentClass fluentClass;
 
-        public ModelTester(Func<TFluentClass> instantiatePart, Func<TModel> getModel)
+        public ModelTester(Func<TFluentClass> instantiatePart, Func<IMapping> getModel)
         {
             this.instantiatePart = instantiatePart;
             this.getModel = getModel;
@@ -25,7 +26,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void ModelShouldMatch(Action<TModel> action)
         {
             var model = getModel();
-            action(model);
+            action((TModel)model);
         }
     }
 }

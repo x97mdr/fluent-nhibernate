@@ -16,7 +16,8 @@ namespace FluentNHibernate.Conventions
     {
         public void Accept(IAcceptanceCriteria<IPropertyInspector> criteria)
         {
-            criteria.Expect(property => Attribute.GetCustomAttribute(property.Property.MemberInfo, typeof(T)) as T != null);
+            criteria.Expect(property =>
+                Attribute.GetCustomAttribute(property.Property.MemberInfo, typeof(T)) as T != null);
         }
 
         public void Apply(IPropertyInstance instance)

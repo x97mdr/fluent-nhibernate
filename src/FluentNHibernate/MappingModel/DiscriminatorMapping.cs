@@ -9,6 +9,13 @@ namespace FluentNHibernate.MappingModel
     {
         readonly ValueStore values = new ValueStore();
 
+        public DiscriminatorMapping()
+        {
+            var column = new ColumnMapping { Name = "discriminator" };
+            column.SpecifyParentValues(values);
+            AddDefaultColumn(column);
+        }
+
         public void Initialise(Type type)
         {
             Type = new TypeReference(type);

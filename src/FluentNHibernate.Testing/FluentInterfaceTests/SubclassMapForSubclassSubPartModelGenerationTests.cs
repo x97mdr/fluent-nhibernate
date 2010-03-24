@@ -73,14 +73,6 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         }
 
         [Test]
-        public void SubClassShouldAddToModelSubclassesCollection()
-        {
-            SubclassMapForSubclass<SuperRecord>()
-                .Mapping(m => m.Subclass<ChildRecord>(x => { }))
-                .ModelShouldMatch(x => x.Subclasses.Count().ShouldEqual(1));
-        }
-
-        [Test]
         public void HasOneShouldAddToOneToOneCollectionOnModel()
         {
             SubclassMapForSubclass<PropertyTarget>()

@@ -65,6 +65,10 @@ namespace FluentNHibernate.MappingModel
 
         public void AddChild(IMapping child)
         {
+            if (child is PropertyMapping)
+                AddProperty((PropertyMapping)child);
+            if (child is ManyToOneMapping)
+                AddReference((ManyToOneMapping)child);
         }
 
         public void UpdateValues(ValueStore otherValues)

@@ -19,10 +19,10 @@ namespace FluentNHibernate.Mapping
         }
 
         [Obsolete("Inline definitions of subclasses are depreciated. Please create a derived class from SubclassMap in the same way you do with ClassMap.")]
-        public DiscriminatorPart SubClass<TSubClass>(object discriminatorValue, Action<SubClassPart<TSubClass>> action)
+        public DiscriminatorPart SubClass<TSubClass>(object discriminatorValue, Action<SubclassPart<TSubClass>> action)
         {
             var subclassStructure = new SubclassStructure(SubclassType.Subclass, typeof(TSubClass));
-            var subclass = new SubClassPart<TSubClass>(this, subclassStructure);
+            var subclass = new SubclassPart<TSubClass>(this, subclassStructure);
 
             if (discriminatorValue != null)
                 subclass.DiscriminatorValue(discriminatorValue);
@@ -34,7 +34,7 @@ namespace FluentNHibernate.Mapping
         }
 
         [Obsolete("Inline definitions of subclasses are depreciated. Please create a derived class from SubclassMap in the same way you do with ClassMap.")]
-        public DiscriminatorPart SubClass<TSubClass>(Action<SubClassPart<TSubClass>> action)
+        public DiscriminatorPart SubClass<TSubClass>(Action<SubclassPart<TSubClass>> action)
         {
             return SubClass(null, action);
         }

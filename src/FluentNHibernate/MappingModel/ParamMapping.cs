@@ -38,5 +38,25 @@ namespace FluentNHibernate.MappingModel
             get { return values.Get(Attr.Value); }
             set { values.Set(Attr.Value, value); }
         }
+
+        public bool Equals(ParamMapping other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(other.values, values);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != typeof(ParamMapping)) return false;
+            return Equals((ParamMapping)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (values != null ? values.GetHashCode() : 0);
+        }
     }
 }

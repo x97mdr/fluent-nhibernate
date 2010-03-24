@@ -7,18 +7,16 @@ namespace FluentNHibernate.Conventions.AcceptanceCriteria
     public class EvalExpectation<TInspector> : IExpectation
         where TInspector : IInspector
     {
-        private readonly Expression<Func<TInspector, bool>> expression;
+        private readonly Func<TInspector, bool> func;
 
-        public EvalExpectation(Expression<Func<TInspector, bool>> expression)
+        public EvalExpectation(Func<TInspector, bool> func)
         {
-            this.expression = expression;
+            this.func = func;
         }
 
         public bool Matches(TInspector inspector)
         {
-            var compiledFunc = expression.Compile();
-
-            return compiledFunc(inspector);
+            return func(inspector);
         }
 
         bool IExpectation.Matches(IInspector inspector)

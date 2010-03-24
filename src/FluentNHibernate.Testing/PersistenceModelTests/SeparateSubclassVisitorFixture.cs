@@ -28,7 +28,7 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
              * GenericFooMap<T> subclass mapping.
              */
 
-            fooMapping = (ClassMapping)((IMappingProvider)new FooMap()).GetUserDefinedMappings().Structure;
+            fooMapping = (ClassMapping)((IMappingProvider)new FooMap()).GetUserDefinedMappings().Structure.CreateMappingNode();
 
             providers.Add(new StringFooMap());
             var sut = CreateSut();
@@ -45,7 +45,7 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
              * GenericFooMap<T> subclass mapping.
              */
 
-            fooMapping = (ClassMapping)((IMappingProvider)new BaseMap()).GetUserDefinedMappings().Structure;
+            fooMapping = (ClassMapping)((IMappingProvider)new BaseMap()).GetUserDefinedMappings().Structure.CreateMappingNode();
 
             providers.Add(new StringFooMap());
             var sut = CreateSut();
@@ -62,7 +62,7 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
              * since it does not implement the interface.
              */
 
-            fooMapping = (ClassMapping)((IMappingProvider)new FooMap()).GetUserDefinedMappings().Structure;
+            fooMapping = (ClassMapping)((IMappingProvider)new FooMap()).GetUserDefinedMappings().Structure.CreateMappingNode();
 
             providers.Add(new StandAloneMap());
             var sut = CreateSut();
@@ -78,7 +78,7 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
              * since it does not implement the interface.
              */
 
-            fooMapping = (ClassMapping)((IMappingProvider)new BaseMap()).GetUserDefinedMappings().Structure;
+            fooMapping = (ClassMapping)((IMappingProvider)new BaseMap()).GetUserDefinedMappings().Structure.CreateMappingNode();
 
             providers.Add(new StandAloneMap());
             var sut = CreateSut();
@@ -95,7 +95,7 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
              * the BaseImpl class which already implements FooBase.
              */
 
-            fooMapping = (ClassMapping)((IMappingProvider)new FooMap()).GetUserDefinedMappings().Structure;
+            fooMapping = (ClassMapping)((IMappingProvider)new FooMap()).GetUserDefinedMappings().Structure.CreateMappingNode();
 
             providers.Add(new BaseImplMap());
             providers.Add(new StringFooMap());
@@ -114,7 +114,7 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
              * the BaseImpl class which already implements FooBase.
              */
 
-            fooMapping = (ClassMapping)((IMappingProvider)new BaseMap()).GetUserDefinedMappings().Structure;
+            fooMapping = (ClassMapping)((IMappingProvider)new BaseMap()).GetUserDefinedMappings().Structure.CreateMappingNode();
 
             providers.Add(new BaseImplMap());
             providers.Add(new StringFooMap());

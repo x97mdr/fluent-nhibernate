@@ -17,5 +17,30 @@ namespace FluentNHibernate.MappingModel.ClassBased
         {
             return elementName;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is SubclassType)
+                return ((SubclassType)obj).elementName.Equals(elementName);
+
+            return false;
+        }
+
+        public override string ToString()
+        {
+            return "Subclass(" + elementName + ")";
+        }
+
+        public bool Equals(SubclassType other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(other.elementName, elementName);
+        }
+
+        public override int GetHashCode()
+        {
+            return (elementName != null ? elementName.GetHashCode() : 0);
+        }
     }
 }

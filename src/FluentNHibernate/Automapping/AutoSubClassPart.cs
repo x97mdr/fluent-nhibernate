@@ -10,11 +10,11 @@ using FluentNHibernate.MappingModel.Structure;
 
 namespace FluentNHibernate.Automapping
 {
-    public class AutoSubClassPart<T> : SubClassPart<T>, IAutoClasslike
+    public class AutoSubclassPart<T> : SubclassPart<T>, IAutoClasslike
     {
         private readonly IList<Member> propertiesMapped = new List<Member>();
 
-        public AutoSubClassPart(DiscriminatorPart parent, IMappingStructure<SubclassMapping> structure)
+        public AutoSubclassPart(DiscriminatorPart parent, IMappingStructure<SubclassMapping> structure)
             : base(parent, structure)
         {}
 
@@ -96,10 +96,10 @@ namespace FluentNHibernate.Automapping
             return (IAutoClasslike)joinedclass;
         }
 
-        public void SubClass<TSubclass>(string discriminatorValue, Action<AutoSubClassPart<TSubclass>> action)
+        public void SubClass<TSubclass>(string discriminatorValue, Action<AutoSubclassPart<TSubclass>> action)
         {
-            var genericType = typeof(AutoSubClassPart<>).MakeGenericType(typeof(TSubclass));
-            var subclass = (AutoSubClassPart<TSubclass>)Activator.CreateInstance(genericType, discriminatorValue);
+            var genericType = typeof(AutoSubclassPart<>).MakeGenericType(typeof(TSubclass));
+            var subclass = (AutoSubclassPart<TSubclass>)Activator.CreateInstance(genericType, discriminatorValue);
 
             action(subclass);
 
@@ -108,7 +108,7 @@ namespace FluentNHibernate.Automapping
 
         public IAutoClasslike SubClass(Type type, string discriminatorValue)
         {
-            var genericType = typeof(AutoSubClassPart<>).MakeGenericType(type);
+            var genericType = typeof(AutoSubclassPart<>).MakeGenericType(type);
             var subclass = (ISubclassMappingProvider)Activator.CreateInstance(genericType, discriminatorValue);
 
             //subclasses[type] = subclass;

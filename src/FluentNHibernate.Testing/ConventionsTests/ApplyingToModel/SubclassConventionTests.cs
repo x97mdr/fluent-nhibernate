@@ -94,7 +94,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.ApplyingToModel
                 .Classes.First()
                 .Subclasses.First();
 
-            modelVerification((SubclassMapping)modelInstance);
+            modelVerification(modelInstance);
         }
 
         #endregion

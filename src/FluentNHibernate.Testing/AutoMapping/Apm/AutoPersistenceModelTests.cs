@@ -254,7 +254,7 @@ namespace FluentNHibernate.Testing.AutoMapping.Apm
         {
             var autoMapper = AutoMap.AssemblyOf<ExampleClass>()
                 .Where(t => t.Namespace == "FluentNHibernate.Automapping.TestFixtures")
-                .Conventions.Add(PrimaryKey.Name.Is(id => id.Property.Name + "Id"));
+                .Conventions.Add(PrimaryKey.Name.Is(id => id.EntityType.Name + "Id"));
 
             new AutoMappingTester<ExampleClass>(autoMapper)
                 .Element("class/id").HasAttribute("name", "Id")

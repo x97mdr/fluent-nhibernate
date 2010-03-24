@@ -13,9 +13,6 @@ namespace FluentNHibernate.Mapping
     {
         readonly IMappingStructure<SubclassMapping> structure;
 
-        // this is a bit weird, but we need a way of delaying the generation of the subclass mappings until we know
-        // what the parent subclass type is...
-        private readonly IDictionary<Type, IIndeterminateSubclassMappingProvider> indetermineateSubclasses = new Dictionary<Type, IIndeterminateSubclassMappingProvider>();
         private bool nextBool = true;
         private IList<JoinMapping> joins = new List<JoinMapping>();
         IMappingStructure<KeyMapping> keyStructure;
@@ -42,82 +39,12 @@ namespace FluentNHibernate.Mapping
 
         IUserDefinedMapping IMappingProvider.GetUserDefinedMappings()
         {
-            //var mapping = new SubclassMapping(SubclassType.Unknown);
-
-            //GenerateNestedSubclasses(mapping);
-
-            //attributes.SetDefault(x => x.Type, typeof(T));
-            //attributes.SetDefault(x => x.Name, typeof(T).AssemblyQualifiedName);
-            //attributes.SetDefault(x => x.DiscriminatorValue, typeof(T).Name);
-
-            //// TODO: un-hardcode this
-            //var key = new KeyMapping();
-            //key.AddDefaultColumn(new ColumnMapping { Name = typeof(T).BaseType.Name + "_id" });
-
-            //attributes.SetDefault(x => x.TableName, GetDefaultTableName());
-            //attributes.SetDefault(x => x.Key, key);
-
-            //// TODO: this is nasty, we should find a better way
-            //mapping.OverrideAttributes(attributes.CloneInner());
-
-            //foreach (var join in joins)
-            //    mapping.AddJoin(join);
-
-            //foreach (var property in properties)
-            //    mapping.AddProperty(property.GetPropertyMapping());
-
-            //foreach (var component in components)
-            //    mapping.AddComponent(component.GetComponentMapping());
-
-            //foreach (var oneToOne in oneToOnes)
-            //    mapping.AddOneToOne(oneToOne.GetOneToOneMapping());
-
-            //foreach (var collection in collections)
-            //    mapping.AddCollection(collection.GetCollectionMapping());
-
-            //foreach (var reference in references)
-            //    mapping.AddReference(reference.GetManyToOneMapping());
-
-            //foreach (var any in anys)
-            //    mapping.AddAny(any.GetAnyMapping());
-
             return new FluentMapUserDefinedMappings(typeof(T), structure);
         }
 
         public HibernateMapping GetHibernateMapping()
         {
             throw new NotImplementedException();
-        }
-
-        private void GenerateNestedSubclasses(SubclassMapping mapping)
-        {
-            foreach (var subclassType in indetermineateSubclasses.Keys)
-            {
-                var userMappings = indetermineateSubclasses[subclassType].GetUserDefinedMappings();
-                var subclassMapping = (SubclassMapping)userMappings.Structure;
-                subclassMapping.SubclassType = mapping.SubclassType;
-
-                mapping.AddSubclass(subclassMapping);
-            }
-        }
-
-        private string GetDefaultTableName()
-        {
-            var tableName = EntityType.Name;
-
-            if (EntityType.IsGenericType)
-            {
-                // special case for generics: GenericType_GenericParameterType
-                tableName = EntityType.Name.Substring(0, EntityType.Name.IndexOf('`'));
-
-                foreach (var argument in EntityType.GetGenericArguments())
-                {
-                    tableName += "_";
-                    tableName += argument.Name;
-                }
-            }
-
-            return "`" + tableName + "`";
         }
 
         public void Abstract()
@@ -160,15 +87,6 @@ namespace FluentNHibernate.Mapping
             nextBool = true;
         }
 
-        public void Subclass<TSubclass>(Action<SubclassMap<TSubclass>> subclassDefinition)
-        {
-            var subclass = new SubclassMap<TSubclass>();
-
-            subclassDefinition(subclass);
-
-            indetermineateSubclasses[typeof(TSubclass)] = subclass;
-        }
-
         public void DiscriminatorValue(object discriminatorValue)
         {
             structure.SetValue(Attr.DiscriminatorValue, discriminatorValue);
@@ -201,6 +119,8 @@ namespace FluentNHibernate.Mapping
 
             new ColumnPart(column)
                 .Name(columnName);
+
+            keyStructure.AddChild(column);
         }
 
         public void Subselect(string subselect)

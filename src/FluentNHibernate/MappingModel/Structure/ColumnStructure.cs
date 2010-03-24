@@ -4,7 +4,22 @@ using FluentNHibernate.Utils;
 
 namespace FluentNHibernate.MappingModel.Structure
 {
-    public class ColumnStructure : BaseMappingStructure<ColumnMapping>
+    public class IdentifierColumnStructure : ColumnStructure<IdentifierColumnMapping>
+    {
+        public IdentifierColumnStructure(IMappingStructure parent)
+            : base(parent)
+        {}
+    }
+
+    public class ColumnStructure : ColumnStructure<ColumnMapping>
+    {
+        public ColumnStructure(IMappingStructure parent)
+            : base(parent)
+        { }
+    }
+
+    public abstract class ColumnStructure<T> : BaseMappingStructure<T>
+        where T : IMapping, new()
     {
         readonly IMappingStructure parent;
 
@@ -13,9 +28,9 @@ namespace FluentNHibernate.MappingModel.Structure
             this.parent = parent;
         }
 
-        public override ColumnMapping CreateMappingNode()
+        public override T CreateMappingNode()
         {
-            var mapping = new ColumnMapping();
+            var mapping = new T();
 
             Children
                 .Select(x => x.CreateMappingNode())

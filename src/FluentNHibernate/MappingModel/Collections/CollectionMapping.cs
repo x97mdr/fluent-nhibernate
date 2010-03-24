@@ -42,6 +42,11 @@ namespace FluentNHibernate.MappingModel.Collections
         public Member Member { get; set; }
         public Collection Type { get; set; }
 
+        public CollectionMapping()
+        {
+            Type = Collection.Bag;
+        }
+
         public void Initialise(Type type, Member member)
         {
             Name = GetMemberName(member);
@@ -136,7 +141,7 @@ namespace FluentNHibernate.MappingModel.Collections
             if (property == Attr.Relationship)
                 return Relationship != null;
 
-            return HasValue(property);
+            return values.HasUserDefinedValue(property);
         }
 
         public Type ChildType
@@ -300,7 +305,7 @@ namespace FluentNHibernate.MappingModel.Collections
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return base.Equals(other) && Equals(other.values, values);
+            return Equals(other.values, values);
         }
 
         public override bool Equals(object obj)
@@ -318,6 +323,13 @@ namespace FluentNHibernate.MappingModel.Collections
                     return (base.GetHashCode() * 397) ^ (values != null ? values.GetHashCode() : 0);
                 }
             }
+        }
+
+        // TODO: Kludge. Here because we're not let layering attributes, so setting the
+        // table name in the convention results in users not being able to define their own
+        public void SetDefaultTableName(string tableName)
+        {
+            values.SetDefault(Attr.Table, tableName);
         }
     }
 }

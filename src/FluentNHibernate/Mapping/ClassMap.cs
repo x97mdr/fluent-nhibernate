@@ -167,6 +167,8 @@ namespace FluentNHibernate.Mapping
             if (column != null)
                 part.Column(column);
 
+            part.CustomType(typeof(TReturn));
+
             structure.AddChild(idStructure);
 
             return part;
