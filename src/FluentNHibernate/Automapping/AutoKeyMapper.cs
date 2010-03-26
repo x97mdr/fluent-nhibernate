@@ -1,6 +1,7 @@
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Collections;
+using System;
 
 namespace FluentNHibernate.Automapping
 {
@@ -15,7 +16,7 @@ namespace FluentNHibernate.Automapping
 
         public void SetKey(Member property, ClassMappingBase classMap, ICollectionMapping mapping)
         {
-            var columnName = property.DeclaringType.Name + "_id";
+            var columnName = String.Format("{0}_{1}_id", property.DeclaringType.Name, property.Name);
 
             if (classMap is ComponentMapping)
                 columnName = expressions.GetComponentColumnPrefix(((ComponentMapping)classMap).Member) + columnName;

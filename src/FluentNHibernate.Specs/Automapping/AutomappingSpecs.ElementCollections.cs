@@ -135,7 +135,7 @@ namespace FluentNHibernate.Specs.Automapping
             container.Collections.Single().Key.ContainingEntityType.ShouldEqual(FakeMembers.Type);
 
         It should_create_a_column_for_the_key_with_the_default_id_naming = () =>
-            container.Collections.Single().Key.Columns.Single().Name.ShouldEqual("Target_id");
+            container.Collections.Single().Key.Columns.Single().Name.ShouldEqual("Target_IListOfStrings_id");
 
         It should_set_the_collection_s_containing_entity_type_to_the_type_owning_the_property = () =>
             container.Collections.Single().ContainingEntityType.ShouldEqual(FakeMembers.Type);
